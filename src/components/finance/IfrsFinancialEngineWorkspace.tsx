@@ -63,10 +63,12 @@ import {
 
 interface IfrsFinancialEngineWorkspaceProps {
   initialSection?: 'overview' | 'trial-balance' | 'diagnostics' | 'statements' | 'ratios-plan' | 'mapping-settings' | 'coa-tree';
+  initialStatementView?: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow';
 }
 
 export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspaceProps> = ({
   initialSection = 'ratios-plan',
+  initialStatementView = 'balance-sheet',
 }) => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { addNotification } = useAppStore();
@@ -77,7 +79,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
 
   const [activeStatementView, setActiveStatementView] = useState<
     'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow'
-  >('balance-sheet');
+  >(initialStatementView);
 
   const [entries, setEntries] = useState<TrialBalanceEntry[]>(() =>
     ifrsFinancialEngineService.getTrialBalance(activeCompanyId)
@@ -147,6 +149,46 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
     'A-01': true, 'A-10': true, 'L-04': true, 'R-01': true, 'R-02': true, 'R-04': true,
   });
   const [excelTreeSearch, setExcelTreeSearch] = useState('');
+
+  // Editable Labels & Custom Sub-Nodes for Tree, Assets/Balance Sheet & Income Statement
+  const [statementLabelOverrides, setStatementLabelOverrides] = useState<Record<string, string>>(() => {
+    try {
+      const saved = localStorage.getItem(`erp_ifrs_stmt_labels_${activeCompanyId}`);
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return {};
+  });
+  const [incomeCompOverrides, setIncomeCompOverrides] = useState<Record<string, number>>(() => {
+    try {
+      const saved = localStorage.getItem(`erp_ifrs_inc_comp_${activeCompanyId}`);
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return {};
+  });
+  const [customTreeNodeNames, setCustomTreeNodeNames] = useState<Record<string, string>>(() => {
+    try {
+      const saved = localStorage.getItem(`erp_ifrs_tree_labels_${activeCompanyId}`);
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return {};
+  });
+  const [customTreeSubNodes, setCustomTreeSubNodes] = useState<
+    Array<{ level: number; code: string; titleAr: string; parentCode: string; statementCode: string }>
+  >(() => {
+    try {
+      const saved = localStorage.getItem(`erp_ifrs_tree_custom_nodes_${activeCompanyId}`);
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return [];
+  });
 
   // Reference Guides Sub-View in mapping-settings
   const [refGuideSubTab, setRefGuideSubTab] = useState<
@@ -545,6 +587,154 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
       message: `تمت إضافة (${newRow.accountName}) تحت البند (${ifrsCode}) ويمكنك الآن تعديل أرصدته وحقوله مباشرة.`,
       type: 'success',
     });
+  };
+
+  const handleUpdateStatementLabel = (key: string, label: string) => {
+    const next = { ...statementLabelOverrides, [key]: label };
+    setStatementLabelOverrides(next);
+    try {
+      localStorage.setItem(`erp_ifrs_stmt_labels_${activeCompanyId}`, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleUpdateIncomeCompOverride = (key: string, val: number) => {
+    const next = { ...incomeCompOverrides, [key]: val };
+    setIncomeCompOverrides(next);
+    try {
+      localStorage.setItem(`erp_ifrs_inc_comp_${activeCompanyId}`, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleUpdateTreeNodeTitle = (code: string, titleAr: string) => {
+    const next = { ...customTreeNodeNames, [code]: titleAr };
+    setCustomTreeNodeNames(next);
+    try {
+      localStorage.setItem(`erp_ifrs_tree_labels_${activeCompanyId}`, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleAddCustomTreeSubNode = (parentCode: string, parentTitle: string) => {
+    const existingChildren = [
+      ...EXCEL_ACCOUNTING_TREE.filter((n) => n.parentCode === parentCode),
+      ...customTreeSubNodes.filter((n) => n.parentCode === parentCode),
+    ];
+    const nextIdx = existingChildren.length + 1;
+    const newCode = `${parentCode}-${String(nextIdx).padStart(2, '0')}C`;
+    const newNode = {
+      level: 3,
+      code: newCode,
+      titleAr: `تصنيف فرعي مخصص تحت ${parentTitle.replace(/^[↳\s]+/, '')} #${nextIdx}`,
+      parentCode,
+      statementCode: parentCode,
+    };
+    const next = [...customTreeSubNodes, newNode];
+    setCustomTreeSubNodes(next);
+    setExpandedExcelTreeCodes((prev) => ({ ...prev, [parentCode]: true }));
+    try {
+      localStorage.setItem(`erp_ifrs_tree_custom_nodes_${activeCompanyId}`, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+    addNotification({
+      title: 'إضافة تصنيف فرعي في الشجرة',
+      message: `تمت إضافة العقدة الفرعية (${newCode}) تحت (${parentCode}) في الشجرة المحاسبية.`,
+      type: 'success',
+    });
+  };
+
+  const handleRemoveCustomTreeSubNode = (code: string) => {
+    const next = customTreeSubNodes.filter((n) => n.code !== code);
+    setCustomTreeSubNodes(next);
+    try {
+      localStorage.setItem(`erp_ifrs_tree_custom_nodes_${activeCompanyId}`, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleUpdateStatementLineTotal = (
+    codes: string[],
+    currentVal: number,
+    targetVal: number,
+    mode: 'current' | 'comparative',
+    naturalSign: 'D' | 'C',
+    defaultLabel: string
+  ) => {
+    const delta = targetVal - currentVal;
+    if (Math.abs(delta) < 0.01) return;
+    const primaryTargetCode = codes[0];
+    const matchingIdx = entries.findIndex((item) => {
+      const pCode = extractPrimaryIfrsCode(item.manualCode || suggestIfrsCode(item.accountName));
+      return pCode === primaryTargetCode;
+    });
+
+    let next: TrialBalanceEntry[];
+    if (matchingIdx >= 0) {
+      next = entries.map((item, idx) => {
+        if (idx !== matchingIdx) return item;
+        if (naturalSign === 'D') {
+          if (mode === 'current') {
+            const curPeriodNet = (item.periodDebit || 0) - (item.periodCredit || 0) + delta;
+            return {
+              ...item,
+              periodDebit: curPeriodNet >= 0 ? curPeriodNet : 0,
+              periodCredit: curPeriodNet < 0 ? Math.abs(curPeriodNet) : 0,
+            };
+          } else {
+            const curOpenNet = (item.openingDebit || 0) - (item.openingCredit || 0) + delta;
+            const curPeriodNet = (item.periodDebit || 0) - (item.periodCredit || 0) - delta;
+            return {
+              ...item,
+              openingDebit: curOpenNet >= 0 ? curOpenNet : 0,
+              openingCredit: curOpenNet < 0 ? Math.abs(curOpenNet) : 0,
+              periodDebit: curPeriodNet >= 0 ? curPeriodNet : 0,
+              periodCredit: curPeriodNet < 0 ? Math.abs(curPeriodNet) : 0,
+            };
+          }
+        } else {
+          if (mode === 'current') {
+            const curPeriodNet = (item.periodCredit || 0) - (item.periodDebit || 0) + delta;
+            return {
+              ...item,
+              periodCredit: curPeriodNet >= 0 ? curPeriodNet : 0,
+              periodDebit: curPeriodNet < 0 ? Math.abs(curPeriodNet) : 0,
+            };
+          } else {
+            const curOpenNet = (item.openingCredit || 0) - (item.openingDebit || 0) + delta;
+            const curPeriodNet = (item.periodCredit || 0) - (item.periodDebit || 0) - delta;
+            return {
+              ...item,
+              openingCredit: curOpenNet >= 0 ? curOpenNet : 0,
+              openingDebit: curOpenNet < 0 ? Math.abs(curOpenNet) : 0,
+              periodCredit: curPeriodNet >= 0 ? curPeriodNet : 0,
+              periodDebit: curPeriodNet < 0 ? Math.abs(curPeriodNet) : 0,
+            };
+          }
+        }
+      });
+    } else {
+      const nextSeq = entries.length > 0 ? Math.max(...entries.map((e) => e.seq)) + 1 : 1;
+      const newRow: TrialBalanceEntry = {
+        seq: nextSeq,
+        erpCode: `${1000 + nextSeq}`,
+        accountName: defaultLabel,
+        manualCode: primaryTargetCode,
+        openingDebit: mode === 'comparative' && naturalSign === 'D' && targetVal >= 0 ? targetVal : mode === 'comparative' && naturalSign === 'C' && targetVal < 0 ? Math.abs(targetVal) : 0,
+        openingCredit: mode === 'comparative' && naturalSign === 'C' && targetVal >= 0 ? targetVal : mode === 'comparative' && naturalSign === 'D' && targetVal < 0 ? Math.abs(targetVal) : 0,
+        periodDebit: mode === 'current' && naturalSign === 'D' && targetVal >= 0 ? targetVal : mode === 'current' && naturalSign === 'C' && targetVal < 0 ? Math.abs(targetVal) : 0,
+        periodCredit: mode === 'current' && naturalSign === 'C' && targetVal >= 0 ? targetVal : mode === 'current' && naturalSign === 'D' && targetVal < 0 ? Math.abs(targetVal) : 0,
+        movementSource: 'فعلي',
+      };
+      next = [...entries, newRow];
+    }
+    setEntries(next);
+    ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, next);
   };
 
   const handleAddCustomFieldDef = () => {
@@ -1441,7 +1631,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                   <tbody className="divide-y divide-[#e0e0e0]">
                     {matchingRows.map((sub) => (
                       <tr key={sub.seq} className="hover:bg-[#f3f3f3]/40">
-                        <td className="p-1.5 font-mono text-[#707070]">{sub.erpCode}</td>
+                        <td className="p-1.5 min-w-[90px]">
+                          <input
+                            type="text"
+                            value={sub.erpCode}
+                            onChange={(e) => handleUpdateRow(sub.seq, { erpCode: e.target.value })}
+                            className="w-20 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-[11px] text-[#141414]"
+                          />
+                        </td>
                         <td className="p-1.5 min-w-[180px]">
                           <input
                             type="text"
@@ -1456,8 +1653,13 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                             onChange={(e) => handleUpdateRow(sub.seq, { manualCode: e.target.value })}
                             className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-1.5 text-[10px] font-mono text-[#141414]"
                           >
+                            {codes.map((c) => (
+                              <option key={c} value={c}>
+                                {c} (رئيسي)
+                              </option>
+                            ))}
                             {EXTENDED_IFRS_CLASSIFICATIONS.filter((ext) =>
-                              codes.includes(ext.parentStatementCode)
+                              codes.includes(ext.parentStatementCode) && !codes.includes(ext.code)
                             ).map((ext) => (
                               <option key={ext.code} value={ext.code}>
                                 {ext.code} - {ext.nameAr}
@@ -2679,13 +2881,51 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                         <React.Fragment key={pCode}>
                           <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
                             <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
-                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                              <span>{item.label}</span>
+                              {isExp ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />}
+                              <input
+                                type="text"
+                                value={statementLabelOverrides[pCode] ?? item.label}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={(e) => handleUpdateStatementLabel(pCode, e.target.value)}
+                                className="w-full bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-semibold text-[#141414]"
+                              />
                             </td>
                             <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
                             <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
-                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
-                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 font-mono font-bold" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.cur)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.cur,
+                                    parseFloat(e.target.value) || 0,
+                                    'current',
+                                    'D',
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                              />
+                            </td>
+                            <td className="p-2.5 font-mono text-[#707070]" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.comp)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.comp,
+                                    parseFloat(e.target.value) || 0,
+                                    'comparative',
+                                    'D',
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs text-[#707070]"
+                              />
+                            </td>
                             <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
                               <button
                                 type="button"
@@ -2731,13 +2971,51 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                         <React.Fragment key={pCode}>
                           <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
                             <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
-                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                              <span>{item.label}</span>
+                              {isExp ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />}
+                              <input
+                                type="text"
+                                value={statementLabelOverrides[pCode] ?? item.label}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={(e) => handleUpdateStatementLabel(pCode, e.target.value)}
+                                className="w-full bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-semibold text-[#141414]"
+                              />
                             </td>
                             <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
                             <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
-                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
-                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 font-mono font-bold" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.cur)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.cur,
+                                    parseFloat(e.target.value) || 0,
+                                    'current',
+                                    'D',
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                              />
+                            </td>
+                            <td className="p-2.5 font-mono text-[#707070]" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.comp)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.comp,
+                                    parseFloat(e.target.value) || 0,
+                                    'comparative',
+                                    'D',
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs text-[#707070]"
+                              />
+                            </td>
                             <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
                               <button
                                 type="button"
@@ -2777,11 +3055,11 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                       </td>
                     </tr>
                     {[
-                      { label: 'رأس المال المدفوع', codes: ['E-01'], ref: 'IAS 1.78', cur: engine.balanceSheet.current.shareCapital, comp: engine.balanceSheet.comparative.shareCapital, cat: 'حقوق ملكية' as const },
-                      { label: 'الاحتياطي النظامي والاحتياطيات الأخرى', codes: ['E-02'], ref: 'IAS 1.79', cur: engine.balanceSheet.current.reserves, comp: engine.balanceSheet.comparative.reserves, cat: 'حقوق ملكية' as const },
-                      { label: 'الأرباح المبقاة (تشمل صافي ربح السنة الحالية)', codes: ['E-03'], ref: 'IAS 1.106', cur: engine.balanceSheet.current.retainedEarningsWithProfit, comp: engine.balanceSheet.comparative.retainedEarnings, cat: 'حقوق ملكية' as const },
-                      { label: 'توزيعات الأرباح ومسحوبات الشركاء (تخصم)', codes: ['E-04'], ref: 'IAS 1.107', cur: -engine.balanceSheet.current.dividendsDrawings, comp: -engine.balanceSheet.comparative.dividendsDrawings, cat: 'حقوق ملكية' as const },
-                      { label: 'الدخل الشامل الآخر المتراكم (OCI)', codes: ['O-01'], ref: 'IAS 1.82A', cur: engine.balanceSheet.current.oci, comp: engine.balanceSheet.comparative.oci, cat: 'حقوق ملكية' as const },
+                      { label: 'رأس المال المدفوع', codes: ['E-01'], ref: 'IAS 1.78', cur: engine.balanceSheet.current.shareCapital, comp: engine.balanceSheet.comparative.shareCapital, cat: 'حقوق ملكية' as const, sign: 'C' as const },
+                      { label: 'الاحتياطي النظامي والاحتياطيات الأخرى', codes: ['E-02'], ref: 'IAS 1.79', cur: engine.balanceSheet.current.reserves, comp: engine.balanceSheet.comparative.reserves, cat: 'حقوق ملكية' as const, sign: 'C' as const },
+                      { label: 'الأرباح المبقاة (تشمل صافي ربح السنة الحالية)', codes: ['E-03'], ref: 'IAS 1.106', cur: engine.balanceSheet.current.retainedEarningsWithProfit, comp: engine.balanceSheet.comparative.retainedEarnings, cat: 'حقوق ملكية' as const, sign: 'C' as const },
+                      { label: 'توزيعات الأرباح ومسحوبات الشركاء (تخصم)', codes: ['E-04'], ref: 'IAS 1.107', cur: -engine.balanceSheet.current.dividendsDrawings, comp: -engine.balanceSheet.comparative.dividendsDrawings, cat: 'حقوق ملكية' as const, sign: 'D' as const },
+                      { label: 'الدخل الشامل الآخر المتراكم (OCI)', codes: ['O-01'], ref: 'IAS 1.82A', cur: engine.balanceSheet.current.oci, comp: engine.balanceSheet.comparative.oci, cat: 'حقوق ملكية' as const, sign: 'C' as const },
                     ].map((item) => {
                       const pCode = item.codes[0];
                       const isExp = Boolean(expandedStatementCodes[pCode]);
@@ -2789,13 +3067,51 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                         <React.Fragment key={pCode}>
                           <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
                             <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
-                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                              <span>{item.label}</span>
+                              {isExp ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />}
+                              <input
+                                type="text"
+                                value={statementLabelOverrides[pCode] ?? item.label}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={(e) => handleUpdateStatementLabel(pCode, e.target.value)}
+                                className="w-full bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-semibold text-[#141414]"
+                              />
                             </td>
                             <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
                             <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
-                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
-                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 font-mono font-bold" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.cur)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.sign === 'D' ? Math.abs(item.cur) : item.cur,
+                                    item.sign === 'D' ? Math.abs(parseFloat(e.target.value) || 0) : parseFloat(e.target.value) || 0,
+                                    'current',
+                                    item.sign,
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                              />
+                            </td>
+                            <td className="p-2.5 font-mono text-[#707070]" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.comp)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.sign === 'D' ? Math.abs(item.comp) : item.comp,
+                                    item.sign === 'D' ? Math.abs(parseFloat(e.target.value) || 0) : parseFloat(e.target.value) || 0,
+                                    'comparative',
+                                    item.sign,
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs text-[#707070]"
+                              />
+                            </td>
                             <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
                               <button
                                 type="button"
@@ -2840,13 +3156,51 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                         <React.Fragment key={pCode}>
                           <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
                             <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
-                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                              <span>{item.label}</span>
+                              {isExp ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />}
+                              <input
+                                type="text"
+                                value={statementLabelOverrides[pCode] ?? item.label}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={(e) => handleUpdateStatementLabel(pCode, e.target.value)}
+                                className="w-full bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-semibold text-[#141414]"
+                              />
                             </td>
                             <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
                             <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
-                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
-                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 font-mono font-bold" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.cur)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.cur,
+                                    parseFloat(e.target.value) || 0,
+                                    'current',
+                                    'C',
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                              />
+                            </td>
+                            <td className="p-2.5 font-mono text-[#707070]" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.comp)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.comp,
+                                    parseFloat(e.target.value) || 0,
+                                    'comparative',
+                                    'C',
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs text-[#707070]"
+                              />
+                            </td>
                             <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
                               <button
                                 type="button"
@@ -2892,13 +3246,51 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                         <React.Fragment key={pCode}>
                           <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
                             <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
-                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                              <span>{item.label}</span>
+                              {isExp ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />}
+                              <input
+                                type="text"
+                                value={statementLabelOverrides[pCode] ?? item.label}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={(e) => handleUpdateStatementLabel(pCode, e.target.value)}
+                                className="w-full bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-semibold text-[#141414]"
+                              />
                             </td>
                             <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
                             <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
-                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
-                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 font-mono font-bold" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.cur)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.cur,
+                                    parseFloat(e.target.value) || 0,
+                                    'current',
+                                    'C',
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                              />
+                            </td>
+                            <td className="p-2.5 font-mono text-[#707070]" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="number"
+                                value={Math.round(item.comp)}
+                                onChange={(e) =>
+                                  handleUpdateStatementLineTotal(
+                                    item.codes,
+                                    item.comp,
+                                    parseFloat(e.target.value) || 0,
+                                    'comparative',
+                                    'C',
+                                    statementLabelOverrides[pCode] ?? item.label
+                                  )
+                                }
+                                className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs text-[#707070]"
+                              />
+                            </td>
                             <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
                               <button
                                 type="button"
@@ -3007,6 +3399,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                           ? ((Math.abs(row.val) / engine.incomeStatement.revenues) * 100).toFixed(1) + '%'
                           : '0.0%';
                       const isExp = row.expandable && Boolean(expandedStatementCodes[row.code]);
+                      const compVal = incomeCompOverrides[row.code] ?? row.comp;
                       return (
                         <React.Fragment key={idx}>
                           <tr
@@ -3025,12 +3418,56 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                               ) : (
                                 <span className="w-4" />
                               )}
-                              <span>{row.label}</span>
+                              {row.expandable ? (
+                                <input
+                                  type="text"
+                                  value={statementLabelOverrides[row.code] ?? row.label}
+                                  onClick={(e) => e.stopPropagation()}
+                                  onChange={(e) => handleUpdateStatementLabel(row.code, e.target.value)}
+                                  className="w-full bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-semibold text-[#141414]"
+                                />
+                              ) : (
+                                <span>{row.label}</span>
+                              )}
                             </td>
                             <td className="p-3 font-mono">{row.code}</td>
                             <td className="p-3 font-mono opacity-80">{row.ref}</td>
-                            <td className="p-3 font-mono font-bold">{fmt(row.val)}</td>
-                            <td className="p-3 font-mono opacity-80">{fmt(row.comp)}</td>
+                            <td className="p-3 font-mono font-bold" onClick={(e) => row.expandable && e.stopPropagation()}>
+                              {row.expandable && row.cat ? (
+                                <input
+                                  type="number"
+                                  value={Math.round(Math.abs(row.val))}
+                                  onChange={(e) => {
+                                    const num = Math.abs(parseFloat(e.target.value) || 0);
+                                    handleUpdateStatementLineTotal(
+                                      [row.code],
+                                      Math.abs(row.val),
+                                      num,
+                                      'current',
+                                      row.cat === 'مصروفات' ? 'D' : 'C',
+                                      statementLabelOverrides[row.code] ?? row.label
+                                    );
+                                  }}
+                                  className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                                />
+                              ) : (
+                                fmt(row.val)
+                              )}
+                            </td>
+                            <td className="p-3 font-mono opacity-80" onClick={(e) => row.expandable && e.stopPropagation()}>
+                              {row.expandable ? (
+                                <input
+                                  type="number"
+                                  value={Math.round(compVal)}
+                                  onChange={(e) =>
+                                    handleUpdateIncomeCompOverride(row.code, parseFloat(e.target.value) || 0)
+                                  }
+                                  className="w-32 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs text-[#707070]"
+                                />
+                              ) : (
+                                fmt(compVal)
+                              )}
+                            </td>
                             <td className="p-3 font-mono">{pct}</td>
                             <td className="p-3 text-center" onClick={(e) => e.stopPropagation()}>
                               {row.expandable && row.cat ? (
@@ -3039,7 +3476,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                   onClick={() => handleAddStatementLineAccount(row.code, row.cat === 'إيرادات' ? 'بند إيراد جديد' : 'بند مصروف جديد')}
                                   className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer"
                                 >
-                                  + إضافة بند
+                                  + إضافة وتعديل بند
                                 </button>
                               ) : (
                                 <span className="text-[10px] opacity-70">محسوب آلياً</span>
@@ -4211,10 +4648,16 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                             className="bg-[#141414] text-[#ffffff] font-bold cursor-pointer"
                           >
                             <td className="p-3 flex items-center gap-2">
-                              {l1Expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                              <FolderTree className="w-4 h-4" />
-                              <span>{l1.titleAr}</span>
-                              <span className="text-[11px] opacity-80">({l2Nodes.length} بند رئيسي • {l1Rows.length} حساب فعلي)</span>
+                              {l1Expanded ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />}
+                              <FolderTree className="w-4 h-4 shrink-0" />
+                              <input
+                                type="text"
+                                value={customTreeNodeNames[l1.code] ?? l1.titleAr}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={(e) => handleUpdateTreeNodeTitle(l1.code, e.target.value)}
+                                className="bg-transparent hover:bg-[#262626] focus:bg-[#262626] border border-transparent hover:border-[#404040] focus:border-[#ffffff] rounded-lg px-2 py-0.5 text-xs font-bold text-[#ffffff] min-w-[240px]"
+                              />
+                              <span className="text-[11px] opacity-80 shrink-0">({l2Nodes.length} بند رئيسي • {l1Rows.length} حساب فعلي)</span>
                             </td>
                             <td className="p-3 font-mono">{l1.code}</td>
                             <td className="p-3">المستوى 1 (باب رئيسي)</td>
@@ -4229,20 +4672,22 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                         if (!l1Expanded) return;
 
                         l2Nodes.forEach((l2) => {
-                          const l3Nodes = EXCEL_ACCOUNTING_TREE.filter(
-                            (n) => n.level === 3 && n.parentCode === l2.code
-                          );
+                          const l3Nodes = [
+                            ...EXCEL_ACCOUNTING_TREE.filter((n) => n.level === 3 && n.parentCode === l2.code),
+                            ...customTreeSubNodes.filter((n) => n.parentCode === l2.code),
+                          ];
                           const l2LedgerRows = engine.rows.filter((r) => r.approvedCode === l2.code);
                           const l2Debit = l2LedgerRows.reduce((s, r) => s + r.closingDebit, 0);
                           const l2Credit = l2LedgerRows.reduce((s, r) => s + r.closingCredit, 0);
                           const l2Meta = IFRS_MAPPING_CODES.find((m) => m.code === l2.code);
                           const l2Expanded = Boolean(expandedExcelTreeCodes[l2.code]) || Boolean(q);
+                          const l2DisplayTitle = customTreeNodeNames[l2.code] ?? l2.titleAr;
 
                           const matchesL2 =
                             !q ||
-                            l2.titleAr.toLowerCase().includes(q) ||
+                            l2DisplayTitle.toLowerCase().includes(q) ||
                             l2.code.toLowerCase().includes(q) ||
-                            l3Nodes.some((x) => x.titleAr.toLowerCase().includes(q) || x.code.toLowerCase().includes(q)) ||
+                            l3Nodes.some((x) => (customTreeNodeNames[x.code] ?? x.titleAr).toLowerCase().includes(q) || x.code.toLowerCase().includes(q)) ||
                             l2LedgerRows.some((r) => r.accountName.toLowerCase().includes(q));
 
                           if (!matchesL2) return;
@@ -4256,9 +4701,15 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                               className="bg-[#f3f3f3] text-[#141414] font-bold cursor-pointer hover:bg-[#e8e8e8]"
                             >
                               <td className="p-2.5 pr-7 flex items-center gap-1.5">
-                                {l2Expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                                <span>{l2.titleAr}</span>
-                                <span className="text-[10px] text-[#707070] font-normal">
+                                {l2Expanded ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />}
+                                <input
+                                  type="text"
+                                  value={l2DisplayTitle}
+                                  onClick={(e) => e.stopPropagation()}
+                                  onChange={(e) => handleUpdateTreeNodeTitle(l2.code, e.target.value)}
+                                  className="bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-bold text-[#141414] min-w-[260px]"
+                                />
+                                <span className="text-[10px] text-[#707070] font-normal shrink-0">
                                   ({l3Nodes.length} تصنيف فرعي • {l2LedgerRows.length} حساب مرتبط)
                                 </span>
                               </td>
@@ -4269,28 +4720,40 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                               <td className="p-2.5 font-mono">{fmt(l2Debit)}</td>
                               <td className="p-2.5 font-mono">{fmt(l2Credit)}</td>
                               <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
-                                <button
-                                  type="button"
-                                  onClick={() => handleAddStatementLineAccount(l2.code, l2.titleAr.replace(/^[↳\s]+/, ''))}
-                                  className="px-2.5 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold cursor-pointer"
-                                >
-                                  + إضافة حساب تحت {l2.code}
-                                </button>
+                                <div className="flex items-center justify-center gap-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleAddCustomTreeSubNode(l2.code, l2DisplayTitle)}
+                                    className="px-2 py-1 rounded-full bg-white hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-[10px] font-bold cursor-pointer"
+                                    title="إضافة عقدة تصنيف فرعي جديدة (مستوى 3)"
+                                  >
+                                    + تصنيف فرعي
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleAddStatementLineAccount(l2.code, l2DisplayTitle.replace(/^[↳\s]+/, ''))}
+                                    className="px-2.5 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold cursor-pointer"
+                                  >
+                                    + إضافة حساب
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           );
 
                           if (!l2Expanded) return;
 
-                          // Render Level 3 Extended Sub-Classifications (from دليل_التصنيف_الموسع / شجرة_الحسابات)
+                          // Render Level 3 Extended Sub-Classifications (from دليل_التصنيف_الموسع / شجرة_الحسابات + custom sub-nodes)
                           l3Nodes.forEach((l3) => {
                             const extMeta = EXTENDED_IFRS_CLASSIFICATIONS.find((x) => x.code === l3.code);
                             const l3LedgerRows = l2LedgerRows.filter((r) => r.manualCode === l3.code);
                             const l3Debit = l3LedgerRows.reduce((s, r) => s + r.closingDebit, 0);
                             const l3Credit = l3LedgerRows.reduce((s, r) => s + r.closingCredit, 0);
+                            const l3DisplayTitle = customTreeNodeNames[l3.code] ?? l3.titleAr.replace(/^[↳\s]+/, '');
+                            const isCustomNode = customTreeSubNodes.some((cn) => cn.code === l3.code);
                             if (
                               q &&
-                              !l3.titleAr.toLowerCase().includes(q) &&
+                              !l3DisplayTitle.toLowerCase().includes(q) &&
                               !l3.code.toLowerCase().includes(q) &&
                               l3LedgerRows.length === 0
                             ) {
@@ -4301,7 +4764,12 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                               <tr key={`tree_l3_${l3.code}`} className="bg-white hover:bg-[#f3f3f3]/50">
                                 <td className="p-2 pr-14 font-semibold text-[#141414] flex items-center gap-1.5">
                                   <span className="text-[#707070]">├──</span>
-                                  <span>{l3.titleAr.replace(/^[↳\s]+/, '')}</span>
+                                  <input
+                                    type="text"
+                                    value={l3DisplayTitle}
+                                    onChange={(e) => handleUpdateTreeNodeTitle(l3.code, e.target.value)}
+                                    className="bg-transparent hover:bg-[#f3f3f3] focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-semibold text-[#141414] min-w-[230px]"
+                                  />
                                   {l3LedgerRows.length > 0 && (
                                     <span className="px-2 py-0.5 rounded-full bg-[#141414] text-[#ffffff] text-[10px]">
                                       {l3LedgerRows.length} حساب
@@ -4315,15 +4783,27 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                 <td className="p-2 font-mono font-bold">{l3Debit > 0 ? fmt(l3Debit) : '-'}</td>
                                 <td className="p-2 font-mono font-bold">{l3Credit > 0 ? fmt(l3Credit) : '-'}</td>
                                 <td className="p-2 text-center">
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      handleAddStatementLineAccount(l3.code, l3.titleAr.replace(/^[↳\s]+/, ''))
-                                    }
-                                    className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-[10px] font-semibold cursor-pointer"
-                                  >
-                                    + إضافة حساب بـ {l3.code}
-                                  </button>
+                                  <div className="flex items-center justify-center gap-1">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleAddStatementLineAccount(l3.code, l3DisplayTitle)
+                                      }
+                                      className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-[10px] font-semibold cursor-pointer"
+                                    >
+                                      + إضافة حساب بـ {l3.code}
+                                    </button>
+                                    {isCustomNode && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveCustomTreeSubNode(l3.code)}
+                                        className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                                        title="حذف التصنيف الفرعي المخصص"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
                                 </td>
                               </tr>
                             );
@@ -4345,7 +4825,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                     className="bg-white border border-[#e0e0e0] rounded-lg py-0.5 px-2 text-xs font-bold text-[#141414] min-w-[220px]"
                                   />
                                 </td>
-                                <td className="p-2 font-mono text-[#707070]">{accRow.erpCode}</td>
+                                <td className="p-2 font-mono text-[#707070]">
+                                  <input
+                                    type="text"
+                                    value={accRow.erpCode}
+                                    onChange={(e) => handleUpdateRow(accRow.seq, { erpCode: e.target.value })}
+                                    className="w-20 bg-white border border-[#e0e0e0] rounded-lg py-0.5 px-1.5 font-mono text-xs text-[#141414]"
+                                  />
+                                </td>
                                 <td className="p-2 text-[#141414] font-semibold">المستوى 4 (حساب أستاذ)</td>
                                 <td className="p-2 font-mono">
                                   <select
@@ -4356,7 +4843,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                     <option value={l2.code}>{l2.code} (رئيسي)</option>
                                     {l3Nodes.map((subOpt) => (
                                       <option key={subOpt.code} value={subOpt.code}>
-                                        {subOpt.code} - {subOpt.titleAr.replace(/^[↳\s]+/, '')}
+                                        {subOpt.code} - {(customTreeNodeNames[subOpt.code] ?? subOpt.titleAr).replace(/^[↳\s]+/, '')}
                                       </option>
                                     ))}
                                   </select>
@@ -4741,31 +5228,41 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#e0e0e0] pb-4">
                 <div>
                   <h3 className="text-base font-bold text-[#141414] m-0">
-                    ورقة دليل الحسابات المرتبط بميزان المراجعة (دليل_الحسابات — {engine.rows.length} حساباً)
+                    ورقة دليل الحسابات المرتبط بميزان المراجعة القابلة للتعديل (دليل_الحسابات — {engine.rows.length} حساباً)
                   </h3>
                   <p className="text-xs text-[#707070] mt-1">
-                    يعرض كل حساب في الميزان، التصنيف اليدوي/الفرعي المختار، الكود المعتمد بالقوائم، مرجع المعيار الدولي IFRS، وحالة الربط (مرتبط / غير مصنف)
+                    يمكنك تعديل رقم الحساب، اسمه، التصنيف الرئيسي أو الفرعي الموسع، والأرصدة مباشرة من الدليل المرتبط
                   </p>
                 </div>
-                <span className="px-3 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold">
-                  مرتبط: {engine.rows.filter((r) => Boolean(r.approvedCode)).length} | غير مصنف:{' '}
-                  {engine.rows.filter((r) => !r.approvedCode).length}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleAddAccountRow}
+                    className="px-3.5 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ إضافة حساب جديد للدليل</span>
+                  </button>
+                  <span className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-bold">
+                    مرتبط: {engine.rows.filter((r) => Boolean(r.approvedCode)).length} | غير مصنف:{' '}
+                    {engine.rows.filter((r) => !r.approvedCode).length}
+                  </span>
+                </div>
               </div>
 
               <div className="overflow-x-auto max-h-[640px]">
                 <table className="w-full text-right text-xs">
-                  <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0] sticky top-0">
+                  <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0] sticky top-0 z-10">
                     <tr>
                       <th className="p-2.5">الرقم التسلسلي</th>
                       <th className="p-2.5">رقم الحساب ERP</th>
-                      <th className="p-2.5">اسم الحساب</th>
-                      <th className="p-2.5">التصنيف المختار (رئيسي / فرعي موسع)</th>
+                      <th className="p-2.5">اسم الحساب (قابل للتعديل)</th>
+                      <th className="p-2.5">التصنيف المختار (34 رئيسي + 314 فرعي موسع)</th>
                       <th className="p-2.5">البند المالي المعتمد</th>
                       <th className="p-2.5">مرجع المعيار (IFRS)</th>
                       <th className="p-2.5 font-mono">الرصيد النهائي مدين</th>
                       <th className="p-2.5 font-mono">الرصيد النهائي دائن</th>
-                      <th className="p-2.5">حالة الربط</th>
+                      <th className="p-2.5 text-center">إجراء</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#e0e0e0]">
@@ -4777,25 +5274,72 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                       return (
                         <tr key={r.seq} className="hover:bg-[#f3f3f3]/40">
                           <td className="p-2 font-mono text-[#707070]">{r.seq}</td>
-                          <td className="p-2 font-mono">{r.erpCode}</td>
-                          <td className="p-2 font-bold text-[#141414]">{r.accountName}</td>
-                          <td className="p-2 font-mono text-[#141414]">
-                            {ext ? `${ext.code} (${ext.nameAr})` : r.manualCode || r.approvedCode || '-'}
+                          <td className="p-2 font-mono">
+                            <input
+                              type="text"
+                              value={r.erpCode}
+                              onChange={(e) => handleUpdateRow(r.seq, { erpCode: e.target.value })}
+                              className="w-20 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
+                            />
+                          </td>
+                          <td className="p-2 font-bold text-[#141414] min-w-[200px]">
+                            <input
+                              type="text"
+                              value={r.accountName}
+                              onChange={(e) => handleUpdateRow(r.seq, { accountName: e.target.value })}
+                              className="w-full bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 text-xs font-bold text-[#141414]"
+                            />
+                          </td>
+                          <td className="p-2 font-mono text-[#141414] min-w-[220px]">
+                            <select
+                              value={r.manualCode || r.approvedCode || ''}
+                              onChange={(e) => handleUpdateRow(r.seq, { manualCode: e.target.value })}
+                              className="w-full bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 text-[11px] font-mono text-[#141414]"
+                            >
+                              <option value="">-- غير مصنف --</option>
+                              <optgroup label="الأكواد الرئيسية الـ 34 (A-01 .. R-10)">
+                                {IFRS_MAPPING_CODES.map((c) => (
+                                  <option key={c.code} value={c.code}>
+                                    {c.code} - {c.nameAr}
+                                  </option>
+                                ))}
+                              </optgroup>
+                              <optgroup label="التصنيفات الفرعية الموسعة (314 تصنيفاً)">
+                                {EXTENDED_IFRS_CLASSIFICATIONS.filter((c) => c.level === 3).map((c) => (
+                                  <option key={c.code} value={c.code}>
+                                    {c.code} - {c.nameAr}
+                                  </option>
+                                ))}
+                              </optgroup>
+                            </select>
                           </td>
                           <td className="p-2">{r.approvedItemName || 'غير مصنف'}</td>
                           <td className="p-2 font-mono text-[#707070]">{ext?.ifrsRef || primary?.ifrsRef || '-'}</td>
-                          <td className="p-2 font-mono font-bold">{r.closingDebit > 0 ? fmt(r.closingDebit) : '-'}</td>
-                          <td className="p-2 font-mono font-bold">{r.closingCredit > 0 ? fmt(r.closingCredit) : '-'}</td>
-                          <td className="p-2">
-                            <span
-                              className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
-                                r.approvedCode
-                                  ? 'bg-[#141414] text-[#ffffff]'
-                                  : 'bg-[#f3f3f3] text-[#141414] border border-[#141414]'
-                              }`}
+                          <td className="p-2 font-mono font-bold">
+                            <input
+                              type="number"
+                              value={r.closingDebit}
+                              onChange={(e) => handleUpdateClosingDebit(r, parseFloat(e.target.value) || 0)}
+                              className="w-24 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                            />
+                          </td>
+                          <td className="p-2 font-mono font-bold">
+                            <input
+                              type="number"
+                              value={r.closingCredit}
+                              onChange={(e) => handleUpdateClosingCredit(r, parseFloat(e.target.value) || 0)}
+                              className="w-24 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                            />
+                          </td>
+                          <td className="p-2 text-center">
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteAccountRow(r.seq, r.accountName)}
+                              className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                              title="حذف الحساب"
                             >
-                              {r.approvedCode ? '✔ مرتبط' : '⚠ غير مصنف'}
-                            </span>
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
                           </td>
                         </tr>
                       );

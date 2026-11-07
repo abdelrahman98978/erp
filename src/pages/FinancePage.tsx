@@ -5,6 +5,7 @@ import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useCompany } from '../contexts/CompanyContext';
 import { useTableMutation, useCostCenters } from '../hooks/queries/useErpQueries';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
+import { EXTENDED_IFRS_CLASSIFICATIONS } from '../services/accounting/ifrsExtendedReferenceData';
 import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { BudgetVsActualWidget } from '../components/finance/BudgetVsActualWidget';
@@ -17,7 +18,7 @@ import {
   Eye, EyeOff, X, ArrowLeft, ArrowRight, FolderTree, Receipt, PieChart, 
   Building2, Globe, DollarSign, Calculator, ChevronRight, Check,
   BookOpen, Landmark, Coins, AlertCircle, Clock, BarChart3, AlertTriangle,
-  CheckCircle2, ArrowUpRight, ArrowDownLeft
+  CheckCircle2, ArrowUpRight, ArrowDownLeft, Edit3, Trash2
 } from 'lucide-react';
 
 export interface JournalEntry {
@@ -221,6 +222,76 @@ export const FinancePage: React.FC = () => {
     nameEn: '',
     category: 'أصول' as const,
     balance: '0',
+  });
+
+  // Editable Chart of Accounts, Assets/Balance Sheet & Income Statement State
+  const [finCoaAccounts, setFinCoaAccounts] = useState<AccountItem[]>(() =>
+    chartOfAccountsService.getAccountsByCompany(activeCompany.id as any)
+  );
+  useEffect(() => {
+    setFinCoaAccounts(chartOfAccountsService.getAccountsByCompany(activeCompany.id as any));
+  }, [activeCompany.id]);
+
+  const handleUpdateFinCoa = (code: string, patch: Partial<AccountItem>) => {
+    chartOfAccountsService.updateAccount(activeCompany.id as any, code, patch);
+    setFinCoaAccounts(chartOfAccountsService.getAccountsByCompany(activeCompany.id as any));
+  };
+
+  const handleAddQuickFinCoaAccount = () => {
+    const nextNum = finCoaAccounts.length + 1101;
+    chartOfAccountsService.addAccount(activeCompany.id as any, {
+      code: `${nextNum}`,
+      nameAr: `حساب جديد في الدليل #${finCoaAccounts.length + 1}`,
+      nameEn: `New Account #${finCoaAccounts.length + 1}`,
+      category: coaCategoryFilter !== 'ALL' ? (coaCategoryFilter as any) : 'أصول',
+      nature: coaCategoryFilter === 'خصوم' || coaCategoryFilter === 'حقوق ملكية' || coaCategoryFilter === 'إيرادات' ? 'دائن' : 'مدين',
+      statementType: coaCategoryFilter === 'إيرادات' || coaCategoryFilter === 'مصروفات' ? 'قائمة الدخل (أرباح وخسائر)' : 'قائمة المركز المالي (ميزانية)',
+      level: 3,
+      openingBalance: 0,
+      balance: 0,
+      currency: 'SAR',
+      isActive: true,
+      ifrsSubCode: 'A-10-01',
+    });
+    setFinCoaAccounts(chartOfAccountsService.getAccountsByCompany(activeCompany.id as any));
+    addNotification({
+      title: 'إضافة حساب جديد للشجرة',
+      message: `تمت إضافة الحساب (${nextNum}) ويمكنك تعديل اسمه وتصنيفه ورصيده مباشرة.`,
+      type: 'success',
+    });
+  };
+
+  const handleDeleteFinCoaAccount = (code: string, nameAr: string) => {
+    const next = finCoaAccounts.filter((a) => a.code !== code);
+    chartOfAccountsService.saveAccountsForCompany(activeCompany.id as any, next);
+    setFinCoaAccounts(next);
+    addNotification({
+      title: 'حذف حساب من الدليل',
+      message: `تم حذف الحساب (${code} - ${nameAr}) من الشجرة.`,
+      type: 'info',
+    });
+  };
+
+  const [finPosData, setFinPosData] = useState({
+    cash: 850000,
+    musanedEscrow: 184500,
+    receivables: 215971.2,
+    ppeNet: 882500,
+    payables: 189375,
+    eosb: 94200,
+    vatZakat: 124000,
+    shareCapital: 1205000,
+    retainedEarnings: 520396.2,
+  });
+
+  const [finIncData, setFinIncData] = useState({
+    musanedRev: 410000,
+    rentalRev: 115471.2,
+    directCostAgency: 112500,
+    shelterCost: 46000,
+    sellingExp: 14500,
+    adminExp: 35000,
+    depreciationExp: 12500,
   });
 
   const { createItem: createJournalEntry } = useTableMutation('company_journal_entries');
@@ -832,58 +903,107 @@ export const FinancePage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
                 <div className="flex justify-between items-center font-bold text-[#141414] border-b border-zinc-200 pb-2 text-sm">
-                  <span>1. الأصول (Assets — IAS 1 / IAS 16 / IFRS 16)</span>
-                  <span className="font-mono">2,132,971.20 ⃁</span>
+                  <span>1. الأصول (Assets — IAS 1 / IAS 16 / IFRS 16) — قابلة للتعديل المباشر</span>
+                  <span className="font-mono">
+                    {(finPosData.cash + finPosData.musanedEscrow + finPosData.receivables + finPosData.ppeNet).toLocaleString()} ⃁
+                  </span>
                 </div>
                 <div className="space-y-2 text-xs">
                   <div className="font-bold text-zinc-700">الأصول المتداولة (Current Assets):</div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                  <div className="flex justify-between items-center py-1 border-b border-zinc-200/60 text-zinc-600">
                     <span>النقدية والصناديق والبنوك (A-10 | IAS 7):</span>
-                    <span className="font-bold font-mono text-[#141414]">850,000.00 ⃁</span>
+                    <input
+                      type="number"
+                      value={finPosData.cash}
+                      onChange={(e) => setFinPosData({ ...finPosData, cash: parseFloat(e.target.value) || 0 })}
+                      className="w-32 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
                   </div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                  <div className="flex justify-between items-center py-1 border-b border-zinc-200/60 text-zinc-600">
                     <span>أمانات مساند المعلقة (A-07 | IFRS 15):</span>
-                    <span className="font-bold font-mono text-[#141414]">184,500.00 ⃁</span>
+                    <input
+                      type="number"
+                      value={finPosData.musanedEscrow}
+                      onChange={(e) => setFinPosData({ ...finPosData, musanedEscrow: parseFloat(e.target.value) || 0 })}
+                      className="w-32 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
                   </div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                  <div className="flex justify-between items-center py-1 border-b border-zinc-200/60 text-zinc-600">
                     <span>المدينون وأرصدة العملاء بالصافي (A-07 | IFRS 9):</span>
-                    <span className="font-bold font-mono text-[#141414]">215,971.20 ⃁</span>
+                    <input
+                      type="number"
+                      value={finPosData.receivables}
+                      onChange={(e) => setFinPosData({ ...finPosData, receivables: parseFloat(e.target.value) || 0 })}
+                      className="w-32 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
                   </div>
                   <div className="font-bold text-zinc-700 pt-2">الأصول غير المتداولة (Non-Current Assets):</div>
-                  <div className="flex justify-between py-1 text-zinc-600">
+                  <div className="flex justify-between items-center py-1 text-zinc-600">
                     <span>صافي الممتلكات والآلات والمعدات وحق الاستخدام (A-01/A-02 | IAS 16):</span>
-                    <span className="font-bold font-mono text-[#141414]">882,500.00 ⃁</span>
+                    <input
+                      type="number"
+                      value={finPosData.ppeNet}
+                      onChange={(e) => setFinPosData({ ...finPosData, ppeNet: parseFloat(e.target.value) || 0 })}
+                      className="w-32 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
                   </div>
                 </div>
               </div>
 
               <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
                 <div className="flex justify-between items-center font-bold text-[#141414] border-b border-zinc-200 pb-2 text-sm">
-                  <span>2. الخصوم وحقوق الملكية (Liabilities & Equity — IAS 1)</span>
-                  <span className="font-mono">2,132,971.20 ⃁</span>
+                  <span>2. الخصوم وحقوق الملكية (Liabilities & Equity — IAS 1) — قابلة للتعديل</span>
+                  <span className="font-mono">
+                    {(finPosData.payables + finPosData.eosb + finPosData.vatZakat + finPosData.shareCapital + finPosData.retainedEarnings).toLocaleString()} ⃁
+                  </span>
                 </div>
                 <div className="space-y-2 text-xs">
                   <div className="font-bold text-zinc-700">الخصوم والالتزامات (Liabilities):</div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                  <div className="flex justify-between items-center py-1 border-b border-zinc-200/60 text-zinc-600">
                     <span>مستحقات الموردين والوكلاء الخارجيين (L-04 | IAS 1.69):</span>
-                    <span className="font-bold font-mono text-[#141414]">189,375.00 ⃁</span>
+                    <input
+                      type="number"
+                      value={finPosData.payables}
+                      onChange={(e) => setFinPosData({ ...finPosData, payables: parseFloat(e.target.value) || 0 })}
+                      className="w-32 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
                   </div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                  <div className="flex justify-between items-center py-1 border-b border-zinc-200/60 text-zinc-600">
                     <span>مخصص مكافأة نهاية الخدمة للموظفين (L-03 | IAS 19):</span>
-                    <span className="font-bold font-mono text-[#141414]">94,200.00 ⃁</span>
+                    <input
+                      type="number"
+                      value={finPosData.eosb}
+                      onChange={(e) => setFinPosData({ ...finPosData, eosb: parseFloat(e.target.value) || 0 })}
+                      className="w-32 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
                   </div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                  <div className="flex justify-between items-center py-1 border-b border-zinc-200/60 text-zinc-600">
                     <span>ضريبة القيمة المضافة ومستحقات الزكاة (L-05/L-08 | ZATCA):</span>
-                    <span className="font-bold font-mono text-[#141414]">124,000.00 ⃁</span>
+                    <input
+                      type="number"
+                      value={finPosData.vatZakat}
+                      onChange={(e) => setFinPosData({ ...finPosData, vatZakat: parseFloat(e.target.value) || 0 })}
+                      className="w-32 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
                   </div>
                   <div className="font-bold text-zinc-700 pt-2">حقوق الملكية (Equity):</div>
-                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                  <div className="flex justify-between items-center py-1 border-b border-zinc-200/60 text-zinc-600">
                     <span>رأس المال المدفوع والاحتياطي النظامي (E-01/E-02 | IAS 1.78):</span>
-                    <span className="font-bold font-mono text-[#141414]">1,205,000.00 ⃁</span>
+                    <input
+                      type="number"
+                      value={finPosData.shareCapital}
+                      onChange={(e) => setFinPosData({ ...finPosData, shareCapital: parseFloat(e.target.value) || 0 })}
+                      className="w-32 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
                   </div>
-                  <div className="flex justify-between py-1 text-zinc-600">
+                  <div className="flex justify-between items-center py-1 text-zinc-600">
                     <span>الأرباح المبقاة وصافي ربح السنة (E-03 | IAS 1.106):</span>
-                    <span className="font-bold font-mono text-[#141414]">520,396.20 ⃁</span>
+                    <input
+                      type="number"
+                      value={finPosData.retainedEarnings}
+                      onChange={(e) => setFinPosData({ ...finPosData, retainedEarnings: parseFloat(e.target.value) || 0 })}
+                      className="w-32 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
                   </div>
                 </div>
               </div>
@@ -891,7 +1011,7 @@ export const FinancePage: React.FC = () => {
           </div>
 
           {/* Interactive Expandable IFRS Balance Sheet with Custom Asset Fields & Inline Add/Edit */}
-          <IfrsFinancialEngineWorkspace initialSection="statements" />
+          <IfrsFinancialEngineWorkspace initialSection="statements" initialStatementView="balance-sheet" />
         </div>
       )}
 
@@ -903,10 +1023,10 @@ export const FinancePage: React.FC = () => {
               <div>
                 <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-[#141414]" />
-                  <span>قائمة الدخل الشاملة والأرباح والخسائر المكتملة (IAS 1 / IFRS 18 Income Statement & OCI)</span>
+                  <span>قائمة الدخل الشاملة والأرباح والخسائر القابلة للتعديل المباشر (IAS 1 / IFRS 18 Income Statement & OCI)</span>
                 </h3>
                 <p className="text-xs text-[#707070] mt-1">
-                  تحليل الإيرادات، التكاليف المباشرة، مجمل الربح، المصروفات التشغيلية، EBITDA، الربح التشغيلي، الزكاة، وصافي الربح والدخل الشامل
+                  عدّل أي بند إيراد أو تكلفة أو مصروف مباشرة ليتم إعادة احتساب مجمل الربح، EBITDA، وصافي الربح تلقائياً
                 </p>
               </div>
 
@@ -950,60 +1070,105 @@ export const FinancePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="max-w-4xl mx-auto p-6 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3 text-xs">
-              <div className="flex justify-between py-2 border-b border-zinc-200 font-bold text-zinc-900">
-                <span>1. إيرادات خدمات التوسط في الاستقدام (مساند — R-01 | IFRS 15):</span>
-                <span className="font-mono">410,000.00 ⃁</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-zinc-200 font-bold text-zinc-900">
-                <span>2. إيرادات عقود التأجير والتشغيل ونقل الكفالة (R-01 | IFRS 15):</span>
-                <span className="font-mono">115,471.20 ⃁</span>
-              </div>
-              <div className="flex justify-between py-2.5 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
-                <span>= إجمالي الإيرادات التشغيلية (Total Revenues — 100%):</span>
-                <span className="font-mono">525,471.20 ⃁</span>
-              </div>
+            {(() => {
+              const totalRev = finIncData.musanedRev + finIncData.rentalRev;
+              const grossProfit = totalRev - finIncData.directCostAgency - finIncData.shelterCost;
+              const ebitda = grossProfit - finIncData.sellingExp - finIncData.adminExp;
+              const netProfit = ebitda - finIncData.depreciationExp;
+              const gpMargin = totalRev > 0 ? ((grossProfit / totalRev) * 100).toFixed(1) : '0.0';
+              const netMargin = totalRev > 0 ? ((netProfit / totalRev) * 100).toFixed(1) : '0.0';
+              return (
+                <div className="max-w-4xl mx-auto p-6 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3 text-xs">
+                  <div className="flex justify-between items-center py-2 border-b border-zinc-200 font-bold text-zinc-900">
+                    <span>1. إيرادات خدمات التوسط في الاستقدام (مساند — R-01 | IFRS 15):</span>
+                    <input
+                      type="number"
+                      value={finIncData.musanedRev}
+                      onChange={(e) => setFinIncData({ ...finIncData, musanedRev: parseFloat(e.target.value) || 0 })}
+                      className="w-36 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-zinc-200 font-bold text-zinc-900">
+                    <span>2. إيرادات عقود التأجير والتشغيل ونقل الكفالة (R-01 | IFRS 15):</span>
+                    <input
+                      type="number"
+                      value={finIncData.rentalRev}
+                      onChange={(e) => setFinIncData({ ...finIncData, rentalRev: parseFloat(e.target.value) || 0 })}
+                      className="w-36 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                    />
+                  </div>
+                  <div className="flex justify-between py-2.5 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
+                    <span>= إجمالي الإيرادات التشغيلية (Total Revenues — 100%):</span>
+                    <span className="font-mono">{totalRev.toLocaleString()} ⃁</span>
+                  </div>
 
-              <div className="pt-2 text-[#141414] space-y-1">
-                <div className="flex justify-between py-1.5 border-b border-zinc-200">
-                  <span>3. (-) تكلفة المكاتب الخارجية والتأشيرات وتذاكر السفر (R-02 | IAS 1.99):</span>
-                  <span className="font-mono font-bold">(112,500.00) ⃁</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-200">
-                  <span>4. (-) مصاريف الإعاشة والإيواء والفحص الطبي والتأمين (R-02 | IAS 1.99):</span>
-                  <span className="font-mono font-bold">(46,000.00) ⃁</span>
-                </div>
-                <div className="flex justify-between py-2 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
-                  <span>= مجمل الربح (Gross Profit — هامش 69.8%):</span>
-                  <span className="font-mono">366,971.20 ⃁</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-200">
-                  <span>5. (-) مصروفات البيع والتسويق وعمولات المبيعات (R-03 | IAS 1.99):</span>
-                  <span className="font-mono font-bold">(14,500.00) ⃁</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-200">
-                  <span>6. (-) الرواتب والأجور والمصروفات العمومية والإدارية (R-04 | IAS 1.99):</span>
-                  <span className="font-mono font-bold">(35,000.00) ⃁</span>
-                </div>
-                <div className="flex justify-between py-2 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
-                  <span>= الربح قبل الفوائد والضرائب والإهلاك والإطفاء (EBITDA — IFRS 18):</span>
-                  <span className="font-mono">317,471.20 ⃁</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-200">
-                  <span>7. (-) مصروف الإهلاك والإطفاء للأصول الثابتة وحق الاستخدام (R-10 | IAS 16):</span>
-                  <span className="font-mono font-bold">(12,500.00) ⃁</span>
-                </div>
-              </div>
+                  <div className="pt-2 text-[#141414] space-y-1">
+                    <div className="flex justify-between items-center py-1.5 border-b border-zinc-200">
+                      <span>3. (-) تكلفة المكاتب الخارجية والتأشيرات وتذاكر السفر (R-02 | IAS 1.99):</span>
+                      <input
+                        type="number"
+                        value={finIncData.directCostAgency}
+                        onChange={(e) => setFinIncData({ ...finIncData, directCostAgency: parseFloat(e.target.value) || 0 })}
+                        className="w-36 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                      />
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-zinc-200">
+                      <span>4. (-) مصاريف الإعاشة والإيواء والفحص الطبي والتأمين (R-02 | IAS 1.99):</span>
+                      <input
+                        type="number"
+                        value={finIncData.shelterCost}
+                        onChange={(e) => setFinIncData({ ...finIncData, shelterCost: parseFloat(e.target.value) || 0 })}
+                        className="w-36 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                      />
+                    </div>
+                    <div className="flex justify-between py-2 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
+                      <span>= مجمل الربح (Gross Profit — هامش {gpMargin}%):</span>
+                      <span className="font-mono">{grossProfit.toLocaleString()} ⃁</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-zinc-200">
+                      <span>5. (-) مصروفات البيع والتسويق وعمولات المبيعات (R-03 | IAS 1.99):</span>
+                      <input
+                        type="number"
+                        value={finIncData.sellingExp}
+                        onChange={(e) => setFinIncData({ ...finIncData, sellingExp: parseFloat(e.target.value) || 0 })}
+                        className="w-36 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                      />
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-zinc-200">
+                      <span>6. (-) الرواتب والأجور والمصروفات العمومية والإدارية (R-04 | IAS 1.99):</span>
+                      <input
+                        type="number"
+                        value={finIncData.adminExp}
+                        onChange={(e) => setFinIncData({ ...finIncData, adminExp: parseFloat(e.target.value) || 0 })}
+                        className="w-36 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                      />
+                    </div>
+                    <div className="flex justify-between py-2 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
+                      <span>= الربح قبل الفوائد والضرائب والإهلاك والإطفاء (EBITDA — IFRS 18):</span>
+                      <span className="font-mono">{ebitda.toLocaleString()} ⃁</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-zinc-200">
+                      <span>7. (-) مصروف الإهلاك والإطفاء للأصول الثابتة وحق الاستخدام (R-10 | IAS 16):</span>
+                      <input
+                        type="number"
+                        value={finIncData.depreciationExp}
+                        onChange={(e) => setFinIncData({ ...finIncData, depreciationExp: parseFloat(e.target.value) || 0 })}
+                        className="w-36 bg-white border border-zinc-300 rounded-lg py-1 px-2 font-bold font-mono text-[#141414] text-left"
+                      />
+                    </div>
+                  </div>
 
-              <div className="flex justify-between py-3.5 bg-[#141414] text-[#ffffff] px-5 rounded-2xl font-bold text-sm">
-                <span>= صافي ربح السنة والربح التشغيلي (Net Profit / Total Comprehensive Income — هامش 58.0%):</span>
-                <span className="font-mono text-[#ffffff]">304,971.20 ⃁</span>
-              </div>
-            </div>
+                  <div className="flex justify-between py-3.5 bg-[#141414] text-[#ffffff] px-5 rounded-2xl font-bold text-sm">
+                    <span>= صافي ربح السنة والربح التشغيلي (Net Profit / Total Comprehensive Income — هامش {netMargin}%):</span>
+                    <span className="font-mono text-[#ffffff]">{netProfit.toLocaleString()} ⃁</span>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Complete Multi-Step IFRS 18 / IAS 1 Expandable Income Statement */}
-          <IfrsFinancialEngineWorkspace initialSection="statements" />
+          <IfrsFinancialEngineWorkspace initialSection="statements" initialStatementView="income-statement" />
         </div>
       )}
 
@@ -1735,16 +1900,24 @@ export const FinancePage: React.FC = () => {
             <div>
               <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
                 <FolderTree className="w-4 h-4 text-[#141414]" />
-                <span>شجرة الحسابات والدليل المحاسبي الموحد (Chart of Accounts)</span>
+                <span>شجرة الحسابات والدليل المحاسبي الموحد القابل للتعديل المباشر (Chart of Accounts)</span>
               </h3>
               <p className="text-xs text-[#707070] mt-1">
-                الهيكل المحاسبي الشامل لـ ({activeCompany.name}) مقسم وفق المعايير المحاسبية (1: أصول، 2: خصوم، 3: حقوق ملكية، 4: إيرادات، 5: مصروفات)
+                يمكنك تعديل اسم الحساب، الكود، التصنيف الرئيسي أو الفرعي الموسع، والرصيد مباشرة من الجدول أو إضافة حساب جديد
               </p>
             </div>
 
             <div className="flex items-center gap-2">
               <button
-                onClick={() => exportData('chart_of_accounts', chartOfAccountsService.getAccountsByCompany(activeCompany.id as any), 'excel', `دليل_الحسابات_${activeCompany.name}`)}
+                onClick={handleAddQuickFinCoaAccount}
+                className="button-primary-pill"
+                style={{ padding: '6px 14px', fontSize: '11.5px', minHeight: '34px' }}
+              >
+                <Plus className="w-3.5 h-3.5 ml-1" />
+                <span>+ إضافة حساب جديد للشجرة</span>
+              </button>
+              <button
+                onClick={() => exportData('chart_of_accounts', finCoaAccounts, 'excel', `دليل_الحسابات_${activeCompany.name}`)}
                 className="button-outline-on-light"
                 style={{ padding: '6px 14px', fontSize: '11.5px', minHeight: '34px' }}
               >
@@ -1804,18 +1977,17 @@ export const FinancePage: React.FC = () => {
               <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                 <tr>
                   <th className="p-3">رقم الحساب</th>
-                  <th className="p-3">اسم الحساب (عربي / EN)</th>
+                  <th className="p-3">اسم الحساب (قابل للتعديل المباشر)</th>
                   <th className="p-3">التصنيف المحاسبي</th>
                   <th className="p-3">التصنيف الرئيسي بالقوائم (34 رمزاً)</th>
-                  <th className="p-3">التصنيف الفرعي الموسع (314 بنداً)</th>
+                  <th className="p-3">التصنيف الفرعي الموسع (314 بنداً — قابل للتعديل)</th>
                   <th className="p-3">المعيار والتدفق النقدي</th>
-                  <th className="p-3 font-mono">الرصيد التراكمي</th>
+                  <th className="p-3 font-mono">الرصيد التراكمي (قابل للتعديل)</th>
                   <th className="p-3 text-center">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {chartOfAccountsService
-                  .getAccountsByCompany(activeCompany.id as any)
+                {finCoaAccounts
                   .filter((acc) => {
                     const matchesCategory = coaCategoryFilter === 'ALL' || acc.category === coaCategoryFilter;
                     const q = coaSearchQuery.toLowerCase();
@@ -1836,24 +2008,50 @@ export const FinancePage: React.FC = () => {
                       key={account.id}
                       className="hover:bg-zinc-50 transition-colors"
                     >
-                      <td className="p-3 font-mono font-bold text-[#141414]">{account.code}</td>
-                      <td className="p-3">
-                        <div className="font-bold text-[#141414]">{account.nameAr}</div>
-                        <div className="font-mono text-[10.5px] text-[#707070]">{account.nameEn}</div>
+                      <td className="p-3 font-mono font-bold text-[#141414]">
+                        <input
+                          type="text"
+                          value={account.code}
+                          onChange={(e) => handleUpdateFinCoa(account.code, { code: e.target.value })}
+                          className="w-20 bg-zinc-50 focus:bg-white border border-zinc-200 focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs font-bold text-[#141414]"
+                        />
+                      </td>
+                      <td className="p-3 min-w-[200px]">
+                        <input
+                          type="text"
+                          value={account.nameAr}
+                          onChange={(e) => handleUpdateFinCoa(account.code, { nameAr: e.target.value })}
+                          className="w-full bg-zinc-50 focus:bg-white border border-zinc-200 focus:border-[#141414] rounded-lg py-1 px-2 text-xs font-bold text-[#141414]"
+                        />
+                        <input
+                          type="text"
+                          value={account.nameEn}
+                          onChange={(e) => handleUpdateFinCoa(account.code, { nameEn: e.target.value })}
+                          className="w-full bg-transparent hover:bg-zinc-50 focus:bg-white border border-transparent focus:border-zinc-300 rounded px-2 py-0.5 font-mono text-[10.5px] text-[#707070] mt-0.5"
+                        />
                       </td>
                       <td className="p-3">
-                        <Badge
-                          text={`${account.category} (${account.nature})`}
-                          type={
-                            account.category === 'أصول'
-                              ? 'info'
-                              : account.category === 'إيرادات'
-                              ? 'success'
-                              : account.category === 'مصروفات'
-                              ? 'danger'
-                              : 'purple'
+                        <select
+                          value={account.category}
+                          onChange={(e) =>
+                            handleUpdateFinCoa(account.code, {
+                              category: e.target.value as any,
+                              nature:
+                                e.target.value === 'خصوم' ||
+                                e.target.value === 'حقوق ملكية' ||
+                                e.target.value === 'إيرادات'
+                                  ? 'دائن'
+                                  : 'مدين',
+                            })
                           }
-                        />
+                          className="bg-zinc-50 border border-zinc-200 rounded-lg py-1 px-2 text-xs font-bold text-[#141414]"
+                        >
+                          <option value="أصول">أصول (مدين)</option>
+                          <option value="خصوم">خصوم (دائن)</option>
+                          <option value="حقوق ملكية">حقوق ملكية (دائن)</option>
+                          <option value="إيرادات">إيرادات (دائن)</option>
+                          <option value="مصروفات">مصروفات (مدين)</option>
+                        </select>
                       </td>
                       <td className="p-3">
                         <span className="font-mono font-bold text-[#141414] bg-[#f3f3f3] px-2 py-0.5 rounded text-[11px]">
@@ -1861,33 +2059,56 @@ export const FinancePage: React.FC = () => {
                         </span>
                         <div className="text-[10px] text-[#707070] mt-0.5">{account.ifrsSection}</div>
                       </td>
-                      <td className="p-3">
-                        <span className="font-mono font-semibold text-[#141414] text-[11px] block">
-                          {account.ifrsSubCode}
-                        </span>
-                        <span className="text-[10.5px] text-[#707070]">{account.ifrsSubItemName}</span>
+                      <td className="p-3 min-w-[200px]">
+                        <select
+                          value={account.ifrsSubCode || account.ifrsCode || ''}
+                          onChange={(e) => handleUpdateFinCoa(account.code, { ifrsSubCode: e.target.value })}
+                          className="w-full bg-zinc-50 focus:bg-white border border-zinc-200 focus:border-[#141414] rounded-lg py-1 px-1.5 font-mono text-[11px] font-semibold text-[#141414]"
+                        >
+                          {EXTENDED_IFRS_CLASSIFICATIONS.map((ext) => (
+                            <option key={ext.code} value={ext.code}>
+                              {ext.code} - {ext.nameAr}
+                            </option>
+                          ))}
+                        </select>
                       </td>
                       <td className="p-3">
                         <span className="font-mono font-bold text-[11px] text-[#141414] block">{account.ifrsRef}</span>
                         <span className="text-[10px] text-[#707070]">{account.cashFlowType}</span>
                       </td>
                       <td className="p-3 font-mono font-bold text-[#141414]">
-                        {account.balance.toLocaleString()} {account.currency}
+                        <input
+                          type="number"
+                          value={account.balance}
+                          onChange={(e) =>
+                            handleUpdateFinCoa(account.code, { balance: parseFloat(e.target.value) || 0 })
+                          }
+                          className="w-28 bg-zinc-50 focus:bg-white border border-zinc-200 focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                        />
                       </td>
                       <td className="p-3 text-center">
-                        <button
-                          onClick={() => setSelectedAccountForDrilldown({
-                            code: account.code,
-                            name: account.nameAr,
-                            type: account.category,
-                            balance: account.balance
-                          })}
-                          className="button-outline-on-light"
-                          style={{ padding: '3px 10px', fontSize: '10.5px', minHeight: '26px' }}
-                        >
-                          <Eye className="w-3 h-3 ml-1" />
-                          <span>كشف الحساب</span>
-                        </button>
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            onClick={() => setSelectedAccountForDrilldown({
+                              code: account.code,
+                              name: account.nameAr,
+                              type: account.category,
+                              balance: account.balance
+                            })}
+                            className="button-outline-on-light"
+                            style={{ padding: '3px 10px', fontSize: '10.5px', minHeight: '26px' }}
+                          >
+                            <Eye className="w-3 h-3 ml-1" />
+                            <span>كشف</span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteFinCoaAccount(account.code, account.nameAr)}
+                            className="p-1 text-zinc-500 hover:text-zinc-900 cursor-pointer"
+                            title="حذف الحساب"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

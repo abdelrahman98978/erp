@@ -463,6 +463,12 @@ export const SmaccAccountingPage: React.FC = () => {
     }
   };
 
+  // Inline Update Account Handler
+  const handleInlineUpdateSmaccAccount = (code: string, patch: Partial<AccountItem>) => {
+    chartOfAccountsService.updateAccount(activeCompanyId, code, patch);
+    setRawAccounts(chartOfAccountsService.getAccountsByCompany(activeCompanyId));
+  };
+
   // Delete Account Handler
   const handleDeleteAccount = (code: string, name: string) => {
     if (window.confirm(`هل أنت متأكد من حذف الحساب (${name} - #${code})؟`)) {
@@ -717,16 +723,45 @@ export const SmaccAccountingPage: React.FC = () => {
               <span className="font-bold text-[#141414]">{node.code}</span>
             </div>
           </td>
-          <td className="p-3">
-            <span className={depth === 0 ? 'text-[#141414] font-bold text-sm' : depth === 1 ? 'text-zinc-900 font-semibold text-xs' : 'text-zinc-700 text-xs'}>
-              {node.name}
-            </span>
-            {node.nameEn && <span className="text-[10px] text-[#707070] font-mono block">{node.nameEn}</span>}
+          <td className="p-3 min-w-[210px]">
+            <input
+              type="text"
+              value={node.name}
+              onChange={(e) => handleInlineUpdateSmaccAccount(node.code, { nameAr: e.target.value })}
+              className={`w-full bg-transparent hover:bg-zinc-100 focus:bg-white border border-transparent focus:border-[#141414] rounded-lg px-2 py-0.5 ${
+                depth === 0 ? 'text-[#141414] font-bold text-sm' : depth === 1 ? 'text-zinc-900 font-semibold text-xs' : 'text-zinc-700 text-xs'
+              }`}
+            />
+            {node.nameEn !== undefined && (
+              <input
+                type="text"
+                value={node.nameEn || ''}
+                onChange={(e) => handleInlineUpdateSmaccAccount(node.code, { nameEn: e.target.value })}
+                placeholder="English Name..."
+                className="w-full bg-transparent hover:bg-zinc-100 focus:bg-white border border-transparent focus:border-zinc-300 rounded px-2 py-0.5 text-[10px] text-[#707070] font-mono block mt-0.5"
+              />
+            )}
           </td>
           <td className="p-3">
-            <span className="pill-tag-shade text-[10px] py-0.5 px-2">
-              {node.type} ({node.nature})
-            </span>
+            <select
+              value={node.type}
+              onChange={(e) =>
+                handleInlineUpdateSmaccAccount(node.code, {
+                  category: e.target.value as any,
+                  nature:
+                    e.target.value === 'خصوم' || e.target.value === 'حقوق ملكية' || e.target.value === 'إيرادات'
+                      ? 'دائن'
+                      : 'مدين',
+                })
+              }
+              className="bg-zinc-100 border border-zinc-200 rounded-lg py-1 px-2 text-[10.5px] font-bold text-[#141414]"
+            >
+              <option value="أصول">أصول (مدين)</option>
+              <option value="خصوم">خصوم (دائن)</option>
+              <option value="حقوق ملكية">حقوق ملكية (دائن)</option>
+              <option value="إيرادات">إيرادات (دائن)</option>
+              <option value="مصروفات">مصروفات (مدين)</option>
+            </select>
           </td>
           <td className="p-3">
             <span className="font-mono font-bold text-[11px] bg-[#f3f3f3] text-[#141414] px-2 py-0.5 rounded">
@@ -734,16 +769,29 @@ export const SmaccAccountingPage: React.FC = () => {
             </span>
             <div className="text-[10px] text-[#707070] mt-0.5">{node.ifrsSection}</div>
           </td>
-          <td className="p-3">
-            <span className="font-mono font-semibold text-[11px] text-[#141414] block">
-              {node.ifrsSubCode} — {node.ifrsSubItemName}
-            </span>
-            <span className="text-[10px] font-mono text-[#707070]">{node.ifrsRef} • {node.cashFlowType}</span>
+          <td className="p-3 min-w-[200px]">
+            <select
+              value={node.ifrsSubCode || node.ifrsCode || ''}
+              onChange={(e) => handleInlineUpdateSmaccAccount(node.code, { ifrsSubCode: e.target.value })}
+              className="w-full bg-zinc-50 focus:bg-white border border-zinc-200 focus:border-[#141414] rounded-lg py-1 px-1.5 font-mono text-[11px] font-semibold text-[#141414]"
+            >
+              {EXTENDED_IFRS_CLASSIFICATIONS.map((ext) => (
+                <option key={ext.code} value={ext.code}>
+                  {ext.code} - {ext.nameAr}
+                </option>
+              ))}
+            </select>
+            <span className="text-[10px] font-mono text-[#707070] block mt-0.5">{node.ifrsRef} • {node.cashFlowType}</span>
           </td>
           <td className="p-3 font-mono font-bold text-xs text-left pl-4">
-            <span className={node.balance >= 0 ? 'text-[#141414]' : 'text-[#141414]'}>
-              {node.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ⃁
-            </span>
+            <input
+              type="number"
+              value={Math.round(node.balance * 100) / 100}
+              onChange={(e) =>
+                handleInlineUpdateSmaccAccount(node.code, { balance: parseFloat(e.target.value) || 0 })
+              }
+              className="w-28 bg-zinc-50 focus:bg-white border border-zinc-200 focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414] text-left"
+            />
           </td>
           <td className="p-3 text-center">
             <div className="flex items-center justify-center gap-1.5">
@@ -1581,7 +1629,7 @@ export const SmaccAccountingPage: React.FC = () => {
           </div>
 
           {/* Complete Interactive Expandable IFRS Income Statement */}
-          <IfrsFinancialEngineWorkspace initialSection="statements" />
+          <IfrsFinancialEngineWorkspace initialSection="statements" initialStatementView="income-statement" />
         </div>
       )}
 
