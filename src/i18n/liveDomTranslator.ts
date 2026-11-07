@@ -563,15 +563,15 @@ function processTextNode(node: ErpTextNode, langCode: string): void {
 
 const TRANSLATABLE_ATTRS = ['placeholder', 'title', 'aria-label'] as const;
 
-function processElementAttributes(el: HTMLElement, langCode: string): void {
+function processElementAttributes(el: Element, langCode: string): void {
   if (shouldSkipElement(el)) return;
 
   for (const attr of TRANSLATABLE_ATTRS) {
-    const dataKey = `erpOrig_${attr}`;
+    const dataAttr = `data-erp-orig-${attr}`;
     const currentAttr = el.getAttribute(attr);
 
     if (langCode === 'ar') {
-      const savedOrig = el.dataset[dataKey];
+      const savedOrig = el.getAttribute(dataAttr);
       if (savedOrig && currentAttr !== savedOrig) {
         el.setAttribute(attr, savedOrig);
       }
@@ -579,10 +579,10 @@ function processElementAttributes(el: HTMLElement, langCode: string): void {
     }
 
     if (currentAttr && ARABIC_CHAR_REGEX.test(currentAttr)) {
-      el.dataset[dataKey] = currentAttr;
+      el.setAttribute(dataAttr, currentAttr);
     }
 
-    const origAr = el.dataset[dataKey];
+    const origAr = el.getAttribute(dataAttr);
     if (!origAr || !ARABIC_CHAR_REGEX.test(origAr)) continue;
 
     const trimmedOrig = origAr.trim();
@@ -610,31 +610,35 @@ function processElementAttributes(el: HTMLElement, langCode: string): void {
   }
 }
 
-export function translateDomSubtree(root: Node, langCode: string): void {
+export function translateDomSubtree(root: Node | null, langCode: string): void {
   activeLangCode = langCode;
-  if (typeof document === 'undefined') return;
+  if (!root || typeof document === 'undefined') return;
 
-  if (root.nodeType === Node.TEXT_NODE) {
-    processTextNode(root as ErpTextNode, langCode);
-    return;
-  }
-
-  if (root.nodeType === Node.ELEMENT_NODE) {
-    processElementAttributes(root as HTMLElement, langCode);
-  }
-
-  const walker = document.createTreeWalker(
-    root,
-    NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT
-  );
-
-  let current: Node | null = walker.nextNode();
-  while (current) {
-    if (current.nodeType === Node.TEXT_NODE) {
-      processTextNode(current as ErpTextNode, langCode);
-    } else if (current.nodeType === Node.ELEMENT_NODE) {
-      processElementAttributes(current as HTMLElement, langCode);
+  try {
+    if (root.nodeType === Node.TEXT_NODE) {
+      processTextNode(root as ErpTextNode, langCode);
+      return;
     }
-    current = walker.nextNode();
+
+    if (root.nodeType === Node.ELEMENT_NODE) {
+      processElementAttributes(root as Element, langCode);
+    }
+
+    const walker = document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT
+    );
+
+    let current: Node | null = walker.nextNode();
+    while (current) {
+      if (current.nodeType === Node.TEXT_NODE) {
+        processTextNode(current as ErpTextNode, langCode);
+      } else if (current.nodeType === Node.ELEMENT_NODE) {
+        processElementAttributes(current as Element, langCode);
+      }
+      current = walker.nextNode();
+    }
+  } catch {
+    // Safeguard against detached or exotic DOM nodes
   }
 }
