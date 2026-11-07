@@ -769,9 +769,18 @@ export const FinancePage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <button
-                  onClick={() => exportData('balance-sheet', TRIAL_BALANCE_DATA, 'excel', `المركز المالي - ${activeCompany.name}`)}
+                  onClick={() =>
+                    exportData(
+                      'balance-sheet',
+                      TRIAL_BALANCE_DATA.filter(
+                        (r) => r.type === 'أصول' || r.type === 'خصوم' || r.type === 'حقوق ملكية'
+                      ),
+                      'excel',
+                      `المركز المالي - ${activeCompany.name}`
+                    )
+                  }
                   className="button-outline-on-light"
                   style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
                 >
@@ -779,13 +788,30 @@ export const FinancePage: React.FC = () => {
                   <span>Excel</span>
                 </button>
                 <button
-                  onClick={() => exportData('balance-sheet', TRIAL_BALANCE_DATA, 'pdf', `المركز المالي - ${activeCompany.name}`)}
+                  onClick={() =>
+                    exportData(
+                      'balance-sheet',
+                      TRIAL_BALANCE_DATA.filter(
+                        (r) => r.type === 'أصول' || r.type === 'خصوم' || r.type === 'حقوق ملكية'
+                      ),
+                      'pdf',
+                      `المركز المالي - ${activeCompany.name}`
+                    )
+                  }
                   className="button-outline-on-light"
                   style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
                 >
                   <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                   <span>PDF</span>
                 </button>
+                <ExportDropdown
+                  sectionKey="balance-sheet"
+                  data={TRIAL_BALANCE_DATA.filter(
+                    (r) => r.type === 'أصول' || r.type === 'خصوم' || r.type === 'حقوق ملكية'
+                  )}
+                  customTitle={`قائمة المركز المالي - ${activeCompany.name}`}
+                  buttonLabel="خيارات التصدير"
+                />
               </div>
             </div>
 
@@ -870,9 +896,16 @@ export const FinancePage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <button
-                  onClick={() => exportData('income-statement', TRIAL_BALANCE_DATA, 'excel', `قائمة الدخل - ${activeCompany.name}`)}
+                  onClick={() =>
+                    exportData(
+                      'income-statement',
+                      TRIAL_BALANCE_DATA.filter((r) => r.type === 'إيرادات' || r.type === 'مصروفات'),
+                      'excel',
+                      `قائمة الدخل - ${activeCompany.name}`
+                    )
+                  }
                   className="button-outline-on-light"
                   style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
                 >
@@ -880,13 +913,26 @@ export const FinancePage: React.FC = () => {
                   <span>Excel</span>
                 </button>
                 <button
-                  onClick={() => exportData('income-statement', TRIAL_BALANCE_DATA, 'pdf', `قائمة الدخل - ${activeCompany.name}`)}
+                  onClick={() =>
+                    exportData(
+                      'income-statement',
+                      TRIAL_BALANCE_DATA.filter((r) => r.type === 'إيرادات' || r.type === 'مصروفات'),
+                      'pdf',
+                      `قائمة الدخل - ${activeCompany.name}`
+                    )
+                  }
                   className="button-outline-on-light"
                   style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
                 >
                   <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                   <span>PDF</span>
                 </button>
+                <ExportDropdown
+                  sectionKey="income-statement"
+                  data={TRIAL_BALANCE_DATA.filter((r) => r.type === 'إيرادات' || r.type === 'مصروفات')}
+                  customTitle={`قائمة الدخل الشاملة - ${activeCompany.name}`}
+                  buttonLabel="خيارات التصدير"
+                />
               </div>
             </div>
 
@@ -2249,7 +2295,19 @@ export const FinancePage: React.FC = () => {
 
               <button
                 onClick={() => {
-                  window.print();
+                  exportData(
+                    'vat-declaration',
+                    [
+                      { 'البند الضريبي': 'المبيعات الخاضعة للنسبة الأساسية 15%', 'المبلغ الخاضع': 525471.20, 'مبلغ الضريبة': 78820.68 },
+                      { 'البند الضريبي': 'المبيعات للجهات والشركات', 'المبلغ الخاضع': 120000.00, 'مبلغ الضريبة': 18000.00 },
+                      { 'البند الضريبي': 'الصادرات المعفاة', 'المبلغ الخاضع': 65000.00, 'مبلغ الضريبة': 0.00 },
+                      { 'البند الضريبي': 'المشتريات المحلية 15%', 'المبلغ الخاضع': 220500.00, 'مبلغ الضريبة': 33075.00 },
+                      { 'البند الضريبي': 'الاستيرادات الجمركية', 'المبلغ الخاضع': 85000.00, 'مبلغ الضريبة': 12750.00 },
+                      { 'البند الضريبي': 'صافي الضريبة المستحقة للسداد', 'المبلغ الخاضع': 0, 'مبلغ الضريبة': 50995.68 },
+                    ],
+                    'print',
+                    `نموذج الإقرار الضريبي (${vatPeriod}) - ${activeCompany.name}`
+                  );
                   addNotification({
                     title: 'طباعة الإقرار الضريبي',
                     message: `تم إعداد نموذج الإقرار الضريبي (${vatPeriod}) للطباعة الرسمية.`,
@@ -2764,7 +2822,29 @@ export const FinancePage: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => window.print()}
+                  onClick={() =>
+                    exportData(
+                      'vouchers',
+                      [selectedVoucherForPrint],
+                      'pdf',
+                      `سند ${selectedVoucherForPrint.type} رقم ${selectedVoucherForPrint.voucher_no} - ${activeCompany.name}`
+                    )
+                  }
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px' }}
+                >
+                  <FileText className="w-3.5 h-3.5 ml-1" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() =>
+                    exportData(
+                      'vouchers',
+                      [selectedVoucherForPrint],
+                      'print',
+                      `سند ${selectedVoucherForPrint.type} رقم ${selectedVoucherForPrint.voucher_no} - ${activeCompany.name}`
+                    )
+                  }
                   className="button-white-pill"
                   style={{ padding: '4px 14px', fontSize: '11px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
                 >
@@ -2867,7 +2947,29 @@ export const FinancePage: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => window.print()}
+                  onClick={() =>
+                    exportData(
+                      'journals',
+                      [selectedJournalForPrint],
+                      'pdf',
+                      `قيد يومية ${selectedJournalForPrint.ref_no} - ${activeCompany.name}`
+                    )
+                  }
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px' }}
+                >
+                  <FileText className="w-3.5 h-3.5 ml-1" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() =>
+                    exportData(
+                      'journals',
+                      [selectedJournalForPrint],
+                      'print',
+                      `قيد يومية ${selectedJournalForPrint.ref_no} - ${activeCompany.name}`
+                    )
+                  }
                   className="button-white-pill"
                   style={{ padding: '4px 14px', fontSize: '11px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
                 >

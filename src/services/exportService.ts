@@ -587,42 +587,53 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
   // 13. ميزان المراجعة (Trial Balance)
   'trial-balance': {
     sectionTitle: 'ميزان المراجعة بالأرصدة والمجاميع (Trial Balance)',
-    headers: ['رمز الحساب', 'اسم الحساب المحاسبي', 'نوع الحساب', 'الرصيد الافتتاحي (مدين)', 'الرصيد الافتتاحي (دائن)', 'حركة الفترة (مدين)', 'حركة الفترة (دائن)', 'الرصيد النهائي (⃁)'],
-    dataMapper: (r: any) => [
-      r.code || r.account_code || '',
-      r.name || r.account_name || '',
-      r.type || r.account_type || '',
-      r.opening_debit || 0,
-      r.opening_credit || 0,
-      r.period_debit || r.debit || 0,
-      r.period_credit || r.credit || 0,
-      r.balance || (r.debit - r.credit) || 0
-    ]
+    headers: ['رمز الحساب', 'اسم الحساب المحاسبي', 'نوع الحساب', 'الرصيد الافتتاحي (مدين)', 'الرصيد الافتتاحي (دائن)', 'حركة الفترة (مدين)', 'حركة الفترة (دائن)', 'الرصيد النهائي (مدين)', 'الرصيد النهائي (دائن)'],
+    dataMapper: (r: any) => {
+      const opDeb = Number(r.opening_debit ?? r.openingDebit ?? 0);
+      const opCred = Number(r.opening_credit ?? r.openingCredit ?? 0);
+      const perDeb = Number(r.period_debit ?? r.periodDebit ?? r.debit ?? 0);
+      const perCred = Number(r.period_credit ?? r.periodCredit ?? r.credit ?? 0);
+      const net = (opDeb - opCred) + (perDeb - perCred);
+      const closeDeb = r.closingDebit !== undefined ? Number(r.closingDebit) : (net > 0 ? net : 0);
+      const closeCred = r.closingCredit !== undefined ? Number(r.closingCredit) : (net < 0 ? Math.abs(net) : 0);
+      return [
+        r.code || r.erpCode || r.account_code || '',
+        r.name || r.accountName || r.account_name || '',
+        r.type || r.approvedItemName || r.account_type || '',
+        opDeb,
+        opCred,
+        perDeb,
+        perCred,
+        closeDeb,
+        closeCred
+      ];
+    }
   },
 
   // 14. قائمة المركز المالي (Balance Sheet)
   'balance-sheet': {
     sectionTitle: 'قائمة المركز المالي الموحدة (Statement of Financial Position)',
-    headers: ['البند الرئيسي', 'الحساب الفرعي', 'القيمة المقارنة (⃁)', 'القيمة الحالية (⃁)', 'نسبة الإجمالي %'],
+    headers: ['رمز البند / الحساب', 'البند الرئيسي', 'الحساب / الأصل / الالتزام', 'القيمة المقارنة (⃁)', 'القيمة الحالية المعتمدة (⃁)'],
     dataMapper: (r: any) => [
-      r.main_category || r.type || '',
-      r.item_name || r.name || '',
-      r.previous_year || 0,
-      r.current_value || r.balance || 0,
-      r.percentage ? `${r.percentage}%` : '-'
+      r.code || r.ifrsCode || '-',
+      r.main_category || r.type || r.category || 'المركز المالي',
+      r.item_name || r.name || r.accountName || '',
+      r.previous_year ?? Math.abs((r.opening_debit || 0) - (r.opening_credit || 0)),
+      r.current_value ?? Math.abs(r.balance || 0)
     ]
   },
 
   // 15. قائمة الدخل والأرباح (Income Statement)
   'income-statement': {
-    sectionTitle: 'قائمة الدخل والأرباح والخسائر (Income Statement)',
-    headers: ['البند المالي', 'التصنيف', 'إجمالي الفترة (⃁)', 'الموازنة التقديرية (⃁)', 'نسبة الانحراف %'],
+    sectionTitle: 'قائمة الدخل والأرباح والخسائر الشاملة (Income Statement)',
+    headers: ['رمز البند / الحساب', 'التصنيف المحاسبي', 'البند المالي', 'رصيد أول المدة (⃁)', 'حركة الفترة (⃁)', 'الإجمالي الختامي (⃁)'],
     dataMapper: (r: any) => [
-      r.title || r.name || '',
-      r.category || r.type || '',
-      r.amount || r.actual || 0,
-      r.budget || 0,
-      r.variance ? `${r.variance}%` : '-'
+      r.code || r.ifrsCode || '-',
+      r.category || r.type || 'قائمة الدخل',
+      r.title || r.name || r.accountName || '',
+      Math.abs((r.opening_debit || 0) - (r.opening_credit || 0)),
+      Math.abs((r.period_debit || 0) - (r.period_credit || 0)),
+      r.amount ?? r.actual ?? Math.abs(r.balance || 0)
     ]
   },
 
@@ -1744,7 +1755,7 @@ export function resolveConfig(
       )
     : [];
   const isPreMappedArabicRows =
-    rawKeys.length >= 2 && rawKeys.every(k => /[\u0600-\u06FF]/.test(k));
+    rawKeys.length >= 2 && rawKeys.some(k => /[\u0600-\u06FF]/.test(k));
 
   if (isPreMappedArabicRows) {
     baseConfig = {
@@ -3204,7 +3215,8 @@ export async function exportToPDF(
   container.style.zIndex = '-9999';
 
   const html = generateExecutiveReportHtml(sectionKey, data, customTitle, false, options);
-  container.innerHTML = html.replace(/<div class="toolbar no-print"[\s\S]*?<\/div>\s*<\/div>/, '');
+  container.innerHTML = html;
+  container.querySelectorAll('.no-print, script').forEach((el) => el.remove());
   document.body.appendChild(container);
 
   try {
@@ -3217,7 +3229,11 @@ export async function exportToPDF(
       useCORS: true,
       backgroundColor: '#ffffff',
       logging: false,
-      windowWidth: isLandscape ? 1200 : 900
+      windowWidth: isLandscape ? 1200 : 900,
+      onclone: (clonedDoc) => {
+        clonedDoc.querySelectorAll('link[rel="stylesheet"]').forEach((el) => el.remove());
+        clonedDoc.querySelectorAll('head style').forEach((el) => el.remove());
+      },
     });
 
     const doc = new jsPDF({
@@ -3290,7 +3306,8 @@ export async function exportToPNG(
   container.style.zIndex = '-9999';
 
   const html = generateExecutiveReportHtml(sectionKey, data, customTitle, false, options);
-  container.innerHTML = html.replace(/<div class="toolbar no-print"[\s\S]*?<\/div>\s*<\/div>/, '');
+  container.innerHTML = html;
+  container.querySelectorAll('.no-print, script').forEach((el) => el.remove());
   document.body.appendChild(container);
 
   try {
@@ -3300,6 +3317,10 @@ export async function exportToPNG(
       useCORS: true,
       backgroundColor: '#ffffff',
       logging: false,
+      onclone: (clonedDoc) => {
+        clonedDoc.querySelectorAll('link[rel="stylesheet"]').forEach((el) => el.remove());
+        clonedDoc.querySelectorAll('head style').forEach((el) => el.remove());
+      },
     });
 
     const dataUrl = canvas.toDataURL('image/png');

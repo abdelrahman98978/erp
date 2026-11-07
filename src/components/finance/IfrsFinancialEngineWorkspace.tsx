@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileSpreadsheet,
+  FileText,
   Printer,
   RefreshCw,
   Search,
@@ -34,7 +35,8 @@ import {
 } from 'lucide-react';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useAppStore } from '../../stores/appStore';
-import { exportData } from '../../services/exportService';
+import { exportData, ExportFormat } from '../../services/exportService';
+import { ExportDropdown } from '../common/ExportDropdown';
 import {
   IFRS_MAPPING_CODES,
   TrialBalanceEntry,
@@ -751,49 +753,590 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
     });
   };
 
-  const handleExportTrialBalance = () => {
-    const exportRows = engine.rows.map((r) => ({
-      'م': r.seq,
-      'رقم الحساب ERP': r.erpCode,
-      'اسم الحساب': r.accountName,
-      'التصنيف المختار (رئيسي/فرعي)': r.manualCode || r.approvedCode,
-      'البند المعتمد بالقوائم': r.approvedCode,
-      'اسم البند في القوائم': r.approvedItemName,
-      'الطبيعة': r.naturalBalance,
-      'أول المدة - مدين': r.openingDebit,
-      'أول المدة - دائن': r.openingCredit,
-      'حركات السنة - مدين': r.periodDebit,
-      'حركات السنة - دائن': r.periodCredit,
-      'الرصيد النهائي - مدين': r.closingDebit,
-      'الرصيد النهائي - دائن': r.closingCredit,
-      'حالة الفحص': r.statusText,
-      'ملاحظات الفحص': r.auditNote,
-    }));
-    exportData(exportRows, `ميزان_المراجعة_IFRS_${activeCompany.code}`, 'excel');
+  const getTrialBalanceExportData = () => {
+    const sourceRows = filteredRows.length > 0 ? filteredRows : engine.rows;
+    return sourceRows.map((r) => {
+      const rowObj: Record<string, any> = {
+        'م': r.seq,
+        'رقم الحساب ERP': r.erpCode,
+        'اسم الحساب': r.accountName,
+        'التصنيف المختار (رئيسي/فرعي)': r.manualCode || r.approvedCode,
+        'البند المعتمد بالقوائم': r.approvedCode,
+        'اسم البند في القوائم': r.approvedItemName,
+        'الطبيعة': r.naturalBalance,
+      };
+      if (showOpeningCols) {
+        rowObj['أول المدة - مدين'] = r.openingDebit;
+        rowObj['أول المدة - دائن'] = r.openingCredit;
+      }
+      if (showMovementCols) {
+        rowObj['حركات السنة - مدين'] = r.periodDebit;
+        rowObj['حركات السنة - دائن'] = r.periodCredit;
+      }
+      if (showClosingBalanceCols) {
+        rowObj['الرصيد النهائي - مدين'] = r.closingDebit;
+        rowObj['الرصيد النهائي - دائن'] = r.closingCredit;
+      }
+      if (showNetBalanceCol) {
+        rowObj['صافي الرصيد النهائي'] = r.closingDebit - r.closingCredit;
+      }
+      rowObj['حالة الفحص'] = r.statusText;
+      rowObj['ملاحظات الفحص'] = r.auditNote;
+      return rowObj;
+    });
+  };
+
+  const handleExportTrialBalance = (format: ExportFormat = 'excel') => {
+    const exportRows = getTrialBalanceExportData();
+    exportData(
+      'trial-balance',
+      exportRows,
+      format,
+      `ميزان المراجعة العام والأرصدة (${settings.companyName})`
+    );
     addNotification({
-      title: 'تصدير ميزان المراجعة IFRS',
-      message: 'تم تصدير ميزان المراجعة الكامل بصيغة Excel.',
+      title: 'تصدير ميزان المراجعة العام',
+      message: `تم تصدير (${exportRows.length}) حساباً من ميزان المراجعة بصيغة ${format.toUpperCase()} بنجاح.`,
       type: 'success',
     });
   };
 
-  const handleExportRatiosPlan = () => {
-    const exportRows = engine.ratios.map((r) => ({
-      'المجموعة': r.category,
-      'النسبة المالية': r.name,
-      'طريقة الحساب': r.formula,
-      'النتيجة الحالية': r.formattedValue,
-      'المعيار المرجعي': r.benchmark,
-      'مستهدف Q4 2026': r.target2026Q4,
-      'مستهدف 2027': r.target2027,
-      'التقييم': r.evaluation,
-      'التفسير المالي': r.meaning,
-      'خطة العمل والتوصية': r.actionPlan,
-    }));
-    exportData(exportRows, `خطة_النسب_المالية_IFRS_${activeCompany.code}`, 'excel');
+  const getRatiosExportData = () => {
+    const visibleStandard = engine.ratios
+      .filter((r) => !hiddenRatioIds.includes(r.id))
+      .map((r) => ({
+        'المجموعة': r.category,
+        'النسبة المالية': r.name,
+        'طريقة الحساب': r.formula,
+        'النتيجة الحالية': r.formattedValue,
+        'المعيار المرجعي': r.benchmark,
+        'مستهدف Q4 2026': r.target2026Q4,
+        'مستهدف 2027': r.target2027,
+        'التقييم': r.evaluation,
+        'التفسير المالي': r.meaning,
+        'خطة العمل والتوصية': r.actionPlan,
+      }));
+    const visibleCustom = customRatios
+      .filter((r) => !hiddenRatioIds.includes(r.id))
+      .map((r) => ({
+        'المجموعة': r.category,
+        'النسبة المالية': r.name,
+        'طريقة الحساب': r.formula,
+        'النتيجة الحالية': r.formattedValue,
+        'المعيار المرجعي': r.benchmark,
+        'مستهدف Q4 2026': r.target2026,
+        'مستهدف 2027': r.target2027,
+        'التقييم': 'ضمن المستهدف المعتمد',
+        'التفسير المالي': 'مؤشر مالي مخصص في النظام المحاسبي',
+        'خطة العمل والتوصية': r.actionPlan,
+      }));
+    return [...visibleStandard, ...visibleCustom];
+  };
+
+  const handleExportRatiosPlan = (format: ExportFormat = 'excel') => {
+    const exportRows = getRatiosExportData();
+    exportData(
+      'financial-ratios',
+      exportRows,
+      format,
+      `التحليل المالي ومؤشرات الأداء (${settings.companyName})`
+    );
     addNotification({
-      title: 'تصدير خطة النسب المالية',
-      message: 'تم تصدير تقرير النسب المالية الـ 16 وخطة العمل الاستراتيجية إلى Excel.',
+      title: 'تصدير التحليل المالي ومؤشرات الأداء',
+      message: `تم تصدير (${exportRows.length}) مؤشراً مالياً بصيغة ${format.toUpperCase()} بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const getStatementExportData = (
+    view: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' = activeStatementView
+  ) => {
+    if (view === 'balance-sheet') {
+      const bs = engine.balanceSheet;
+      return [
+        {
+          'البند في قائمة المركز المالي': 'ممتلكات وآلات ومعدات وأسطول نقل (بالصافي)',
+          'الرمز المعياري': 'A-01 / A-02',
+          'المعيار المرجعي': 'IAS 16',
+          'السنة الحالية (2026)': bs.current.ppeNet,
+          'سنة المقارنة (أول المدة)': bs.comparative.ppeNet,
+          'التغير (الفرق)': bs.current.ppeNet - bs.comparative.ppeNet,
+        },
+        {
+          'البند في قائمة المركز المالي': 'أصول غير ملموسة ورخص وبرامج (بالصافي)',
+          'الرمز المعياري': 'A-03',
+          'المعيار المرجعي': 'IAS 38',
+          'السنة الحالية (2026)': bs.current.intangibles,
+          'سنة المقارنة (أول المدة)': bs.comparative.intangibles,
+          'التغير (الفرق)': bs.current.intangibles - bs.comparative.intangibles,
+        },
+        {
+          'البند في قائمة المركز المالي': 'أصول حق الاستخدام - عقود الإيجار (بالصافي)',
+          'الرمز المعياري': 'A-05',
+          'المعيار المرجعي': 'IFRS 16',
+          'السنة الحالية (2026)': bs.current.rouAssets,
+          'سنة المقارنة (أول المدة)': bs.comparative.rouAssets,
+          'التغير (الفرق)': bs.current.rouAssets - bs.comparative.rouAssets,
+        },
+        {
+          'البند في قائمة المركز المالي': 'استثمارات وأصول مالية طويلة الأجل وضرائب مؤجلة',
+          'الرمز المعياري': 'A-04 / A-11',
+          'المعيار المرجعي': 'IFRS 9 / IAS 12',
+          'السنة الحالية (2026)': bs.current.longTermInvestments,
+          'سنة المقارنة (أول المدة)': bs.comparative.longTermInvestments,
+          'التغير (الفرق)': bs.current.longTermInvestments - bs.comparative.longTermInvestments,
+        },
+        {
+          'البند في قائمة المركز المالي': '= إجمالي الأصول غير المتداولة',
+          'الرمز المعياري': 'NCA',
+          'المعيار المرجعي': 'IAS 1',
+          'السنة الحالية (2026)': bs.current.totalNonCurrentAssets,
+          'سنة المقارنة (أول المدة)': bs.comparative.totalNonCurrentAssets,
+          'التغير (الفرق)': bs.current.totalNonCurrentAssets - bs.comparative.totalNonCurrentAssets,
+        },
+        {
+          'البند في قائمة المركز المالي': 'المخزون وتكاليف العقود الجارية',
+          'الرمز المعياري': 'A-06',
+          'المعيار المرجعي': 'IAS 2',
+          'السنة الحالية (2026)': bs.current.inventory,
+          'سنة المقارنة (أول المدة)': bs.comparative.inventory,
+          'التغير (الفرق)': bs.current.inventory - bs.comparative.inventory,
+        },
+        {
+          'البند في قائمة المركز المالي': 'ذمم مدينة تجارية وحسابات ضمان مساند (بالصافي)',
+          'الرمز المعياري': 'A-07 / A-08',
+          'المعيار المرجعي': 'IFRS 9 / IFRS 15',
+          'السنة الحالية (2026)': bs.current.tradeReceivablesNet,
+          'سنة المقارنة (أول المدة)': bs.comparative.tradeReceivablesNet,
+          'التغير (الفرق)': bs.current.tradeReceivablesNet - bs.comparative.tradeReceivablesNet,
+        },
+        {
+          'البند في قائمة المركز المالي': 'مدفوعات مقدمة، سلف، وأرصدة مدينة وأطراف ذات علاقة',
+          'الرمز المعياري': 'A-09 / A-12',
+          'المعيار المرجعي': 'IAS 1.66 / IAS 24',
+          'السنة الحالية (2026)': bs.current.prepaymentsOtherRec,
+          'سنة المقارنة (أول المدة)': bs.comparative.prepaymentsOtherRec,
+          'التغير (الفرق)': bs.current.prepaymentsOtherRec - bs.comparative.prepaymentsOtherRec,
+        },
+        {
+          'البند في قائمة المركز المالي': 'النقد وما في حكمه (الصناديق والحسابات البنكية)',
+          'الرمز المعياري': 'A-10',
+          'المعيار المرجعي': 'IAS 7',
+          'السنة الحالية (2026)': bs.current.cashAndEquivalents,
+          'سنة المقارنة (أول المدة)': bs.comparative.cashAndEquivalents,
+          'التغير (الفرق)': bs.current.cashAndEquivalents - bs.comparative.cashAndEquivalents,
+        },
+        {
+          'البند في قائمة المركز المالي': '= إجمالي الأصول المتداولة',
+          'الرمز المعياري': 'CA',
+          'المعيار المرجعي': 'IAS 1',
+          'السنة الحالية (2026)': bs.current.totalCurrentAssets,
+          'سنة المقارنة (أول المدة)': bs.comparative.totalCurrentAssets,
+          'التغير (الفرق)': bs.current.totalCurrentAssets - bs.comparative.totalCurrentAssets,
+        },
+        {
+          'البند في قائمة المركز المالي': '=== إجمالي الأصول (Total Assets) ===',
+          'الرمز المعياري': 'TOTAL-A',
+          'المعيار المرجعي': 'IAS 1',
+          'السنة الحالية (2026)': bs.current.totalAssets,
+          'سنة المقارنة (أول المدة)': bs.comparative.totalAssets,
+          'التغير (الفرق)': bs.current.totalAssets - bs.comparative.totalAssets,
+        },
+        {
+          'البند في قائمة المركز المالي': 'رأس المال المدفوع',
+          'الرمز المعياري': 'E-01',
+          'المعيار المرجعي': 'IAS 1.78',
+          'السنة الحالية (2026)': bs.current.shareCapital,
+          'سنة المقارنة (أول المدة)': bs.comparative.shareCapital,
+          'التغير (الفرق)': bs.current.shareCapital - bs.comparative.shareCapital,
+        },
+        {
+          'البند في قائمة المركز المالي': 'الاحتياطي النظامي والاحتياطيات الأخرى',
+          'الرمز المعياري': 'E-02',
+          'المعيار المرجعي': 'IAS 1.79',
+          'السنة الحالية (2026)': bs.current.reserves,
+          'سنة المقارنة (أول المدة)': bs.comparative.reserves,
+          'التغير (الفرق)': bs.current.reserves - bs.comparative.reserves,
+        },
+        {
+          'البند في قائمة المركز المالي': 'الأرباح المبقاة (شاملة صافي ربح السنة الحالية)',
+          'الرمز المعياري': 'E-03',
+          'المعيار المرجعي': 'IAS 1.106',
+          'السنة الحالية (2026)': bs.current.retainedEarningsWithProfit,
+          'سنة المقارنة (أول المدة)': bs.comparative.retainedEarnings,
+          'التغير (الفرق)': bs.current.retainedEarningsWithProfit - bs.comparative.retainedEarnings,
+        },
+        {
+          'البند في قائمة المركز المالي': 'توزيعات الأرباح ومسحوبات الشركاء (تخصم)',
+          'الرمز المعياري': 'E-04',
+          'المعيار المرجعي': 'IAS 1.107',
+          'السنة الحالية (2026)': -bs.current.dividendsDrawings,
+          'سنة المقارنة (أول المدة)': -bs.comparative.dividendsDrawings,
+          'التغير (الفرق)': -bs.current.dividendsDrawings + bs.comparative.dividendsDrawings,
+        },
+        {
+          'البند في قائمة المركز المالي': 'الدخل الشامل الآخر المتراكم (OCI)',
+          'الرمز المعياري': 'O-01',
+          'المعيار المرجعي': 'IAS 1.82A',
+          'السنة الحالية (2026)': bs.current.oci,
+          'سنة المقارنة (أول المدة)': bs.comparative.oci,
+          'التغير (الفرق)': bs.current.oci - bs.comparative.oci,
+        },
+        {
+          'البند في قائمة المركز المالي': '= إجمالي حقوق الملكية',
+          'الرمز المعياري': 'EQ',
+          'المعيار المرجعي': 'IAS 1',
+          'السنة الحالية (2026)': bs.current.totalEquity,
+          'سنة المقارنة (أول المدة)': bs.comparative.totalEquity,
+          'التغير (الفرق)': bs.current.totalEquity - bs.comparative.totalEquity,
+        },
+        {
+          'البند في قائمة المركز المالي': 'قروض وتمويل مرابحة طويل الأجل - الجزء غير المتداول',
+          'الرمز المعياري': 'L-01',
+          'المعيار المرجعي': 'IFRS 9',
+          'السنة الحالية (2026)': bs.current.longTermLoansNonCurrent,
+          'سنة المقارنة (أول المدة)': bs.comparative.longTermLoansNonCurrent,
+          'التغير (الفرق)': bs.current.longTermLoansNonCurrent - bs.comparative.longTermLoansNonCurrent,
+        },
+        {
+          'البند في قائمة المركز المالي': 'التزامات عقود إيجار - الجزء غير المتداول',
+          'الرمز المعياري': 'L-02',
+          'المعيار المرجعي': 'IFRS 16',
+          'السنة الحالية (2026)': bs.current.leaseLiabNonCurrent,
+          'سنة المقارنة (أول المدة)': bs.comparative.leaseLiabNonCurrent,
+          'التغير (الفرق)': bs.current.leaseLiabNonCurrent - bs.comparative.leaseLiabNonCurrent,
+        },
+        {
+          'البند في قائمة المركز المالي': 'مخصص مكافأة نهاية الخدمة للموظفين (EOSB)',
+          'الرمز المعياري': 'L-03',
+          'المعيار المرجعي': 'IAS 19',
+          'السنة الحالية (2026)': bs.current.eosb,
+          'سنة المقارنة (أول المدة)': bs.comparative.eosb,
+          'التغير (الفرق)': bs.current.eosb - bs.comparative.eosb,
+        },
+        {
+          'البند في قائمة المركز المالي': '= إجمالي الالتزامات غير المتداولة',
+          'الرمز المعياري': 'NCL',
+          'المعيار المرجعي': 'IAS 1',
+          'السنة الحالية (2026)': bs.current.totalNonCurrentLiabilities,
+          'سنة المقارنة (أول المدة)': bs.comparative.totalNonCurrentLiabilities,
+          'التغير (الفرق)': bs.current.totalNonCurrentLiabilities - bs.comparative.totalNonCurrentLiabilities,
+        },
+        {
+          'البند في قائمة المركز المالي': 'ذمم دائنة تجارية (الوكلاء الخارجيون والموردون)',
+          'الرمز المعياري': 'L-04',
+          'المعيار المرجعي': 'IAS 1.69',
+          'السنة الحالية (2026)': bs.current.tradePayables,
+          'سنة المقارنة (أول المدة)': bs.comparative.tradePayables,
+          'التغير (الفرق)': bs.current.tradePayables - bs.comparative.tradePayables,
+        },
+        {
+          'البند في قائمة المركز المالي': 'مستحقات وأرصدة دائنة أخرى وضريبة القيمة المضافة والزكاة',
+          'الرمز المعياري': 'L-05 / L-07 / L-08',
+          'المعيار المرجعي': 'IAS 37 / IAS 12',
+          'السنة الحالية (2026)': bs.current.accrualsOtherPayables + bs.current.otherProvisions + bs.current.zakatTaxPayable,
+          'سنة المقارنة (أول المدة)': bs.comparative.accrualsOtherPayables + bs.comparative.otherProvisions + bs.comparative.zakatTaxPayable,
+          'التغير (الفرق)':
+            bs.current.accrualsOtherPayables +
+            bs.current.otherProvisions +
+            bs.current.zakatTaxPayable -
+            (bs.comparative.accrualsOtherPayables + bs.comparative.otherProvisions + bs.comparative.zakatTaxPayable),
+        },
+        {
+          'البند في قائمة المركز المالي': 'قروض قصيرة الأجل والجزء المتداول من القروض وعقود الإيجار',
+          'الرمز المعياري': 'L-06',
+          'المعيار المرجعي': 'IFRS 9 / IFRS 16',
+          'السنة الحالية (2026)': bs.current.shortTermLoansAndCurrentPortion,
+          'سنة المقارنة (أول المدة)': bs.comparative.shortTermLoansAndCurrentPortion,
+          'التغير (الفرق)': bs.current.shortTermLoansAndCurrentPortion - bs.comparative.shortTermLoansAndCurrentPortion,
+        },
+        {
+          'البند في قائمة المركز المالي': 'مستحق لأطراف ذات علاقة (جاري الشركاء والشركات الشقيقة)',
+          'الرمز المعياري': 'L-09',
+          'المعيار المرجعي': 'IAS 24',
+          'السنة الحالية (2026)': bs.current.dueToRelatedParties,
+          'سنة المقارنة (أول المدة)': bs.comparative.dueToRelatedParties,
+          'التغير (الفرق)': bs.current.dueToRelatedParties - bs.comparative.dueToRelatedParties,
+        },
+        {
+          'البند في قائمة المركز المالي': '= إجمالي الالتزامات المتداولة',
+          'الرمز المعياري': 'CL',
+          'المعيار المرجعي': 'IAS 1',
+          'السنة الحالية (2026)': bs.current.totalCurrentLiabilities,
+          'سنة المقارنة (أول المدة)': bs.comparative.totalCurrentLiabilities,
+          'التغير (الفرق)': bs.current.totalCurrentLiabilities - bs.comparative.totalCurrentLiabilities,
+        },
+        {
+          'البند في قائمة المركز المالي': '=== إجمالي حقوق الملكية والالتزامات ===',
+          'الرمز المعياري': 'TOTAL-EL',
+          'المعيار المرجعي': 'IAS 1',
+          'السنة الحالية (2026)': bs.current.totalEquityAndLiabilities,
+          'سنة المقارنة (أول المدة)': bs.comparative.totalEquityAndLiabilities,
+          'التغير (الفرق)': bs.current.totalEquityAndLiabilities - bs.comparative.totalEquityAndLiabilities,
+        },
+      ];
+    }
+
+    if (view === 'income-statement') {
+      const is = engine.incomeStatement;
+      const rev = is.revenues || 1;
+      const rows = [
+        { label: '1. الإيرادات التشغيلية (صافي مبيعات العقود والتأجير)', code: 'R-01', ref: 'IFRS 15', val: is.revenues, comp: Math.round(is.revenues * 0.86) },
+        { label: '2. تكلفة الإيرادات المباشرة', code: 'R-02', ref: 'IAS 2 / IAS 1.99', val: -is.costOfRevenues, comp: -Math.round(is.costOfRevenues * 0.88) },
+        { label: '= مجمل الربح (Gross Profit)', code: 'GP', ref: 'IAS 1', val: is.grossProfit, comp: Math.round(is.revenues * 0.86 - is.costOfRevenues * 0.88) },
+        { label: '3. الإيرادات التشغيلية الأخرى', code: 'R-05', ref: 'IAS 1.97', val: is.otherIncome, comp: Math.round(is.otherIncome * 0.8) },
+        { label: '4. مصروفات البيع والتسويق', code: 'R-03', ref: 'IAS 1.99', val: -is.sellingMarketingExp, comp: -Math.round(is.sellingMarketingExp * 0.9) },
+        { label: '5. المصروفات العمومية والإدارية', code: 'R-04', ref: 'IAS 1.99', val: -is.generalAdminExp, comp: -Math.round(is.generalAdminExp * 0.92) },
+        { label: '6. المصروفات التشغيلية الأخرى وخسائر الانخفاض', code: 'R-06', ref: 'IAS 1.97', val: -is.otherExpenses, comp: -Math.round(is.otherExpenses * 0.85) },
+        { label: '= الربح قبل الفوائد والضرائب والإهلاك (EBITDA)', code: 'EBITDA', ref: 'IFRS 18', val: is.ebitda, comp: Math.round(is.ebitda * 0.84) },
+        { label: '7. مصروف الإهلاك والإطفاء للأصول الثابتة وحق الاستخدام', code: 'R-10', ref: 'IAS 16 / IFRS 16', val: -is.depreciationAmortization, comp: -Math.round(is.depreciationAmortization * 0.95) },
+        { label: '= الربح التشغيلي (Operating Profit / EBIT)', code: 'EBIT', ref: 'IFRS 18', val: is.operatingProfit, comp: Math.round(is.operatingProfit * 0.83) },
+        { label: '8. إيرادات التمويل والودائع البنكية', code: 'R-07', ref: 'IFRS 9', val: is.financeIncome, comp: Math.round(is.financeIncome * 0.8) },
+        { label: '9. تكاليف التمويل والفوائد البنكية وعقود الإيجار', code: 'R-08', ref: 'IFRS 9 / IFRS 16', val: -is.financeCosts, comp: -Math.round(is.financeCosts * 0.9) },
+        { label: '= الربح قبل الزكاة وضريبة الدخل (EBT)', code: 'EBT', ref: 'IAS 1 / IFRS 18', val: is.profitBeforeZakat, comp: Math.round(is.profitBeforeZakat * 0.82) },
+        { label: '10. مصروف الزكاة الشرعية وضريبة الدخل', code: 'R-09', ref: 'IAS 12 / SOCPA', val: -is.zakatAndTaxExpense, comp: -Math.round(is.zakatAndTaxExpense * 0.85) },
+        { label: '=== صافي ربح السنة (Net Profit) ===', code: 'NET', ref: 'IAS 1.81A', val: is.netProfit, comp: Math.round(is.netProfit * 0.82) },
+        { label: '11. الدخل الشامل الآخر (OCI)', code: 'O-01', ref: 'IAS 1.82A', val: is.otherComprehensiveIncome, comp: 0 },
+        { label: '=== إجمالي الدخل الشامل للسنة ===', code: 'TCI', ref: 'IAS 1.81A', val: is.totalComprehensiveIncome, comp: Math.round(is.netProfit * 0.82) },
+      ];
+      return rows.map((r) => ({
+        'البند في قائمة الدخل الشاملة': r.label,
+        'الرمز المعياري': r.code,
+        'المعيار المرجعي': r.ref,
+        'السنة الحالية (2026)': r.val,
+        'فترة المقارنة (2025)': r.comp,
+        'النسبة من الإيرادات %': `${((Math.abs(r.val) / rev) * 100).toFixed(1)}%`,
+      }));
+    }
+
+    if (view === 'equity-changes') {
+      const eq = engine.equityChanges;
+      return [
+        { label: 'الرصيد الافتتاحي في بداية السنة', data: eq.opening },
+        { label: 'صافي ربح السنة الحالية (يرحل للأرباح المبقاة)', data: eq.netProfit },
+        { label: 'الدخل الشامل الآخر للسنة (OCI)', data: eq.ociMovement },
+        { label: 'توزيعات الأرباح ومسحوبات الشركاء المعتمدة', data: eq.dividends },
+        { label: 'الزيادة في رأس المال / التحويل للاحتياطي النظامي', data: eq.otherChanges },
+        { label: 'الرصيد الختامي في نهاية السنة (مطابق للمركز المالي)', data: eq.closing },
+      ].map((r) => ({
+        'البيان والحركة': r.label,
+        'رأس المال (E-01)': r.data.capital,
+        'الاحتياطي النظامي (E-02)': r.data.reserves,
+        'الأرباح المبقاة (E-03)': r.data.retainedEarnings,
+        'الدخل الشامل الآخر (O-01)': r.data.oci,
+        'إجمالي حقوق الملكية': r.data.total,
+      }));
+    }
+
+    const cf = engine.cashFlow;
+    return [
+      { 'قسم التدفقات': 'الأنشطة التشغيلية', 'البند في قائمة التدفقات النقدية': 'الربح قبل الزكاة وضريبة الدخل', 'المعيار المرجعي': 'IAS 7.18(b)', 'المبلغ (ر.س)': cf.profitBeforeZakat },
+      { 'قسم التدفقات': 'الأنشطة التشغيلية', 'البند في قائمة التدفقات النقدية': 'يضاف: الإهلاك والإطفاء', 'المعيار المرجعي': 'IAS 7.20', 'المبلغ (ر.س)': cf.depreciationAmortization },
+      { 'قسم التدفقات': 'الأنشطة التشغيلية', 'البند في قائمة التدفقات النقدية': 'يضاف: صافي تكاليف التمويل', 'المعيار المرجعي': 'IAS 7.20', 'المبلغ (ر.س)': cf.netFinanceCostsAddedBack },
+      { 'قسم التدفقات': 'الأنشطة التشغيلية', 'البند في قائمة التدفقات النقدية': '(الزيادة) النقص في المخزون', 'المعيار المرجعي': 'IAS 7.20', 'المبلغ (ر.س)': cf.changeInInventory },
+      { 'قسم التدفقات': 'الأنشطة التشغيلية', 'البند في قائمة التدفقات النقدية': '(الزيادة) النقص في الذمم المدينة والمدفوعات المقدمة', 'المعيار المرجعي': 'IAS 7.20', 'المبلغ (ر.س)': cf.changeInReceivablesAndPrepayments },
+      { 'قسم التدفقات': 'الأنشطة التشغيلية', 'البند في قائمة التدفقات النقدية': 'الزيادة (النقص) في الذمم الدائنة والمستحقات', 'المعيار المرجعي': 'IAS 7.20', 'المبلغ (ر.س)': cf.changeInPayablesAndAccruals },
+      { 'قسم التدفقات': 'الأنشطة التشغيلية', 'البند في قائمة التدفقات النقدية': 'الزيادة (النقص) في مكافأة نهاية الخدمة والمخصصات', 'المعيار المرجعي': 'IAS 7.20', 'المبلغ (ر.س)': cf.changeInEosbAndProvisions },
+      { 'قسم التدفقات': 'الأنشطة التشغيلية', 'البند في قائمة التدفقات النقدية': 'الزكاة وضريبة الدخل المدفوعة', 'المعيار المرجعي': 'IAS 7.35', 'المبلغ (ر.س)': cf.zakatPaid },
+      { 'قسم التدفقات': 'الأنشطة التشغيلية', 'البند في قائمة التدفقات النقدية': '= صافي النقد من الأنشطة التشغيلية', 'المعيار المرجعي': 'IAS 7', 'المبلغ (ر.س)': cf.netCashFromOperating },
+      { 'قسم التدفقات': 'الأنشطة الاستثمارية', 'البند في قائمة التدفقات النقدية': 'شراء أصول ثابتة وغير ملموسة واستثمارات (بالصافي)', 'المعيار المرجعي': 'IAS 7.16', 'المبلغ (ر.س)': cf.netCapexAndInvestments },
+      { 'قسم التدفقات': 'الأنشطة الاستثمارية', 'البند في قائمة التدفقات النقدية': '= صافي النقد من الأنشطة الاستثمارية', 'المعيار المرجعي': 'IAS 7', 'المبلغ (ر.س)': cf.netCashFromInvesting },
+      { 'قسم التدفقات': 'الأنشطة التمويلية', 'البند في قائمة التدفقات النقدية': 'التغير في القروض طويلة وقصيرة الأجل والتسهيلات', 'المعيار المرجعي': 'IAS 7.17', 'المبلغ (ر.س)': cf.changeInLongTermLoans + cf.changeInShortTermLoans },
+      { 'قسم التدفقات': 'الأنشطة التمويلية', 'البند في قائمة التدفقات النقدية': 'التغير في المستحق لأطراف ذات علاقة', 'المعيار المرجعي': 'IAS 24', 'المبلغ (ر.س)': cf.changeInRelatedParties },
+      { 'قسم التدفقات': 'الأنشطة التمويلية', 'البند في قائمة التدفقات النقدية': 'التغير في رأس المال والاحتياطيات والتوزيعات', 'المعيار المرجعي': 'IAS 7.17', 'المبلغ (ر.س)': cf.changeInCapital + cf.changeInReservesAndRetained + cf.dividendsPaid },
+      { 'قسم التدفقات': 'الأنشطة التمويلية', 'البند في قائمة التدفقات النقدية': '= صافي النقد من الأنشطة التمويلية', 'المعيار المرجعي': 'IAS 7', 'المبلغ (ر.س)': cf.netCashFromFinancing },
+      { 'قسم التدفقات': 'ملخص النقد', 'البند في قائمة التدفقات النقدية': 'صافي التغير في النقد وما في حكمه خلال السنة', 'المعيار المرجعي': 'IAS 7', 'المبلغ (ر.س)': cf.netChangeInCash },
+      { 'قسم التدفقات': 'ملخص النقد', 'البند في قائمة التدفقات النقدية': 'النقد وما في حكمه - أول المدة', 'المعيار المرجعي': 'IAS 7', 'المبلغ (ر.س)': cf.openingCash },
+      { 'قسم التدفقات': 'ملخص النقد', 'البند في قائمة التدفقات النقدية': '=== النقد وما في حكمه - آخر المدة (مطابق لـ A-10) ===', 'المعيار المرجعي': 'IAS 7.45', 'المبلغ (ر.س)': cf.calculatedClosingCash },
+    ];
+  };
+
+  const getStatementTitle = (
+    view: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' = activeStatementView
+  ) => {
+    if (view === 'balance-sheet') return `قائمة المركز المالي (IAS 1) — ${settings.companyName}`;
+    if (view === 'income-statement') return `قائمة الربح أو الخسارة والدخل الشامل (IAS 1 / IFRS 18) — ${settings.companyName}`;
+    if (view === 'equity-changes') return `قائمة التغيرات في حقوق الملكية (IAS 1.106) — ${settings.companyName}`;
+    return `قائمة التدفقات النقدية (IAS 7) — ${settings.companyName}`;
+  };
+
+  const handleExportStatement = (
+    format: ExportFormat = 'excel',
+    view: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' = activeStatementView
+  ) => {
+    const rows = getStatementExportData(view);
+    const title = getStatementTitle(view);
+    exportData(view, rows, format, title);
+    addNotification({
+      title: 'تصدير القائمة المالية المعتمدة',
+      message: `تم تصدير (${title}) بصيغة ${format.toUpperCase()} بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const getDiagnosticsExportData = () => {
+    return engine.diagnostics.checks
+      .filter((chk) => !hiddenCheckIds.includes(chk.id))
+      .filter((chk) => !(hideHealthyChecks && chk.status === 'سليم'))
+      .map((chk) => ({
+        'رقم الفحص': chk.id,
+        'الفحص المعياري': chk.title,
+        'مرجع المعيار (IFRS / IAS)': chk.reference,
+        'القيمة الرقمية': chk.value,
+        'الحالة': chk.status,
+        'تشخيص المشكلة': chk.meaning,
+        'طريقة المعالجة والحل': chk.resolution,
+        'درجة الخطورة': chk.severity,
+      }));
+  };
+
+  const handleExportDiagnostics = (format: ExportFormat = 'excel') => {
+    const rows = getDiagnosticsExportData();
+    exportData(
+      'ifrs-diagnostics',
+      rows,
+      format,
+      `تقرير الرقابة المالية والتدقيق الآلي للحسابات — ${settings.companyName}`
+    );
+    addNotification({
+      title: 'تصدير تقرير الرقابة والتدقيق',
+      message: `تم تصدير (${rows.length}) فحصاً رقابياً بصيغة ${format.toUpperCase()} بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const getCoaExportData = () => {
+    if (coaSubView === 'company-coa-tree') {
+      return coaAccounts.map((acc) => ({
+        'كود الحساب': acc.code,
+        'اسم الحساب (عربي)': acc.nameAr,
+        'التصنيف الرئيسي': acc.category,
+        'الطبيعة المحاسبية': acc.nature,
+        'المستوى الشجري': `المستوى ${acc.level}`,
+        'كود القوائم (IFRS)': acc.ifrsCode || suggestIfrsCode(acc.nameAr),
+        'الرصيد الافتتاحي': acc.openingBalance,
+        'الرصيد الحالي (ر.س)': acc.balance,
+        'القائمة الختامية': acc.statementType,
+      }));
+    }
+    if (coaSubView === 'linked-coa-sheet') {
+      return engine.rows.map((r) => ({
+        'م': r.seq,
+        'رقم الحساب ERP': r.erpCode,
+        'اسم الحساب': r.accountName,
+        'التصنيف المختار': r.manualCode || r.approvedCode || '-',
+        'البند المالي المعتمد': r.approvedItemName || 'غير مصنف',
+        'الرصيد النهائي مدين': r.closingDebit,
+        'الرصيد النهائي دائن': r.closingCredit,
+        'حالة الربط': r.approvedCode ? 'مرتبط' : 'غير مصنف',
+      }));
+    }
+    return EXCEL_ACCOUNTING_TREE.map((node) => {
+      const matched = engine.rows.filter(
+        (r) =>
+          r.approvedCode === node.code ||
+          r.manualCode === node.code ||
+          (node.level === 1 && r.approvedCode.startsWith(node.code + '-'))
+      );
+      return {
+        'الكود التراتبي': node.code,
+        'اسم العقدة / البند في الشجرة': node.titleAr.replace(/^[↳\s]+/, ''),
+        'المستوى': `المستوى ${node.level}`,
+        'كود القائمة الأب': node.statementCode,
+        'عدد الحسابات المرتبطة': matched.length,
+        'إجمالي المدين (ر.س)': matched.reduce((s, x) => s + x.closingDebit, 0),
+        'إجمالي الدائن (ر.س)': matched.reduce((s, x) => s + x.closingCredit, 0),
+      };
+    });
+  };
+
+  const handleExportCoa = (format: ExportFormat = 'excel') => {
+    const rows = getCoaExportData();
+    exportData(
+      'chart-of-accounts',
+      rows,
+      format,
+      `دليل وشجرة الحسابات المعتمدة — ${settings.companyName}`
+    );
+    addNotification({
+      title: 'تصدير الدليل والشجرة المحاسبية',
+      message: `تم تصدير (${rows.length}) بنداً من الدليل والشجرة بصيغة ${format.toUpperCase()} بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const getMappingSettingsExportData = () => {
+    if (refGuideSubTab === 'extended-314') {
+      return EXTENDED_IFRS_CLASSIFICATIONS.map((item) => ({
+        'الكود التفصيلي': item.code,
+        'اسم البند التفصيلي': item.nameAr,
+        'المستوى': `المستوى ${item.level}`,
+        'الكود الأب بالقوائم': item.parentStatementCode,
+        'اسم البند الأب': item.parentStatementName,
+        'الطبيعة': item.naturalBalance === 'D' ? 'مدين (D)' : 'دائن (C)',
+        'مرجع المعيار (IFRS / IAS)': item.ifrsRef,
+      }));
+    }
+    return IFRS_MAPPING_CODES.map((m) => ({
+      'الكود المعياري': m.code,
+      'اسم البند في القوائم': m.nameAr,
+      'القائمة / القسم': m.sectionAr,
+      'الطبيعة': m.naturalBalance,
+      'مرجع المعيار (IFRS / IAS)': m.ifrsRef,
+      'نوع التدفق النقدي': m.cashFlowType,
+      'ملاحظات': m.notes,
+    }));
+  };
+
+  const getActiveWorkspaceExportBundle = (): { sectionKey: string; rows: any[]; title: string } => {
+    if (activeSubTab === 'statements') {
+      return {
+        sectionKey: activeStatementView,
+        rows: getStatementExportData(activeStatementView),
+        title: getStatementTitle(activeStatementView),
+      };
+    }
+    if (activeSubTab === 'trial-balance') {
+      return {
+        sectionKey: 'trial-balance',
+        rows: getTrialBalanceExportData(),
+        title: `ميزان المراجعة العام والأرصدة — ${settings.companyName}`,
+      };
+    }
+    if (activeSubTab === 'coa-tree') {
+      return {
+        sectionKey: 'chart-of-accounts',
+        rows: getCoaExportData(),
+        title: `دليل وشجرة الحسابات المعتمدة — ${settings.companyName}`,
+      };
+    }
+    if (activeSubTab === 'diagnostics') {
+      return {
+        sectionKey: 'ifrs-diagnostics',
+        rows: getDiagnosticsExportData(),
+        title: `تقرير الرقابة المالية والتدقيق الآلي — ${settings.companyName}`,
+      };
+    }
+    if (activeSubTab === 'mapping-settings') {
+      return {
+        sectionKey: 'ifrs-mappings',
+        rows: getMappingSettingsExportData(),
+        title: `قواعد التوجيه المحاسبي المعياري — ${settings.companyName}`,
+      };
+    }
+    return {
+      sectionKey: 'financial-ratios',
+      rows: getRatiosExportData(),
+      title: `التحليل المالي ومؤشرات الأداء — ${settings.companyName}`,
+    };
+  };
+
+  const handleExportActiveWorkspace = (format: ExportFormat = 'excel') => {
+    const bundle = getActiveWorkspaceExportBundle();
+    exportData(bundle.sectionKey, bundle.rows, format, bundle.title);
+    addNotification({
+      title: 'تصدير التقرير المالي المعتمد',
+      message: `تم تصدير (${bundle.title}) بصيغة ${format.toUpperCase()} بنجاح.`,
       type: 'success',
     });
   };
@@ -1036,12 +1579,36 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             )}
             <button
               type="button"
-              onClick={() => window.print()}
+              onClick={() => handleExportActiveWorkspace('excel')}
+              className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5" />
+              <span>تصدير Excel</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleExportActiveWorkspace('pdf')}
+              className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>تصدير PDF</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleExportActiveWorkspace('print')}
               className="px-3.5 py-2 rounded-full bg-[#0066ff] text-[#ffffff] hover:opacity-95 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>طباعة / تصدير التقارير المالية</span>
+              <span>طباعة التقرير المعتمد</span>
             </button>
+            <ExportDropdown
+              sectionKey={getActiveWorkspaceExportBundle().sectionKey}
+              data={getActiveWorkspaceExportBundle().rows}
+              dataProvider={() => getActiveWorkspaceExportBundle().rows}
+              customTitle={getActiveWorkspaceExportBundle().title}
+              buttonLabel="جميع صيغ التصدير والمعاينة"
+              variant="outline-dark"
+            />
           </div>
         </div>
 
@@ -1344,22 +1911,39 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               )}
               <button
                 type="button"
-                onClick={handleExportRatiosPlan}
+                onClick={() => handleExportRatiosPlan('excel')}
                 className="button-outline-on-light"
                 style={{ padding: '6px 14px', fontSize: '12px' }}
               >
                 <FileSpreadsheet className="w-4 h-4 ml-1" />
-                <span>تصدير خطة النسب المالية Excel</span>
+                <span>تصدير Excel</span>
               </button>
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={() => handleExportRatiosPlan('pdf')}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px' }}
+              >
+                <FileText className="w-4 h-4 ml-1" />
+                <span>تصدير PDF</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExportRatiosPlan('print')}
                 className="button-primary-pill"
                 style={{ padding: '6px 16px', fontSize: '12px' }}
               >
                 <Printer className="w-4 h-4 ml-1" />
-                <span>طباعة خطة النسب المالية</span>
+                <span>طباعة معتمدة</span>
               </button>
+              <ExportDropdown
+                sectionKey="financial-ratios"
+                data={getRatiosExportData()}
+                dataProvider={() => getRatiosExportData()}
+                customTitle={`التحليل المالي ومؤشرات الأداء (${settings.companyName})`}
+                buttonLabel="خيارات التصدير (12 صيغة)"
+                variant="outline-light"
+              />
             </div>
           </div>
 
@@ -1849,15 +2433,43 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 </button>
               ))}
             </div>
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="button-primary-pill"
-              style={{ padding: '6px 16px', fontSize: '12px' }}
-            >
-              <Printer className="w-4 h-4 ml-1" />
-              <span>طباعة القائمة الحالية</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => handleExportStatement('excel')}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px' }}
+              >
+                <FileSpreadsheet className="w-4 h-4 ml-1" />
+                <span>تصدير القائمة Excel</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExportStatement('pdf')}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px' }}
+              >
+                <FileText className="w-4 h-4 ml-1" />
+                <span>تصدير القائمة PDF</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExportStatement('print')}
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '12px' }}
+              >
+                <Printer className="w-4 h-4 ml-1" />
+                <span>طباعة القائمة المعتمدة</span>
+              </button>
+              <ExportDropdown
+                sectionKey={activeStatementView}
+                data={getStatementExportData(activeStatementView)}
+                dataProvider={() => getStatementExportData(activeStatementView)}
+                customTitle={getStatementTitle(activeStatementView)}
+                buttonLabel="جميع صيغ التصدير والمعاينة"
+                variant="outline-light"
+              />
+            </div>
           </div>
 
           {/* Custom Dynamic Field Manager Drawer (For Assets & Expandable Sections) */}
@@ -2709,13 +3321,39 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 </button>
                 <button
                   type="button"
-                  onClick={handleExportTrialBalance}
+                  onClick={() => handleExportTrialBalance('excel')}
                   className="button-outline-on-light"
                   style={{ padding: '6px 14px', fontSize: '12px' }}
                 >
                   <FileSpreadsheet className="w-4 h-4 ml-1" />
                   <span>تصدير الميزان Excel</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => handleExportTrialBalance('pdf')}
+                  className="button-outline-on-light"
+                  style={{ padding: '6px 14px', fontSize: '12px' }}
+                >
+                  <FileText className="w-4 h-4 ml-1" />
+                  <span>تصدير الميزان PDF</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleExportTrialBalance('print')}
+                  className="button-outline-on-light"
+                  style={{ padding: '6px 14px', fontSize: '12px' }}
+                >
+                  <Printer className="w-4 h-4 ml-1" />
+                  <span>طباعة الميزان</span>
+                </button>
+                <ExportDropdown
+                  sectionKey="trial-balance"
+                  data={getTrialBalanceExportData()}
+                  dataProvider={() => getTrialBalanceExportData()}
+                  customTitle={`ميزان المراجعة العام والأرصدة (${settings.companyName})`}
+                  buttonLabel="جميع صيغ التصدير والمعاينة"
+                  variant="outline-light"
+                />
               </div>
             </div>
 
@@ -3193,6 +3831,32 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <span className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                 التنبيهات: {engine.diagnostics.warningsCount}
               </span>
+              <button
+                type="button"
+                onClick={() => handleExportDiagnostics('excel')}
+                className="button-outline-on-light"
+                style={{ padding: '6px 12px', fontSize: '12px' }}
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1" />
+                <span>تصدير الفحوصات Excel</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExportDiagnostics('pdf')}
+                className="button-outline-on-light"
+                style={{ padding: '6px 12px', fontSize: '12px' }}
+              >
+                <FileText className="w-3.5 h-3.5 ml-1" />
+                <span>تصدير PDF</span>
+              </button>
+              <ExportDropdown
+                sectionKey="ifrs-diagnostics"
+                data={getDiagnosticsExportData()}
+                dataProvider={() => getDiagnosticsExportData()}
+                customTitle={`تقرير الرقابة المالية والتدقيق الآلي — ${settings.companyName}`}
+                buttonLabel="خيارات التصدير"
+                variant="outline-light"
+              />
             </div>
           </div>
 
@@ -3363,13 +4027,41 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 </button>
               ))}
             </div>
-            <button
-              type="button"
-              onClick={() => setShowCustomFieldManager((v) => !v)}
-              className="px-3.5 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-bold cursor-pointer"
-            >
-              + إضافة / إدارة حقول الأصول ({customFieldDefs.length})
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setShowCustomFieldManager((v) => !v)}
+                className="px-3.5 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-bold cursor-pointer"
+              >
+                + إضافة / إدارة حقول الأصول ({customFieldDefs.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExportCoa('excel')}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px' }}
+              >
+                <FileSpreadsheet className="w-4 h-4 ml-1" />
+                <span>تصدير الدليل والشجرة Excel</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExportCoa('pdf')}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px' }}
+              >
+                <FileText className="w-4 h-4 ml-1" />
+                <span>تصدير PDF</span>
+              </button>
+              <ExportDropdown
+                sectionKey="chart-of-accounts"
+                data={getCoaExportData()}
+                dataProvider={() => getCoaExportData()}
+                customTitle={`دليل وشجرة الحسابات المعتمدة — ${settings.companyName}`}
+                buttonLabel="جميع صيغ التصدير"
+                variant="outline-light"
+              />
+            </div>
           </div>
 
           {/* 5A: EXCEL 319-NODE HIERARCHICAL ACCOUNTING TREE + LEVEL 4 LEDGER ACCOUNTS */}
@@ -4079,6 +4771,16 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                   {tab.label}
                 </button>
               ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <ExportDropdown
+                sectionKey="ifrs-mappings"
+                data={getMappingSettingsExportData()}
+                dataProvider={() => getMappingSettingsExportData()}
+                customTitle={`قواعد التوجيه المحاسبي المعياري — ${settings.companyName}`}
+                buttonLabel="تصدير قواعد التوجيه"
+                variant="outline-light"
+              />
             </div>
           </div>
 

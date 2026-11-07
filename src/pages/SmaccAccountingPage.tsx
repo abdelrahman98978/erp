@@ -1231,7 +1231,35 @@ export const SmaccAccountingPage: React.FC = () => {
                 <span>تصدير كشف الحساب Excel</span>
               </button>
               <button
-                onClick={() => window.print()}
+                onClick={() => {
+                  const exportRows = ledgerEntries.map(e => ({
+                    'التاريخ': e.date,
+                    'المرجع': e.refNo,
+                    'البيان': e.desc,
+                    'مدين': e.debit,
+                    'دائن': e.credit,
+                    'الرصيد التراكمي': e.cumulative
+                  }));
+                  exportData('general-ledger', exportRows, 'pdf', `كشف حساب دفتر الأستاذ (${selectedLedgerAccount}) - ${activeCompany.name}`);
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <FileText className="w-4 h-4 ml-1 text-[#141414]" />
+                <span>تصدير PDF</span>
+              </button>
+              <button
+                onClick={() => {
+                  const exportRows = ledgerEntries.map(e => ({
+                    'التاريخ': e.date,
+                    'المرجع': e.refNo,
+                    'البيان': e.desc,
+                    'مدين': e.debit,
+                    'دائن': e.credit,
+                    'الرصيد التراكمي': e.cumulative
+                  }));
+                  exportData('general-ledger', exportRows, 'print', `كشف حساب دفتر الأستاذ (${selectedLedgerAccount}) - ${activeCompany.name}`);
+                }}
                 className="button-primary-pill"
                 style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
@@ -1391,14 +1419,59 @@ export const SmaccAccountingPage: React.FC = () => {
                 كافة بنود الإيرادات، تكلفة الإيرادات، مجمل الربح، المصروفات التشغيلية، EBITDA، الإهلاك، الزكاة، وصافي الربح والدخل الشامل
               </p>
             </div>
-            <button
-              onClick={() => window.print()}
-              className="button-primary-pill"
-              style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
-            >
-              <Printer className="w-4 h-4 ml-1" />
-              <span>طباعة قائمة الدخل</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => {
+                  const rows = [
+                    { 'البند في قائمة الدخل': '1. إجمالي الإيرادات التشغيلية المكتسبة (R-01)', 'الرمز المعياري': 'R-01', 'المعيار المرجعي': 'IFRS 15', 'السنة الحالية': totalRevenues },
+                    { 'البند في قائمة الدخل': '2. (-) تكلفة الإيرادات والتشغيل المباشرة (R-02)', 'الرمز المعياري': 'R-02', 'المعيار المرجعي': 'IAS 1.99', 'السنة الحالية': -Math.round(totalExpenses * 0.62) },
+                    { 'البند في قائمة الدخل': '= مجمل الربح التشغيلي (Gross Profit)', 'الرمز المعياري': 'GP', 'المعيار المرجعي': 'IAS 1', 'السنة الحالية': totalRevenues - Math.round(totalExpenses * 0.62) },
+                    { 'البند في قائمة الدخل': '3. (-) المصروفات البيعية والعمومية والإدارية (R-03/R-04)', 'الرمز المعياري': 'R-03/R-04', 'المعيار المرجعي': 'IAS 1.99', 'السنة الحالية': -(totalExpenses - Math.round(totalExpenses * 0.62)) },
+                    { 'البند في قائمة الدخل': '=== صافي أرباح الفترة والدخل الشامل ===', 'الرمز المعياري': 'NET', 'المعيار المرجعي': 'IAS 1 / IFRS 18', 'السنة الحالية': netProfit },
+                  ];
+                  exportData('income-statement', rows, 'excel', `قائمة الدخل الشاملة - ${activeCompany.name}`);
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
+                <span>تصدير Excel</span>
+              </button>
+              <button
+                onClick={() => {
+                  const rows = [
+                    { 'البند في قائمة الدخل': '1. إجمالي الإيرادات التشغيلية المكتسبة (R-01)', 'الرمز المعياري': 'R-01', 'المعيار المرجعي': 'IFRS 15', 'السنة الحالية': totalRevenues },
+                    { 'البند في قائمة الدخل': '2. (-) تكلفة الإيرادات والتشغيل المباشرة (R-02)', 'الرمز المعياري': 'R-02', 'المعيار المرجعي': 'IAS 1.99', 'السنة الحالية': -Math.round(totalExpenses * 0.62) },
+                    { 'البند في قائمة الدخل': '= مجمل الربح التشغيلي (Gross Profit)', 'الرمز المعياري': 'GP', 'المعيار المرجعي': 'IAS 1', 'السنة الحالية': totalRevenues - Math.round(totalExpenses * 0.62) },
+                    { 'البند في قائمة الدخل': '3. (-) المصروفات البيعية والعمومية والإدارية (R-03/R-04)', 'الرمز المعياري': 'R-03/R-04', 'المعيار المرجعي': 'IAS 1.99', 'السنة الحالية': -(totalExpenses - Math.round(totalExpenses * 0.62)) },
+                    { 'البند في قائمة الدخل': '=== صافي أرباح الفترة والدخل الشامل ===', 'الرمز المعياري': 'NET', 'المعيار المرجعي': 'IAS 1 / IFRS 18', 'السنة الحالية': netProfit },
+                  ];
+                  exportData('income-statement', rows, 'pdf', `قائمة الدخل الشاملة - ${activeCompany.name}`);
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <FileText className="w-4 h-4 ml-1 text-[#141414]" />
+                <span>تصدير PDF</span>
+              </button>
+              <button
+                onClick={() => {
+                  const rows = [
+                    { 'البند في قائمة الدخل': '1. إجمالي الإيرادات التشغيلية المكتسبة (R-01)', 'الرمز المعياري': 'R-01', 'المعيار المرجعي': 'IFRS 15', 'السنة الحالية': totalRevenues },
+                    { 'البند في قائمة الدخل': '2. (-) تكلفة الإيرادات والتشغيل المباشرة (R-02)', 'الرمز المعياري': 'R-02', 'المعيار المرجعي': 'IAS 1.99', 'السنة الحالية': -Math.round(totalExpenses * 0.62) },
+                    { 'البند في قائمة الدخل': '= مجمل الربح التشغيلي (Gross Profit)', 'الرمز المعياري': 'GP', 'المعيار المرجعي': 'IAS 1', 'السنة الحالية': totalRevenues - Math.round(totalExpenses * 0.62) },
+                    { 'البند في قائمة الدخل': '3. (-) المصروفات البيعية والعمومية والإدارية (R-03/R-04)', 'الرمز المعياري': 'R-03/R-04', 'المعيار المرجعي': 'IAS 1.99', 'السنة الحالية': -(totalExpenses - Math.round(totalExpenses * 0.62)) },
+                    { 'البند في قائمة الدخل': '=== صافي أرباح الفترة والدخل الشامل ===', 'الرمز المعياري': 'NET', 'المعيار المرجعي': 'IAS 1 / IFRS 18', 'السنة الحالية': netProfit },
+                  ];
+                  exportData('income-statement', rows, 'print', `قائمة الدخل الشاملة - ${activeCompany.name}`);
+                }}
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <Printer className="w-4 h-4 ml-1" />
+                <span>طباعة قائمة الدخل</span>
+              </button>
+            </div>
           </div>
 
           <div className="card-pricing p-6 bg-white rounded-2xl space-y-3 border border-zinc-200 text-xs">
@@ -1449,14 +1522,62 @@ export const SmaccAccountingPage: React.FC = () => {
                 إجمالي الأصول والخصوم وحقوق الملكية مع إمكانية إضافة حقول جديدة للأصول وتعديل وتوسيع الأقسام
               </p>
             </div>
-            <button
-              onClick={() => window.print()}
-              className="button-primary-pill"
-              style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
-            >
-              <Printer className="w-4 h-4 ml-1" />
-              <span>طباعة الميزانية العمومية</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => {
+                  const rows = rawAccounts
+                    .filter(a => a.category === 'أصول' || a.category === 'خصوم' || a.category === 'حقوق ملكية')
+                    .map(a => ({
+                      'البند في قائمة المركز المالي': a.nameAr,
+                      'الرمز المعياري': a.ifrsCode || a.code,
+                      'التصنيف المحاسبي': a.category,
+                      'الرصيد الحالي': a.balance,
+                    }));
+                  exportData('balance-sheet', rows, 'excel', `قائمة المركز المالي - ${activeCompany.name}`);
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
+                <span>تصدير Excel</span>
+              </button>
+              <button
+                onClick={() => {
+                  const rows = rawAccounts
+                    .filter(a => a.category === 'أصول' || a.category === 'خصوم' || a.category === 'حقوق ملكية')
+                    .map(a => ({
+                      'البند في قائمة المركز المالي': a.nameAr,
+                      'الرمز المعياري': a.ifrsCode || a.code,
+                      'التصنيف المحاسبي': a.category,
+                      'الرصيد الحالي': a.balance,
+                    }));
+                  exportData('balance-sheet', rows, 'pdf', `قائمة المركز المالي - ${activeCompany.name}`);
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <FileText className="w-4 h-4 ml-1 text-[#141414]" />
+                <span>تصدير PDF</span>
+              </button>
+              <button
+                onClick={() => {
+                  const rows = rawAccounts
+                    .filter(a => a.category === 'أصول' || a.category === 'خصوم' || a.category === 'حقوق ملكية')
+                    .map(a => ({
+                      'البند في قائمة المركز المالي': a.nameAr,
+                      'الرمز المعياري': a.ifrsCode || a.code,
+                      'التصنيف المحاسبي': a.category,
+                      'الرصيد الحالي': a.balance,
+                    }));
+                  exportData('balance-sheet', rows, 'print', `قائمة المركز المالي - ${activeCompany.name}`);
+                }}
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <Printer className="w-4 h-4 ml-1" />
+                <span>طباعة الميزانية العمومية</span>
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1927,7 +2048,15 @@ export const SmaccAccountingPage: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => window.print()}
+                  onClick={() => exportData('journals', [selectedJournalForPreview], 'pdf', `قيد يومية ${selectedJournalForPreview.ref_no} - ${activeCompany.name}`)}
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px' }}
+                >
+                  <FileText className="w-3.5 h-3.5 ml-1" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() => exportData('journals', [selectedJournalForPreview], 'print', `قيد يومية ${selectedJournalForPreview.ref_no} - ${activeCompany.name}`)}
                   className="button-white-pill"
                   style={{ padding: '4px 14px', fontSize: '11px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
                 >
@@ -2012,7 +2141,15 @@ export const SmaccAccountingPage: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => window.print()}
+                  onClick={() => exportData('vouchers', [selectedVoucherForPreview], 'pdf', `سند ${selectedVoucherForPreview.type} رقم ${selectedVoucherForPreview.voucher_no} - ${activeCompany.name}`)}
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px' }}
+                >
+                  <FileText className="w-3.5 h-3.5 ml-1" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() => exportData('vouchers', [selectedVoucherForPreview], 'print', `سند ${selectedVoucherForPreview.type} رقم ${selectedVoucherForPreview.voucher_no} - ${activeCompany.name}`)}
                   className="button-white-pill"
                   style={{ padding: '4px 14px', fontSize: '11px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
                 >
