@@ -8,6 +8,7 @@ import { chartOfAccountsService, AccountItem } from '../services/accounting/char
 import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { BudgetVsActualWidget } from '../components/finance/BudgetVsActualWidget';
+import { IfrsFinancialEngineWorkspace } from '../components/finance/IfrsFinancialEngineWorkspace';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { 
@@ -95,6 +96,8 @@ export type FinanceTab =
   | 'chart-of-accounts' 
   | 'budget'
   | 'period-closing' 
+  | 'ifrs-engine' 
+  | 'financial-ratios' 
   | 'tax';
 
 export const FinancePage: React.FC = () => {
@@ -143,6 +146,10 @@ export const FinancePage: React.FC = () => {
         return 'musaned-escrow';
       case 'suppliers-agents':
         return 'suppliers-agents';
+      case 'ifrs-engine':
+        return 'ifrs-engine';
+      case 'financial-ratios':
+        return 'financial-ratios';
       default:
         return 'overview';
     }
@@ -413,6 +420,8 @@ export const FinancePage: React.FC = () => {
               { id: 'income-statement', label: 'قائمة الدخل والأرباح (P&L)', icon: TrendingUp },
               { id: 'financial-position', label: 'قائمة المركز المالي (Balance Sheet)', icon: Landmark },
               { id: 'cash-flow', label: 'قائمة التدفقات النقدية (Cash Flow)', icon: Coins },
+              { id: 'financial-ratios', label: 'النسب المالية وخطة التحسين (16 نسبة)', icon: BarChart3 },
+              { id: 'ifrs-engine', label: 'محرك وفحوصات IFRS (211 حساباً / 34 فحصاً)', icon: ShieldCheck },
             ].map(t => {
               const isActive = activeTab === t.id;
               const IconComp = t.icon;
@@ -2300,6 +2309,16 @@ export const FinancePage: React.FC = () => {
             </button>
           </div>
         </div>
+      )}
+
+      {/* TAB: IFRS ENGINE & 34 DIAGNOSTICS */}
+      {activeTab === 'ifrs-engine' && (
+        <IfrsFinancialEngineWorkspace initialSection="diagnostics" />
+      )}
+
+      {/* TAB: FINANCIAL RATIOS & IMPROVEMENT PLAN */}
+      {activeTab === 'financial-ratios' && (
+        <IfrsFinancialEngineWorkspace initialSection="ratios-plan" />
       )}
 
       {/* MODAL: FINANCIAL DRILL-DOWN */}

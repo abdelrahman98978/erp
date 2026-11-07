@@ -26,6 +26,8 @@ import {
   UploadCloud,
   Activity,
   Sparkles,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -102,6 +104,70 @@ export const Header: React.FC<HeaderProps> = ({
   );
   const [showUniversalExtractor, setShowUniversalExtractor] = useState<boolean>(false);
   const [langSearch, setLangSearch] = useState<string>('');
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  const toggleFullscreen = React.useCallback(async () => {
+    try {
+      const doc = document as Document & {
+        webkitFullscreenElement?: Element | null;
+        webkitExitFullscreen?: () => Promise<void>;
+      };
+      const docEl = document.documentElement as HTMLElement & {
+        webkitRequestFullscreen?: () => Promise<void>;
+      };
+
+      const currentlyFull = Boolean(doc.fullscreenElement || doc.webkitFullscreenElement);
+      if (!currentlyFull && !isFullscreen) {
+        if (docEl.requestFullscreen) {
+          await docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) {
+          await docEl.webkitRequestFullscreen();
+        }
+        document.documentElement.classList.add('erp-fullscreen-mode');
+        setIsFullscreen(true);
+      } else {
+        if (doc.fullscreenElement && doc.exitFullscreen) {
+          await doc.exitFullscreen();
+        } else if (doc.webkitFullscreenElement && doc.webkitExitFullscreen) {
+          await doc.webkitExitFullscreen();
+        }
+        document.documentElement.classList.remove('erp-fullscreen-mode');
+        setIsFullscreen(false);
+      }
+    } catch {
+      const next = !isFullscreen;
+      document.documentElement.classList.toggle('erp-fullscreen-mode', next);
+      setIsFullscreen(next);
+    }
+  }, [isFullscreen]);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      const doc = document as Document & { webkitFullscreenElement?: Element | null };
+      const active = Boolean(doc.fullscreenElement || doc.webkitFullscreenElement);
+      setIsFullscreen(active);
+      document.documentElement.classList.toggle('erp-fullscreen-mode', active);
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && (e.key === 'f' || e.key === 'F' || e.key === 'ب')) {
+        e.preventDefault();
+        void toggleFullscreen();
+      }
+    };
+    const handleCustomToggle = () => {
+      void toggleFullscreen();
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('erp-toggle-fullscreen', handleCustomToggle);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('erp-toggle-fullscreen', handleCustomToggle);
+    };
+  }, [toggleFullscreen]);
 
   useEffect(() => {
     if (effectiveProfile?.branch) {
@@ -387,6 +453,29 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             )}
           </div>
+
+          {/* Fullscreen / Screen Maximize Toggle Button */}
+          <button
+            type="button"
+            data-slot="fullscreen-toggle-btn"
+            className={`px-2.5 h-9 rounded-full border flex items-center gap-1.5 text-xs font-semibold transition-all shrink-0 cursor-pointer active:scale-95 ${
+              isFullscreen
+                ? 'bg-[#141414] text-[#ffffff] border-[#141414]'
+                : 'bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border-[#e0e0e0]'
+            }`}
+            onClick={() => void toggleFullscreen()}
+            title={isFullscreen ? 'تصغير الشاشة (Alt + F / Esc)' : 'تكبير الشاشة - ملء الشاشة (Alt + F)'}
+            aria-label={isFullscreen ? 'تصغير الشاشة' : 'تكبير الشاشة'}
+          >
+            {isFullscreen ? (
+              <Minimize2 className="w-4 h-4 shrink-0" />
+            ) : (
+              <Maximize2 className="w-4 h-4 shrink-0" />
+            )}
+            <span className="hidden xl:inline">
+              {isFullscreen ? 'تصغير الشاشة' : 'تكبير الشاشة'}
+            </span>
+          </button>
 
           {/* Quick Search Button */}
           <button

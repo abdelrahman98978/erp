@@ -421,63 +421,6 @@ function approximateSyncTranslation(arabicText: string, langCode: string): strin
   return changed ? arabicText.replace(trimmed, working) : null;
 }
 
-// Pending async queue: Arabic string -> Set of callbacks to update DOM nodes
-const pendingQueue = new Map<string, Set<(translated: string) => void>>();
-let batchTimer: ReturnType<typeof setTimeout> | null = null;
-let activeLangCode = 'ar';
-
-function scheduleBatchFlush(langCode: string) {
-  if (batchTimer) return;
-  batchTimer = setTimeout(() => {
-    batchTimer = null;
-    void flushPendingTranslations(langCode);
-  }, 45);
-}
-
-async function flushPendingTranslations(langCode: string): Promise<void> {
-  if (langCode === 'ar' || pendingQueue.size === 0) return;
-
-  const entries = Array.from(pendingQueue.entries());
-  pendingQueue.clear();
-
-  const cache = getLangCache(langCode);
-  const CHUNK_SIZE = 28;
-
-  for (let i = 0; i < entries.length; i += CHUNK_SIZE) {
-    if (activeLangCode !== langCode) return;
-    const chunk = entries.slice(i, i + CHUNK_SIZE);
-    const texts = chunk.map(([txt]) => txt);
-
-    try {
-      // Join with newline delimiter for single-request batch translation
-      const joined = texts.join('\n');
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=${encodeURIComponent(
-        langCode
-      )}&dt=t&q=${encodeURIComponent(joined)}`;
-
-      const res = await fetch(url);
-      if (!res.ok) continue;
-      const data = await res.json();
-
-      if (Array.isArray(data) && Array.isArray(data[0])) {
-        const fullTranslated = data[0].map((part: unknown[]) => (part && part[0] ? String(part[0]) : '')).join('');
-        const lines = fullTranslated.split('\n');
-
-        chunk.forEach(([origAr, callbacks], idx) => {
-          const translatedLine = (lines[idx] || '').trim();
-          if (translatedLine && translatedLine !== origAr) {
-            cache.set(origAr, translatedLine);
-            callbacks.forEach((cb) => cb(translatedLine));
-          }
-        });
-        saveLangCache(langCode);
-      }
-    } catch {
-      // Offline or blocked: keep synchronous dictionary translation
-    }
-  }
-}
-
 interface ErpTextNode extends Text {
   __erpOrigAr?: string;
   __erpLastTranslatedVal?: string;
@@ -537,28 +480,16 @@ function processTextNode(node: ErpTextNode, langCode: string): void {
 
   // Apply fast synchronous subphrase approximation immediately if available
   const approx = approximateSyncTranslation(origAr, langCode);
-  if (approx && node.nodeValue !== approx) {
+  if (approx) {
     node.__erpLastTranslatedVal = approx;
     node.__erpLastLang = langCode;
-    node.nodeValue = approx;
-  }
-
-  // Queue full phrase for exact target-language translation
-  let cbSet = pendingQueue.get(trimmedOrig);
-  if (!cbSet) {
-    cbSet = new Set();
-    pendingQueue.set(trimmedOrig, cbSet);
-  }
-  cbSet.add((translated: string) => {
-    if (activeLangCode !== langCode || !node.isConnected) return;
-    const updatedVal = origAr.replace(trimmedOrig, translated);
-    node.__erpLastTranslatedVal = updatedVal;
-    node.__erpLastLang = langCode;
-    if (node.nodeValue !== updatedVal) {
-      node.nodeValue = updatedVal;
+    if (node.nodeValue !== approx) {
+      node.nodeValue = approx;
     }
-  });
-  scheduleBatchFlush(langCode);
+  } else {
+    node.__erpLastTranslatedVal = currentVal;
+    node.__erpLastLang = langCode;
+  }
 }
 
 const TRANSLATABLE_ATTRS = ['placeholder', 'title', 'aria-label'] as const;
@@ -568,17 +499,23 @@ function processElementAttributes(el: Element, langCode: string): void {
 
   for (const attr of TRANSLATABLE_ATTRS) {
     const dataAttr = `data-erp-orig-${attr}`;
+    const langAttr = `data-erp-lang-${attr}`;
     const currentAttr = el.getAttribute(attr);
 
     if (langCode === 'ar') {
       const savedOrig = el.getAttribute(dataAttr);
       if (savedOrig && currentAttr !== savedOrig) {
         el.setAttribute(attr, savedOrig);
+        el.setAttribute(langAttr, 'ar');
       }
       continue;
     }
 
-    if (currentAttr && ARABIC_CHAR_REGEX.test(currentAttr)) {
+    if (el.getAttribute(langAttr) === langCode) {
+      continue;
+    }
+
+    if (currentAttr && ARABIC_CHAR_REGEX.test(currentAttr) && !el.getAttribute(dataAttr)) {
       el.setAttribute(dataAttr, currentAttr);
     }
 
@@ -589,6 +526,7 @@ function processElementAttributes(el: Element, langCode: string): void {
     const exact = lookupExactTranslation(trimmedOrig, langCode);
     if (exact) {
       if (currentAttr !== exact) el.setAttribute(attr, exact);
+      el.setAttribute(langAttr, langCode);
       continue;
     }
 
@@ -596,22 +534,11 @@ function processElementAttributes(el: Element, langCode: string): void {
     if (approx && currentAttr !== approx) {
       el.setAttribute(attr, approx);
     }
-
-    let cbSet = pendingQueue.get(trimmedOrig);
-    if (!cbSet) {
-      cbSet = new Set();
-      pendingQueue.set(trimmedOrig, cbSet);
-    }
-    cbSet.add((translated: string) => {
-      if (activeLangCode !== langCode || !el.isConnected) return;
-      el.setAttribute(attr, translated);
-    });
-    scheduleBatchFlush(langCode);
+    el.setAttribute(langAttr, langCode);
   }
 }
 
 export function translateDomSubtree(root: Node | null, langCode: string): void {
-  activeLangCode = langCode;
   if (!root || typeof document === 'undefined') return;
 
   try {

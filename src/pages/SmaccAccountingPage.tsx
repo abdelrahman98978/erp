@@ -37,6 +37,7 @@ import { BusinessIllustration } from '../components/common/BusinessIllustration'
 import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { IfrsFinancialEngineWorkspace } from '../components/finance/IfrsFinancialEngineWorkspace';
 
 export interface SmaccAccountNode {
   code: string;
@@ -161,7 +162,7 @@ export const SmaccAccountingPage: React.FC = () => {
 
   const mapStoreTabToSmaccTab = (
     tabKey: string
-  ): 'coa' | 'cost-centers' | 'journals' | 'vouchers' | 'ledger' | 'trial-balance' | 'income-statement' | 'balance-sheet' | 'fiscal-closing' => {
+  ): 'coa' | 'cost-centers' | 'journals' | 'vouchers' | 'ledger' | 'trial-balance' | 'income-statement' | 'balance-sheet' | 'fiscal-closing' | 'ifrs-engine' | 'financial-ratios' => {
     switch (tabKey) {
       case 'receipt-vouchers':
       case 'payment-vouchers':
@@ -194,13 +195,17 @@ export const SmaccAccountingPage: React.FC = () => {
         return 'cost-centers';
       case 'period-closing':
         return 'fiscal-closing';
+      case 'ifrs-engine':
+        return 'ifrs-engine';
+      case 'financial-ratios':
+        return 'financial-ratios';
       default:
         return 'coa';
     }
   };
 
   const [activeTab, setActiveTab] = useState<
-    'coa' | 'cost-centers' | 'journals' | 'vouchers' | 'ledger' | 'trial-balance' | 'income-statement' | 'balance-sheet' | 'fiscal-closing'
+    'coa' | 'cost-centers' | 'journals' | 'vouchers' | 'ledger' | 'trial-balance' | 'income-statement' | 'balance-sheet' | 'fiscal-closing' | 'ifrs-engine' | 'financial-ratios'
   >(() => mapStoreTabToSmaccTab(storeActiveTab));
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -815,6 +820,8 @@ export const SmaccAccountingPage: React.FC = () => {
             { id: 'balance-sheet', label: '7. المركز المالي' },
             { id: 'cost-centers', label: '8. مراكز التكلفة' },
             { id: 'fiscal-closing', label: '9. الإقفال السنوي' },
+            { id: 'ifrs-engine', label: '10. محرك القوائم والفحوصات IFRS (211 حساباً)' },
+            { id: 'financial-ratios', label: '11. النسب المالية وخطة التحسين' },
           ].map(tab => {
             const isActive = activeTab === tab.id;
             return (
@@ -1488,6 +1495,16 @@ export const SmaccAccountingPage: React.FC = () => {
             اعتماد الإقفال وترحيل الأرصدة الافتتاحية
           </button>
         </div>
+      )}
+
+      {/* 10. IFRS ENGINE & 34 AUDIT CHECKS TAB */}
+      {activeTab === 'ifrs-engine' && (
+        <IfrsFinancialEngineWorkspace initialSection="diagnostics" />
+      )}
+
+      {/* 11. FINANCIAL RATIOS & STRATEGIC PLAN TAB */}
+      {activeTab === 'financial-ratios' && (
+        <IfrsFinancialEngineWorkspace initialSection="ratios-plan" />
       )}
 
       {/* MODAL 1: Add New Account */}
