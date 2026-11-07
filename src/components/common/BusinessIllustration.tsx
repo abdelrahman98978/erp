@@ -135,7 +135,6 @@ export const BusinessIllustration: React.FC<BusinessIllustrationProps> = ({
           alt={meta.titleAr}
           onError={() => setImgFailed(true)}
           className="w-full h-full object-contain"
-          loading="eager"
         />
       </div>
     );

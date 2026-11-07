@@ -50,7 +50,6 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
           alt={String(companyId)}
           className="w-full h-full object-contain"
           onError={() => setImgError(true)}
-          loading="eager"
         />
       </div>
     );
