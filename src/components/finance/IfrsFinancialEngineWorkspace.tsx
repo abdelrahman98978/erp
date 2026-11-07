@@ -45,6 +45,7 @@ import {
   ifrsFinancialEngineService,
   suggestIfrsCode,
   extractPrimaryIfrsCode,
+  resolveIfrsClassificationMetadata,
 } from '../../services/accounting/ifrsFinancialEngineService';
 import {
   EXTENDED_IFRS_CLASSIFICATIONS,
@@ -172,9 +173,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   const [coaSubView, setCoaSubView] = useState<'excel-tree-319' | 'company-coa-tree' | 'linked-coa-sheet'>('excel-tree-319');
   const [expandedExcelTreeCodes, setExpandedExcelTreeCodes] = useState<Record<string, boolean>>({
     'A': true, 'L': true, 'E': true, 'O': true, 'R': true,
-    'A-01': true, 'A-10': true, 'L-04': true, 'R-01': true, 'R-02': true, 'R-04': true,
+    'A-01': true, 'A-07': true, 'A-10': true, 'L-04': true, 'L-05': true, 'E-01': true, 'R-01': true, 'R-02': true, 'R-04': true,
   });
   const [excelTreeSearch, setExcelTreeSearch] = useState('');
+  const [excelTreeFilter, setExcelTreeFilter] = useState<'ALL' | 'ACTIVE_ONLY' | 'A' | 'L' | 'E_O' | 'R'>('ALL');
+  const [coaTreeCategoryFilter, setCoaTreeCategoryFilter] = useState<'ALL' | 'أصول' | 'خصوم' | 'حقوق ملكية' | 'إيرادات' | 'مصروفات'>('ALL');
+  const [coaTreeLevelFilter, setCoaTreeLevelFilter] = useState<'ALL' | '1-2' | '3' | '4'>('ALL');
+  const [linkedCoaSectionFilter, setLinkedCoaSectionFilter] = useState<string>('ALL');
+  const [linkedCoaSearch, setLinkedCoaSearch] = useState<string>('');
 
   // Editable Labels & Custom Sub-Nodes for Tree, Assets/Balance Sheet & Income Statement
   const [statementLabelOverrides, setStatementLabelOverrides] = useState<Record<string, string>>(() => {
@@ -859,7 +865,116 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
     setEditingCoaId(null);
     addNotification({
       title: 'حفظ تعديل الحساب في الدليل والشجرة',
-      message: `تم تحديث بيانات الحساب (${coaEditDraft.nameAr}) وحقوله المخصصة بنجاح.`,
+      message: `تم تحديث بيانات الحساب (${coaEditDraft.nameAr}) وإعادة احتساب أرصدة الأبواب التجميعية بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleOrganizeAndCompleteCompanyCoa = () => {
+    const { accounts, addedCount } = chartOfAccountsService.syncAndCompleteMissingAccounts(activeCompanyId);
+    setCoaAccounts(accounts);
+    const allParents: Record<string, boolean> = {};
+    accounts.filter((a) => a.isHeader && a.level <= 3).forEach((a) => {
+      allParents[a.code] = true;
+    });
+    setExpandedTreeIds(allParents);
+    addNotification({
+      title: 'ترتيب واستكمال الشجرة المحاسبية',
+      message:
+        addedCount > 0
+          ? `تم استكمال (${addedCount}) حساباً ومستوى قياسياً ناقصاً وترتيب الشجرة (4 مستويات) وإعادة احتساب أرصدة الأبواب التجميعية.`
+          : `تمت مراجعة وترتيب الشجرة القياسية (${accounts.length} حساباً في 4 مستويات) وإعادة احتساب كافة الأرصدة التجميعية بدقة.`,
+      type: 'success',
+    });
+  };
+
+  const handleSyncCompanyCoaWithTrialBalance = () => {
+    const synced = chartOfAccountsService.syncBalancesFromTrialBalance(activeCompanyId, engine.rows);
+    setCoaAccounts(synced);
+    addNotification({
+      title: 'مزامنة أرصدة الشجرة مع ميزان المراجعة',
+      message: `تمت مزامنة أرصدة وحركات (${synced.length}) حساباً في الشجرة مع أرصدة ميزان المراجعة الفعلي (${engine.rows.length} حساباً).`,
+      type: 'success',
+    });
+  };
+
+  const handleResetCompanyCoaToStandard = () => {
+    const reset = chartOfAccountsService.resetToStandardTree(activeCompanyId);
+    setCoaAccounts(reset);
+    const allParents: Record<string, boolean> = {};
+    reset.filter((a) => a.isHeader && a.level <= 3).forEach((a) => {
+      allParents[a.code] = true;
+    });
+    setExpandedTreeIds(allParents);
+    addNotification({
+      title: 'إعادة ضبط الشجرة القياسية المعتمدة',
+      message: `تمت استعادة الشجرة القياسية الكاملة (${reset.length} حساباً عبر 4 مستويات تغطي كافة الـ 34 تصنيفاً).`,
+      type: 'info',
+    });
+  };
+
+  const handleOrganizeAndCompleteExcelTree = () => {
+    pushUndoSnapshot(entries);
+    let upgradedSubCodes = 0;
+    let addedMissingItems = 0;
+
+    // 1. Upgrade every row to its exact 3-part sub-classification (e.g. A-01-04 instead of A-01)
+    const updatedRows: TrialBalanceEntry[] = entries.map((r) => {
+      const meta = resolveIfrsClassificationMetadata(r.manualCode, r.accountName);
+      if (meta.subCode && r.manualCode !== meta.subCode) {
+        upgradedSubCodes++;
+        return { ...r, manualCode: meta.subCode };
+      }
+      return r;
+    });
+
+    // 2. Check if any of the 34 primary IFRS statement codes have 0 accounts, and add standard leaf accounts if missing
+    const coveredPrimaryCodes = new Set(
+      updatedRows.map((r) => extractPrimaryIfrsCode(r.manualCode || suggestIfrsCode(r.accountName)))
+    );
+    let maxSeq = updatedRows.reduce((m, r) => Math.max(m, r.seq), 0);
+
+    IFRS_MAPPING_CODES.forEach((mapping) => {
+      if (!coveredPrimaryCodes.has(mapping.code)) {
+        maxSeq++;
+        const firstSub = EXCEL_ACCOUNTING_TREE.find(
+          (x) => x.level === 3 && x.parentCode === mapping.code
+        );
+        updatedRows.push({
+          seq: maxSeq,
+          erpCode: `${1000 + maxSeq}`,
+          accountName: `حساب ${mapping.nameAr}`,
+          manualCode: firstSub ? firstSub.code : mapping.code,
+          openingDebit: 0,
+          openingCredit: 0,
+          periodDebit: 0,
+          periodCredit: 0,
+          movementSource: 'فعلي',
+        });
+        addedMissingItems++;
+      }
+    });
+
+    // 3. Sort rows cleanly by IFRS section order (A -> L -> E -> O -> R), then subCode, then erpCode
+    const orderPrefix: Record<string, number> = { A: 1, L: 2, E: 3, O: 4, R: 5 };
+    const sortedRows = [...updatedRows]
+      .sort((a, b) => {
+        const ca = a.manualCode || suggestIfrsCode(a.accountName) || 'Z';
+        const cb = b.manualCode || suggestIfrsCode(b.accountName) || 'Z';
+        const pa = orderPrefix[ca.charAt(0)] || 9;
+        const pb = orderPrefix[cb.charAt(0)] || 9;
+        if (pa !== pb) return pa - pb;
+        const cmp = ca.localeCompare(cb, undefined, { numeric: true });
+        if (cmp !== 0) return cmp;
+        return String(a.erpCode).localeCompare(String(b.erpCode), undefined, { numeric: true });
+      })
+      .map((r, idx) => ({ ...r, seq: idx + 1 }));
+
+    setEntries(sortedRows);
+    ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, sortedRows);
+    addNotification({
+      title: 'ترتيب واستكمال شجرة الـ 319 عقدة ودليل الحسابات',
+      message: `تم تسكين (${upgradedSubCodes}) حساباً في عقدها الفرعية الدقيقة بالمستوى 3، واستكمال (${addedMissingItems}) بنداً ناقصاً، وإعادة ترتيب الـ (${sortedRows.length}) حساباً تسلسلياً.`,
       type: 'success',
     });
   };
@@ -4594,17 +4709,17 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
          ═══════════════════════════════════════════════════════════════════════════ */}
       {activeSubTab === 'coa-tree' && (
         <div className="space-y-5">
-          {/* Sub-Navigation between the 3 Tree & COA views from Excel */}
+          {/* Sub-Navigation between the 3 Tree & COA views */}
           <div className="bg-white p-4 rounded-3xl border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2 flex-wrap">
               {[
                 {
                   id: 'excel-tree-319',
-                  label: '1. شجرة الحسابات المرجعية الكاملة القياسية المعتمدة (319 عقدة معيارية + الحسابات الفرعية بالمستوى 4)',
+                  label: '1. شجرة الحسابات المرجعية الكاملة المعتمدة (319 عقدة معيارية + الحسابات الفرعية بالمستوى 4)',
                 },
                 {
                   id: 'company-coa-tree',
-                  label: `2. الدليل والشجرة التشغيلية القابلة للتوسع وحقول الأصول (${coaAccounts.length} حساب)`,
+                  label: `2. الدليل والشجرة التشغيلية الرباعية وحقول الأصول (${coaAccounts.length} حساب ومستوى)`,
                 },
                 {
                   id: 'linked-coa-sheet',
@@ -4626,6 +4741,15 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               ))}
             </div>
             <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={handleOrganizeAndCompleteCompanyCoa}
+                className="px-3.5 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                title="ترتيب الشجرة واستكمال الحسابات والمستويات القياسية الناقصة آلياً"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>ترتيب واستكمال الشجرة القياسية</span>
+              </button>
               <button
                 type="button"
                 onClick={() => setShowCustomFieldManager((v) => !v)}
@@ -4668,14 +4792,23 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#e0e0e0] pb-4">
                 <div>
                   <h3 className="text-base font-bold text-[#141414] m-0">
-                    شجرة الحسابات المرجعية الكاملة (ورقة شجرة_الحسابات — 319 عقدة معيارية + المستوى الرابع للحسابات الفعلية)
+                    شجرة الحسابات المرجعية الكاملة (319 عقدة معيارية + التسكين الفعلي لحسابات المستوى الرابع تحت كل تصنيف فرعي)
                   </h3>
                   <p className="text-xs text-[#707070] mt-1">
-                    تضم المستويات الأربعة: المستوى 1 (أبواب القوائم A, L, E, O, R) ← المستوى 2 (بنود القوائم الـ 34) ← المستوى 3 (التصنيفات الموسعة الـ 280) ← المستوى 4 (حسابات الأستاذ الفعلية الـ 211+ مع إمكانية الإضافة والتعديل)
+                    تضم المستويات الأربعة مرتبةً: المستوى 1 (أبواب القوائم A, L, E, O, R) ← المستوى 2 (بنود القوائم الـ 34) ← المستوى 3 (التصنيفات الفرعية الـ 280+) ← المستوى 4 (الحسابات الفعلية المسكنة تحت عقدها مباشرةً)
                   </p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <div className="relative w-64">
+                  <button
+                    type="button"
+                    onClick={handleOrganizeAndCompleteExcelTree}
+                    className="px-3.5 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                    title="تسكين كافة الحسابات تحت العقد الفرعية بالمستوى 3 واستكمال أي بند ناقص من الـ 34 بنداً"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>تسكين وترتيب واستكمال العقد الناقصة آلياً</span>
+                  </button>
+                  <div className="relative w-60">
                     <Search className="w-4 h-4 absolute right-3 top-2 text-[#707070]" />
                     <input
                       type="text"
@@ -4696,7 +4829,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                     }}
                     className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
                   >
-                    توسيع الشجرة بالكامل (319 عقدة)
+                    توسيع الـ 4 مستويات بالكامل
                   </button>
                   <button
                     type="button"
@@ -4708,11 +4841,41 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 </div>
               </div>
 
+              {/* Filter Bar for the 319-Node Tree */}
+              <div className="flex items-center justify-between flex-wrap gap-2 bg-[#f3f3f3] p-3 rounded-2xl border border-[#e0e0e0]">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {[
+                    { id: 'ALL', label: 'كافة العقد القياسية (319 عقدة)' },
+                    { id: 'ACTIVE_ONLY', label: 'العقد النشطة بالحسابات والأرصدة فقط' },
+                    { id: 'A', label: '1. الأصول (A-01..A-10)' },
+                    { id: 'L', label: '2. الالتزامات (L-01..L-09)' },
+                    { id: 'E_O', label: '3. حقوق الملكية و OCI (E-01..O-01)' },
+                    { id: 'R', label: '4. الإيرادات والمصروفات والزكاة (R-01..R-10)' },
+                  ].map((f) => (
+                    <button
+                      key={f.id}
+                      type="button"
+                      onClick={() => setExcelTreeFilter(f.id as any)}
+                      className={`px-3 py-1 rounded-full text-xs cursor-pointer transition-all ${
+                        excelTreeFilter === f.id
+                          ? 'bg-[#141414] text-[#ffffff] font-bold'
+                          : 'bg-white text-[#141414] border border-[#e0e0e0] hover:bg-[#e8e8e8] font-medium'
+                      }`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="text-[11px] font-mono text-[#707070]">
+                  إجمالي العقد: <strong>{EXCEL_ACCOUNTING_TREE.length + customTreeSubNodes.length}</strong> • الحسابات الفعلية بالمستوى 4: <strong>{engine.rows.length}</strong>
+                </div>
+              </div>
+
               <div className="overflow-x-auto max-h-[680px]">
                 <table className="w-full text-right text-xs">
                   <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0] sticky top-0 z-10">
                     <tr>
-                      <th className="p-3">هيكل شجرة الحسابات (اضغط لتوسيع الأبواب والبنود والحسابات الفرعية)</th>
+                      <th className="p-3">هيكل شجرة الحسابات المرتب (المستويات 1 ← 2 ← 3 ← 4)</th>
                       <th className="p-3">الكود</th>
                       <th className="p-3">المستوى</th>
                       <th className="p-3">كود القائمة الأب</th>
@@ -4727,13 +4890,25 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                       const q = excelTreeSearch.trim().toLowerCase();
                       const renderedRows: React.ReactNode[] = [];
 
-                      const level1Nodes = EXCEL_ACCOUNTING_TREE.filter((n) => n.level === 1);
+                      const level1Nodes = EXCEL_ACCOUNTING_TREE.filter((n) => {
+                        if (n.level !== 1) return false;
+                        if (excelTreeFilter === 'A') return n.code === 'A';
+                        if (excelTreeFilter === 'L') return n.code === 'L';
+                        if (excelTreeFilter === 'E_O') return n.code === 'E' || n.code === 'O';
+                        if (excelTreeFilter === 'R') return n.code === 'R';
+                        return true;
+                      });
+
                       level1Nodes.forEach((l1) => {
-                        const l2Nodes = EXCEL_ACCOUNTING_TREE.filter((n) => n.level === 2 && n.parentCode === l1.code);
+                        const l2Nodes = EXCEL_ACCOUNTING_TREE.filter((n) => n.level === 2 && n.parentCode === l1.code).sort(
+                          (a, b) => a.code.localeCompare(b.code, undefined, { numeric: true })
+                        );
                         const l1Rows = engine.rows.filter((r) => r.approvedCode.startsWith(l1.code + '-'));
                         const l1Debit = l1Rows.reduce((s, r) => s + r.closingDebit, 0);
                         const l1Credit = l1Rows.reduce((s, r) => s + r.closingCredit, 0);
                         const l1Expanded = Boolean(expandedExcelTreeCodes[l1.code]) || Boolean(q);
+
+                        if (excelTreeFilter === 'ACTIVE_ONLY' && l1Rows.length === 0) return;
 
                         renderedRows.push(
                           <tr
@@ -4753,7 +4928,9 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                 onChange={(e) => handleUpdateTreeNodeTitle(l1.code, e.target.value)}
                                 className="bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-bold text-[#141414] min-w-[240px]"
                               />
-                              <span className="text-[11px] text-[#707070] shrink-0">({l2Nodes.length} بند رئيسي • {l1Rows.length} حساب فعلي)</span>
+                              <span className="text-[11px] text-[#707070] shrink-0">
+                                ({l2Nodes.length} بند رئيسي • {l1Rows.length} حساب فعلي بالمستوى 4)
+                              </span>
                             </td>
                             <td className="p-3 font-mono">{l1.code}</td>
                             <td className="p-3">المستوى 1 (باب رئيسي)</td>
@@ -4771,8 +4948,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                           const l3Nodes = [
                             ...EXCEL_ACCOUNTING_TREE.filter((n) => n.level === 3 && n.parentCode === l2.code),
                             ...customTreeSubNodes.filter((n) => n.parentCode === l2.code),
-                          ];
-                          const l2LedgerRows = engine.rows.filter((r) => r.approvedCode === l2.code);
+                          ].sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
+
+                          const l2LedgerRows = engine.rows
+                            .filter((r) => r.approvedCode === l2.code)
+                            .sort((a, b) => String(a.erpCode).localeCompare(String(b.erpCode), undefined, { numeric: true }));
+
+                          if (excelTreeFilter === 'ACTIVE_ONLY' && l2LedgerRows.length === 0) return;
+
                           const l2Debit = l2LedgerRows.reduce((s, r) => s + r.closingDebit, 0);
                           const l2Credit = l2LedgerRows.reduce((s, r) => s + r.closingCredit, 0);
                           const l2Meta = IFRS_MAPPING_CODES.find((m) => m.code === l2.code);
@@ -4783,8 +4966,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                             !q ||
                             l2DisplayTitle.toLowerCase().includes(q) ||
                             l2.code.toLowerCase().includes(q) ||
-                            l3Nodes.some((x) => (customTreeNodeNames[x.code] ?? x.titleAr).toLowerCase().includes(q) || x.code.toLowerCase().includes(q)) ||
-                            l2LedgerRows.some((r) => r.accountName.toLowerCase().includes(q));
+                            l3Nodes.some(
+                              (x) =>
+                                (customTreeNodeNames[x.code] ?? x.titleAr).toLowerCase().includes(q) ||
+                                x.code.toLowerCase().includes(q)
+                            ) ||
+                            l2LedgerRows.some(
+                              (r) => r.accountName.toLowerCase().includes(q) || r.erpCode.toLowerCase().includes(q)
+                            );
 
                           if (!matchesL2) return;
 
@@ -4839,30 +5028,67 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
 
                           if (!l2Expanded) return;
 
-                          // Render Level 3 Extended Sub-Classifications (from دليل_التصنيف_الموسع / شجرة_الحسابات + custom sub-nodes)
+                          const matchedRowSeqsInL3 = new Set<number>();
+
+                          // Render Level 3 Extended Sub-Classifications + their nested Level 4 accounts directly underneath!
                           l3Nodes.forEach((l3) => {
                             const extMeta = EXTENDED_IFRS_CLASSIFICATIONS.find((x) => x.code === l3.code);
-                            const l3LedgerRows = l2LedgerRows.filter((r) => r.manualCode === l3.code);
+                            const l3LedgerRows = l2LedgerRows.filter(
+                              (r) => r.manualCode === l3.code || r.approvedSubCode === l3.code
+                            );
+                            l3LedgerRows.forEach((r) => matchedRowSeqsInL3.add(r.seq));
+
+                            if (excelTreeFilter === 'ACTIVE_ONLY' && l3LedgerRows.length === 0) return;
+
                             const l3Debit = l3LedgerRows.reduce((s, r) => s + r.closingDebit, 0);
                             const l3Credit = l3LedgerRows.reduce((s, r) => s + r.closingCredit, 0);
                             const l3DisplayTitle = customTreeNodeNames[l3.code] ?? l3.titleAr.replace(/^[↳\s]+/, '');
                             const isCustomNode = customTreeSubNodes.some((cn) => cn.code === l3.code);
+                            const l3Expanded =
+                              expandedExcelTreeCodes[l3.code] !== undefined
+                                ? Boolean(expandedExcelTreeCodes[l3.code])
+                                : l3LedgerRows.length > 0 || Boolean(q);
+
                             if (
                               q &&
                               !l3DisplayTitle.toLowerCase().includes(q) &&
                               !l3.code.toLowerCase().includes(q) &&
-                              l3LedgerRows.length === 0
+                              !l3LedgerRows.some(
+                                (r) => r.accountName.toLowerCase().includes(q) || r.erpCode.toLowerCase().includes(q)
+                              )
                             ) {
                               return;
                             }
 
                             renderedRows.push(
-                              <tr key={`tree_l3_${l3.code}`} className="bg-white hover:bg-[#f3f3f3]/50">
+                              <tr
+                                key={`tree_l3_${l3.code}`}
+                                onClick={() =>
+                                  setExpandedExcelTreeCodes((prev) => ({
+                                    ...prev,
+                                    [l3.code]: !l3Expanded,
+                                  }))
+                                }
+                                className={`cursor-pointer transition-colors ${
+                                  l3LedgerRows.length > 0
+                                    ? 'bg-[#fafafa] hover:bg-[#f0f0f0] font-bold'
+                                    : 'bg-white hover:bg-[#f3f3f3]/50'
+                                }`}
+                              >
                                 <td className="p-2 pr-14 font-semibold text-[#141414] flex items-center gap-1.5">
-                                  <span className="text-[#707070]">├──</span>
+                                  {l3LedgerRows.length > 0 ? (
+                                    l3Expanded ? (
+                                      <ChevronDown className="w-3.5 h-3.5 text-[#141414] shrink-0" />
+                                    ) : (
+                                      <ChevronRight className="w-3.5 h-3.5 text-[#141414] shrink-0" />
+                                    )
+                                  ) : (
+                                    <span className="text-[#707070]">├──</span>
+                                  )}
                                   <input
                                     type="text"
                                     value={l3DisplayTitle}
+                                    onClick={(e) => e.stopPropagation()}
                                     onChange={(e) => handleUpdateTreeNodeTitle(l3.code, e.target.value)}
                                     className="bg-transparent hover:bg-[#f3f3f3] focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-semibold text-[#141414] min-w-[230px]"
                                   />
@@ -4878,16 +5104,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                 <td className="p-2 font-mono text-[#707070]">{extMeta?.ifrsRef || l2Meta?.ifrsRef || 'IFRS'}</td>
                                 <td className="p-2 font-mono font-bold">{l3Debit > 0 ? fmt(l3Debit) : '-'}</td>
                                 <td className="p-2 font-mono font-bold">{l3Credit > 0 ? fmt(l3Credit) : '-'}</td>
-                                <td className="p-2 text-center">
+                                <td className="p-2 text-center" onClick={(e) => e.stopPropagation()}>
                                   <div className="flex items-center justify-center gap-1">
                                     <button
                                       type="button"
-                                      onClick={() =>
-                                        handleAddStatementLineAccount(l3.code, l3DisplayTitle)
-                                      }
+                                      onClick={() => handleAddStatementLineAccount(l3.code, l3DisplayTitle)}
                                       className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-[10px] font-semibold cursor-pointer"
                                     >
-                                      + إضافة حساب بـ {l3.code}
+                                      + حساب بـ {l3.code}
                                     </button>
                                     {isCustomNode && (
                                       <button
@@ -4903,10 +5127,87 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                 </td>
                               </tr>
                             );
+
+                            // Render Level 4 Accounts directly nested under this Level 3 sub-classification!
+                            if (l3Expanded && l3LedgerRows.length > 0) {
+                              l3LedgerRows.forEach((accRow) => {
+                                if (q && !accRow.accountName.toLowerCase().includes(q) && !accRow.erpCode.includes(q)) {
+                                  return;
+                                }
+                                renderedRows.push(
+                                  <tr key={`tree_l4_sub_${l3.code}_${accRow.seq}`} className="bg-white hover:bg-[#f3f3f3]/60">
+                                    <td className="p-2 pr-24 text-[#141414] flex items-center gap-2">
+                                      <span className="text-[#707070] font-mono text-[11px]">└── حساب #{accRow.seq}:</span>
+                                      <input
+                                        type="text"
+                                        value={accRow.accountName}
+                                        onChange={(e) => handleUpdateRow(accRow.seq, { accountName: e.target.value })}
+                                        className="bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-0.5 px-2 text-xs font-bold text-[#141414] min-w-[210px]"
+                                      />
+                                    </td>
+                                    <td className="p-2 font-mono text-[#707070]">
+                                      <input
+                                        type="text"
+                                        value={accRow.erpCode}
+                                        onChange={(e) => handleUpdateRow(accRow.seq, { erpCode: e.target.value })}
+                                        className="w-20 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] rounded-lg py-0.5 px-1.5 font-mono text-xs text-[#141414]"
+                                      />
+                                    </td>
+                                    <td className="p-2 text-[#141414] font-semibold">المستوى 4 (حساب أستاذ)</td>
+                                    <td className="p-2 font-mono">
+                                      <select
+                                        value={accRow.manualCode || accRow.approvedSubCode || accRow.approvedCode}
+                                        onChange={(e) => handleUpdateRow(accRow.seq, { manualCode: e.target.value })}
+                                        className="bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] rounded-lg py-0.5 px-1.5 text-[10px] font-mono text-[#141414]"
+                                      >
+                                        <option value={l2.code}>{l2.code} (رئيسي)</option>
+                                        {l3Nodes.map((subOpt) => (
+                                          <option key={subOpt.code} value={subOpt.code}>
+                                            {subOpt.code} - {(customTreeNodeNames[subOpt.code] ?? subOpt.titleAr).replace(/^[↳\s]+/, '')}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </td>
+                                    <td className="p-2 font-mono text-[#707070]">{extMeta?.ifrsRef || l2Meta?.ifrsRef || 'IFRS'}</td>
+                                    <td className="p-2">
+                                      <input
+                                        type="number"
+                                        value={accRow.closingDebit}
+                                        onChange={(e) =>
+                                          handleUpdateClosingDebit(accRow, parseFloat(e.target.value) || 0)
+                                        }
+                                        className="w-24 bg-[#f3f3f3] focus:bg-white border border-[#141414] rounded-lg py-0.5 px-2 font-mono font-bold text-xs"
+                                      />
+                                    </td>
+                                    <td className="p-2">
+                                      <input
+                                        type="number"
+                                        value={accRow.closingCredit}
+                                        onChange={(e) =>
+                                          handleUpdateClosingCredit(accRow, parseFloat(e.target.value) || 0)
+                                        }
+                                        className="w-24 bg-[#f3f3f3] focus:bg-white border border-[#141414] rounded-lg py-0.5 px-2 font-mono font-bold text-xs"
+                                      />
+                                    </td>
+                                    <td className="p-2 text-center">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDeleteAccountRow(accRow.seq, accRow.accountName)}
+                                        className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                                        title="حذف الحساب"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              });
+                            }
                           });
 
-                          // Render Level 4 Actual Trial Balance Accounts linked to this L2 statement item
-                          l2LedgerRows.forEach((accRow) => {
+                          // Fallback: Render any Level 4 accounts linked to L2 that weren't matched to a specific L3 node
+                          const unmatchedL2Rows = l2LedgerRows.filter((r) => !matchedRowSeqsInL3.has(r.seq));
+                          unmatchedL2Rows.forEach((accRow) => {
                             if (q && !accRow.accountName.toLowerCase().includes(q) && !accRow.erpCode.includes(q)) {
                               return;
                             }
@@ -4989,52 +5290,183 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           )}
 
-          {/* 5B: COMPANY OPERATIONAL COA TREE WITH DYNAMIC ASSET CUSTOM FIELDS */}
+          {/* 5B: COMPANY OPERATIONAL COA TREE WITH DYNAMIC ASSET CUSTOM FIELDS & AUTOMATIC ROLLUPS */}
           {coaSubView === 'company-coa-tree' && (
             <div className="space-y-4">
-              <div className="bg-white p-5 rounded-3xl border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-4">
-                <div>
-                  <h3 className="text-base font-bold text-[#141414] m-0 flex items-center gap-2">
-                    <FolderTree className="w-5 h-5 text-[#141414]" />
-                    <span>الدليل والشجرة المحاسبية القابلة للتوسع (مع الحقول المخصصة للأصول)</span>
-                  </h3>
-                  <p className="text-xs text-[#707070] mt-1">
-                    يمكنك توسيع وطي أي فرع، إضافة حسابات رئيسية أو فرعية بأي عمق، وتعديل حقول الأصول مباشرة
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <div className="relative w-56">
-                    <Search className="w-4 h-4 absolute right-3 top-2 text-[#707070]" />
-                    <input
-                      type="text"
-                      placeholder="بحث بالكود أو اسم الحساب..."
-                      value={coaSearch}
-                      onChange={(e) => setCoaSearch(e.target.value)}
-                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414]"
-                    />
+              {/* Tree Structural Summary KPI Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {(() => {
+                  const rootAssets = coaAccounts.find((a) => a.code === '1');
+                  const rootLiab = coaAccounts.find((a) => a.code === '2');
+                  const rootEq = coaAccounts.find((a) => a.code === '3');
+                  const rootRev = coaAccounts.find((a) => a.code === '4');
+                  const rootExp = coaAccounts.find((a) => a.code === '5');
+                  const headerCount = coaAccounts.filter((a) => a.isHeader).length;
+                  const leafCount = coaAccounts.filter((a) => !a.isHeader).length;
+                  return (
+                    <>
+                      <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0]">
+                        <div className="text-xs text-[#707070] font-semibold">إجمالي هيكل الشجرة (4 مستويات)</div>
+                        <div className="text-xl font-bold font-mono text-[#141414] mt-1">
+                          {coaAccounts.length} حساب ومستوى
+                        </div>
+                        <div className="text-[11px] text-[#707070] mt-1">
+                          {headerCount} حساب رئيسي تجميعي • {leafCount} حساب فرعي تشغيلي
+                        </div>
+                      </div>
+                      <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0]">
+                        <div className="text-xs text-[#707070] font-semibold">إجمالي الأصول بالصافي (الباب 1)</div>
+                        <div className="text-xl font-bold font-mono text-[#141414] mt-1">
+                          {fmt(rootAssets?.balance || 0)} ⃁
+                        </div>
+                        <div className="text-[11px] text-[#707070] mt-1">
+                          شامل خصم مخصص ECL ومجمع الإهلاك آلياً
+                        </div>
+                      </div>
+                      <div className="bg-white p-4 rounded-2xl border border-[#e0e0e0]">
+                        <div className="text-xs text-[#707070] font-semibold">الخصوم وحقوق الملكية (الباب 2 + 3)</div>
+                        <div className="text-xl font-bold font-mono text-[#141414] mt-1">
+                          {fmt((rootLiab?.balance || 0) + (rootEq?.balance || 0))} ⃁
+                        </div>
+                        <div className="text-[11px] text-[#707070] mt-1">
+                          الخصوم: {fmt(rootLiab?.balance || 0)} • الملكية: {fmt(rootEq?.balance || 0)}
+                        </div>
+                      </div>
+                      <div className="bg-[#f3f3f3] p-4 rounded-2xl border border-[#e0e0e0]">
+                        <div className="text-xs text-[#707070] font-semibold">صافي الدخل بالشجرة (الباب 4 - الباب 5)</div>
+                        <div className="text-xl font-bold font-mono text-[#141414] mt-1">
+                          {fmt((rootRev?.balance || 0) - (rootExp?.balance || 0))} ⃁
+                        </div>
+                        <div className="text-[11px] text-[#707070] mt-1">
+                          الإيرادات: {fmt(rootRev?.balance || 0)} • المصروفات: {fmt(rootExp?.balance || 0)}
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+
+              <div className="bg-white p-5 rounded-3xl border border-[#e0e0e0] space-y-4">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <h3 className="text-base font-bold text-[#141414] m-0 flex items-center gap-2">
+                      <FolderTree className="w-5 h-5 text-[#141414]" />
+                      <span>الدليل والشجرة المحاسبية الرباعية القابلة للتوسع (مع التجميع التلقائي للأرصدة وحقول الأصول)</span>
+                    </h3>
+                    <p className="text-xs text-[#707070] mt-1">
+                      مرتبة هرمياً (المستوى 1 الأبواب ← المستوى 2 المجموعات ← المستوى 3 الحسابات الرقابية ← المستوى 4 الحسابات الفرعية) مع جمع تلقائي للأرصدة من الأسفل للأعلى
+                    </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={expandAllCoaTree}
-                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
-                  >
-                    توسيع الشجرة بالكامل
-                  </button>
-                  <button
-                    type="button"
-                    onClick={collapseAllCoaTree}
-                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
-                  >
-                    طي الشجرة
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenAddSubAccount(null)}
-                    className="px-3.5 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer flex items-center gap-1"
-                  >
-                    <PlusCircle className="w-3.5 h-3.5" />
-                    <span>+ إضافة باب / حساب رئيسي</span>
-                  </button>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="relative w-56">
+                      <Search className="w-4 h-4 absolute right-3 top-2 text-[#707070]" />
+                      <input
+                        type="text"
+                        placeholder="بحث بالكود أو الاسم أو IFRS..."
+                        value={coaSearch}
+                        onChange={(e) => setCoaSearch(e.target.value)}
+                        className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414]"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleOrganizeAndCompleteCompanyCoa}
+                      className="px-3 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#141414] text-xs font-bold cursor-pointer flex items-center gap-1"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>ترتيب واستكمال الناقص</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSyncCompanyCoaWithTrialBalance}
+                      className="px-3 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer flex items-center gap-1"
+                      title="مزامنة أرصدة الشجرة مع أرصدة ميزان المراجعة الـ 211 حساباً"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>مزامنة مع الميزان</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleResetCompanyCoaToStandard}
+                      className="px-3 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                      title="إعادة ضبط الشجرة القياسية الرباعية الكاملة"
+                    >
+                      إعادة ضبط الشجرة
+                    </button>
+                    <button
+                      type="button"
+                      onClick={expandAllCoaTree}
+                      className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                    >
+                      توسيع الكل
+                    </button>
+                    <button
+                      type="button"
+                      onClick={collapseAllCoaTree}
+                      className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                    >
+                      طي الكل
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenAddSubAccount(null)}
+                      className="px-3.5 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer flex items-center gap-1"
+                    >
+                      <PlusCircle className="w-3.5 h-3.5" />
+                      <span>+ إضافة باب / حساب رئيسي</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Category & Level Filter Pills */}
+                <div className="flex items-center justify-between flex-wrap gap-2 bg-[#f3f3f3] p-3 rounded-2xl border border-[#e0e0e0]">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {[
+                      { id: 'ALL', label: `كافة الأبواب (${coaAccounts.length})` },
+                      { id: 'أصول', label: `1. الأصول (${coaAccounts.filter((a) => a.category === 'أصول').length})` },
+                      { id: 'خصوم', label: `2. الخصوم (${coaAccounts.filter((a) => a.category === 'خصوم').length})` },
+                      { id: 'حقوق ملكية', label: `3. حقوق الملكية (${coaAccounts.filter((a) => a.category === 'حقوق ملكية').length})` },
+                      { id: 'إيرادات', label: `4. الإيرادات (${coaAccounts.filter((a) => a.category === 'إيرادات').length})` },
+                      { id: 'مصروفات', label: `5. المصروفات (${coaAccounts.filter((a) => a.category === 'مصروفات').length})` },
+                    ].map((cat) => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setCoaTreeCategoryFilter(cat.id as any)}
+                        className={`px-3 py-1 rounded-full text-xs cursor-pointer transition-all ${
+                          coaTreeCategoryFilter === cat.id
+                            ? 'bg-[#141414] text-[#ffffff] font-bold'
+                            : 'bg-white text-[#141414] border border-[#e0e0e0] hover:bg-[#e8e8e8] font-medium'
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {[
+                      { id: 'ALL', label: 'كل المستويات (1-4)' },
+                      { id: '1-2', label: 'المستوى 1-2 (الأبواب والمجموعات)' },
+                      { id: '3', label: 'المستوى 3 (الحسابات الرقابية)' },
+                      { id: '4', label: 'المستوى 4 (الحسابات الفرعية)' },
+                    ].map((lvl) => (
+                      <button
+                        key={lvl.id}
+                        type="button"
+                        onClick={() => {
+                          setCoaTreeLevelFilter(lvl.id as any);
+                          if (lvl.id !== 'ALL') expandAllCoaTree();
+                        }}
+                        className={`px-2.5 py-1 rounded-full text-[11px] cursor-pointer transition-all ${
+                          coaTreeLevelFilter === lvl.id
+                            ? 'bg-[#141414] text-[#ffffff] font-bold'
+                            : 'bg-white text-[#141414] border border-[#e0e0e0] hover:bg-[#e8e8e8]'
+                        }`}
+                      >
+                        {lvl.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -5111,10 +5543,12 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                       <tr>
                         <th className="p-3">الشجرة والكود التراتبي</th>
                         <th className="p-3">اسم الحساب / القسم</th>
-                        <th className="p-3">النوع</th>
-                        <th className="p-3">المستوى</th>
-                        <th className="p-3">تصنيف IFRS</th>
-                        <th className="p-3 font-mono">الرصيد (⃁)</th>
+                        <th className="p-3">النوع والطبيعة</th>
+                        <th className="p-3">المستوى ونوع العقدة</th>
+                        <th className="p-3">تصنيف IFRS (رئيسي / فرعي)</th>
+                        <th className="p-3 font-mono">رصيد افتتاحي</th>
+                        <th className="p-3 font-mono">حركة مدين / دائن</th>
+                        <th className="p-3 font-mono">الرصيد الصافي (⃁)</th>
                         <th className="p-3">الحقول الإضافية للأصول</th>
                         <th className="p-3 text-center">التوسيع / الإضافة / التعديل</th>
                       </tr>
@@ -5125,28 +5559,42 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                           const children = coaAccounts.filter((a) => (a.parentCode || null) === parentCode);
                           const nodes: React.ReactNode[] = [];
                           for (const acc of children) {
+                            if (coaTreeCategoryFilter !== 'ALL' && acc.category !== coaTreeCategoryFilter) {
+                              continue;
+                            }
                             const subChildren = coaAccounts.filter((a) => a.parentCode === acc.code);
                             const hasSub = subChildren.length > 0;
-                            const isExp = Boolean(expandedTreeIds[acc.code]);
+                            const isExp = Boolean(expandedTreeIds[acc.code]) || coaTreeLevelFilter !== 'ALL';
                             const isEditing = editingCoaId === acc.code;
+                            const q = coaSearch.trim().toLowerCase();
                             const matchesSearch =
-                              !coaSearch.trim() ||
-                              acc.nameAr.toLowerCase().includes(coaSearch.toLowerCase()) ||
-                              acc.code.toLowerCase().includes(coaSearch.toLowerCase());
+                              !q ||
+                              acc.nameAr.toLowerCase().includes(q) ||
+                              acc.code.toLowerCase().includes(q) ||
+                              (acc.ifrsCode || '').toLowerCase().includes(q) ||
+                              (acc.ifrsSubCode || '').toLowerCase().includes(q);
 
-                            if (matchesSearch || hasSub) {
+                            const matchesLevel =
+                              coaTreeLevelFilter === 'ALL' ||
+                              (coaTreeLevelFilter === '1-2' && acc.level <= 2) ||
+                              (coaTreeLevelFilter === '3' && acc.level === 3) ||
+                              (coaTreeLevelFilter === '4' && acc.level >= 4);
+
+                            if ((matchesSearch && matchesLevel) || (hasSub && coaTreeLevelFilter === 'ALL')) {
                               nodes.push(
                                 <tr
                                   key={acc.code}
                                   className={`hover:bg-[#f3f3f3]/50 ${
                                     acc.level === 1
-                                      ? 'bg-[#f3f3f3] font-bold'
+                                      ? 'bg-[#f3f3f3] font-bold border-y border-[#141414]'
                                       : acc.level === 2
-                                      ? 'bg-[#fafafa] font-semibold'
-                                      : ''
+                                      ? 'bg-[#f8f8f8] font-bold'
+                                      : acc.level === 3
+                                      ? 'bg-[#fcfcfc] font-semibold'
+                                      : 'bg-white'
                                   }`}
                                 >
-                                  <td className="p-2.5 font-mono" style={{ paddingRight: `${12 + depth * 22}px` }}>
+                                  <td className="p-2.5 font-mono" style={{ paddingRight: `${12 + depth * 20}px` }}>
                                     <div className="flex items-center gap-1.5">
                                       {hasSub ? (
                                         <button
@@ -5157,12 +5605,12 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                           {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                         </button>
                                       ) : (
-                                        <span className="w-5 inline-block text-center text-[#707070]">•</span>
+                                        <span className="text-[#707070] font-mono text-[11px]">└──</span>
                                       )}
-                                      <span>{acc.code}</span>
+                                      <span className="font-bold text-[#141414]">{acc.code}</span>
                                     </div>
                                   </td>
-                                  <td className="p-2.5">
+                                  <td className="p-2.5 min-w-[220px]">
                                     {isEditing ? (
                                       <input
                                         type="text"
@@ -5171,16 +5619,37 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                         className="w-full bg-white border border-[#141414] rounded-lg py-1 px-2 text-xs font-bold"
                                       />
                                     ) : (
-                                      <span className="text-[#141414]">{acc.nameAr}</span>
+                                      <div>
+                                        <span className="text-[#141414]">{acc.nameAr}</span>
+                                        {acc.nameEn && (
+                                          <span className="block text-[10px] font-mono text-[#707070]">{acc.nameEn}</span>
+                                        )}
+                                      </div>
                                     )}
                                   </td>
-                                  <td className="p-2.5">{acc.category}</td>
-                                  <td className="p-2.5 font-mono text-[#707070]">مستوى {acc.level}</td>
+                                  <td className="p-2.5">
+                                    <span className="font-semibold text-[#141414]">{acc.category}</span>
+                                    <span className="block text-[10px] text-[#707070]">طبيعة: {acc.nature}</span>
+                                  </td>
+                                  <td className="p-2.5">
+                                    <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] font-mono text-[10.5px] font-bold text-[#141414]">
+                                      مستوى {acc.level}
+                                    </span>
+                                    <span className="block text-[10px] text-[#707070] mt-0.5">
+                                      {hasSub ? `رئيسي تجميعي (${subChildren.length})` : 'فرعي تشغيلي'}
+                                    </span>
+                                  </td>
                                   <td className="p-2.5 font-mono">
                                     {isEditing ? (
                                       <select
-                                        value={coaEditDraft.ifrsCode || ''}
-                                        onChange={(e) => setCoaEditDraft({ ...coaEditDraft, ifrsCode: e.target.value })}
+                                        value={coaEditDraft.ifrsSubCode || coaEditDraft.ifrsCode || ''}
+                                        onChange={(e) =>
+                                          setCoaEditDraft({
+                                            ...coaEditDraft,
+                                            ifrsSubCode: e.target.value,
+                                            ifrsCode: extractPrimaryIfrsCode(e.target.value),
+                                          })
+                                        }
                                         className="bg-white border border-[#141414] rounded-lg py-1 px-2 text-[11px]"
                                       >
                                         {EXTENDED_IFRS_CLASSIFICATIONS.map((c) => (
@@ -5190,10 +5659,24 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                         ))}
                                       </select>
                                     ) : (
-                                      acc.ifrsCode || suggestIfrsCode(acc.nameAr)
+                                      <div>
+                                        <span className="font-bold text-[#141414]">
+                                          {acc.ifrsSubCode || acc.ifrsCode || suggestIfrsCode(acc.nameAr)}
+                                        </span>
+                                        <span className="block text-[10px] text-[#707070] font-sans">
+                                          {acc.ifrsItemName || acc.ifrsRef}
+                                        </span>
+                                      </div>
                                     )}
                                   </td>
-                                  <td className="p-2.5 font-mono font-bold">
+                                  <td className="p-2.5 font-mono text-[#707070]">
+                                    {fmt(acc.openingBalance || 0)}
+                                  </td>
+                                  <td className="p-2.5 font-mono text-[11px] text-[#707070]">
+                                    <div>م: {fmt(acc.currentDebit || 0)}</div>
+                                    <div>د: {fmt(acc.currentCredit || 0)}</div>
+                                  </td>
+                                  <td className="p-2.5 font-mono font-bold text-[#141414]">
                                     {isEditing ? (
                                       <input
                                         type="number"
@@ -5324,13 +5807,21 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#e0e0e0] pb-4">
                 <div>
                   <h3 className="text-base font-bold text-[#141414] m-0">
-                    ورقة دليل الحسابات المرتبط بميزان المراجعة القابلة للتعديل (دليل_الحسابات — {engine.rows.length} حساباً)
+                    ورقة دليل الحسابات المرتبط بميزان المراجعة القابلة للتعديل ({engine.rows.length} حساباً)
                   </h3>
                   <p className="text-xs text-[#707070] mt-1">
-                    يمكنك تعديل رقم الحساب، اسمه، التصنيف الرئيسي أو الفرعي الموسع، والأرصدة مباشرة من الدليل المرتبط
+                    يمكنك تعديل رقم الحساب، اسمه، التصنيف الرئيسي أو الفرعي الموسع، والأرصدة مباشرة من الدليل المرتبط أو ترتيب وتسكين كافة الحسابات آلياً
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={handleOrganizeAndCompleteExcelTree}
+                    className="px-3.5 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#141414] text-xs font-bold cursor-pointer flex items-center gap-1"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>تسكين التصنيفات الفرعية الـ 314 وترتيب الدليل آلياً</span>
+                  </button>
                   <button
                     type="button"
                     onClick={handleAddAccountRow}
@@ -5343,6 +5834,42 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                     مرتبط: {engine.rows.filter((r) => Boolean(r.approvedCode)).length} | غير مصنف:{' '}
                     {engine.rows.filter((r) => !r.approvedCode).length}
                   </span>
+                </div>
+              </div>
+
+              {/* Filter & Search Bar for Linked COA Sheet */}
+              <div className="flex items-center justify-between flex-wrap gap-3 bg-[#f3f3f3] p-3 rounded-2xl border border-[#e0e0e0]">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {[
+                    { id: 'ALL', label: `الكل (${engine.rows.length})` },
+                    { id: 'A-', label: `الأصول (${engine.rows.filter((r) => r.approvedCode.startsWith('A-')).length})` },
+                    { id: 'L-', label: `الالتزامات (${engine.rows.filter((r) => r.approvedCode.startsWith('L-')).length})` },
+                    { id: 'E-', label: `حقوق الملكية (${engine.rows.filter((r) => r.approvedCode.startsWith('E-') || r.approvedCode.startsWith('O-')).length})` },
+                    { id: 'R-', label: `الإيرادات والمصروفات (${engine.rows.filter((r) => r.approvedCode.startsWith('R-')).length})` },
+                  ].map((sec) => (
+                    <button
+                      key={sec.id}
+                      type="button"
+                      onClick={() => setLinkedCoaSectionFilter(sec.id)}
+                      className={`px-3 py-1 rounded-full text-xs cursor-pointer transition-all ${
+                        linkedCoaSectionFilter === sec.id
+                          ? 'bg-[#141414] text-[#ffffff] font-bold'
+                          : 'bg-white text-[#141414] border border-[#e0e0e0] hover:bg-[#e8e8e8]'
+                      }`}
+                    >
+                      {sec.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="relative w-64">
+                  <Search className="w-4 h-4 absolute right-3 top-2 text-[#707070]" />
+                  <input
+                    type="text"
+                    placeholder="بحث في الدليل المرتبط..."
+                    value={linkedCoaSearch}
+                    onChange={(e) => setLinkedCoaSearch(e.target.value)}
+                    className="w-full bg-white border border-[#e0e0e0] rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414]"
+                  />
                 </div>
               </div>
 
@@ -5362,84 +5889,107 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#e0e0e0]">
-                    {engine.rows.map((r) => {
-                      const ext = EXTENDED_IFRS_CLASSIFICATIONS.find(
-                        (x) => x.code === (r.manualCode || r.approvedCode)
-                      );
-                      const primary = IFRS_MAPPING_CODES.find((m) => m.code === r.approvedCode);
-                      return (
-                        <tr key={r.seq} className="hover:bg-[#f3f3f3]/40">
-                          <td className="p-2 font-mono text-[#707070]">{r.seq}</td>
-                          <td className="p-2 font-mono">
-                            <input
-                              type="text"
-                              value={r.erpCode}
-                              onChange={(e) => handleUpdateRow(r.seq, { erpCode: e.target.value })}
-                              className="w-20 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
-                            />
-                          </td>
-                          <td className="p-2 font-bold text-[#141414] min-w-[200px]">
-                            <input
-                              type="text"
-                              value={r.accountName}
-                              onChange={(e) => handleUpdateRow(r.seq, { accountName: e.target.value })}
-                              className="w-full bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 text-xs font-bold text-[#141414]"
-                            />
-                          </td>
-                          <td className="p-2 font-mono text-[#141414] min-w-[220px]">
-                            <select
-                              value={r.manualCode || r.approvedCode || ''}
-                              onChange={(e) => handleUpdateRow(r.seq, { manualCode: e.target.value })}
-                              className="w-full bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 text-[11px] font-mono text-[#141414]"
-                            >
-                              <option value="">-- غير مصنف --</option>
-                              <optgroup label="الأكواد الرئيسية الـ 34 (A-01 .. R-10)">
-                                {IFRS_MAPPING_CODES.map((c) => (
-                                  <option key={c.code} value={c.code}>
-                                    {c.code} - {c.nameAr}
-                                  </option>
-                                ))}
-                              </optgroup>
-                              <optgroup label="التصنيفات الفرعية الموسعة (314 تصنيفاً)">
-                                {EXTENDED_IFRS_CLASSIFICATIONS.filter((c) => c.level === 3).map((c) => (
-                                  <option key={c.code} value={c.code}>
-                                    {c.code} - {c.nameAr}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            </select>
-                          </td>
-                          <td className="p-2">{r.approvedItemName || 'غير مصنف'}</td>
-                          <td className="p-2 font-mono text-[#707070]">{ext?.ifrsRef || primary?.ifrsRef || '-'}</td>
-                          <td className="p-2 font-mono font-bold">
-                            <input
-                              type="number"
-                              value={r.closingDebit}
-                              onChange={(e) => handleUpdateClosingDebit(r, parseFloat(e.target.value) || 0)}
-                              className="w-24 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
-                            />
-                          </td>
-                          <td className="p-2 font-mono font-bold">
-                            <input
-                              type="number"
-                              value={r.closingCredit}
-                              onChange={(e) => handleUpdateClosingCredit(r, parseFloat(e.target.value) || 0)}
-                              className="w-24 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
-                            />
-                          </td>
-                          <td className="p-2 text-center">
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteAccountRow(r.seq, r.accountName)}
-                              className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
-                              title="حذف الحساب"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {engine.rows
+                      .filter((r) => {
+                        if (linkedCoaSectionFilter !== 'ALL') {
+                          if (linkedCoaSectionFilter === 'E-') {
+                            if (!r.approvedCode.startsWith('E-') && !r.approvedCode.startsWith('O-')) return false;
+                          } else if (!r.approvedCode.startsWith(linkedCoaSectionFilter)) {
+                            return false;
+                          }
+                        }
+                        if (linkedCoaSearch.trim()) {
+                          const q = linkedCoaSearch.trim().toLowerCase();
+                          return (
+                            r.accountName.toLowerCase().includes(q) ||
+                            r.erpCode.toLowerCase().includes(q) ||
+                            r.approvedCode.toLowerCase().includes(q) ||
+                            (r.approvedSubCode || '').toLowerCase().includes(q)
+                          );
+                        }
+                        return true;
+                      })
+                      .map((r) => {
+                        const ext = EXTENDED_IFRS_CLASSIFICATIONS.find(
+                          (x) => x.code === (r.manualCode || r.approvedSubCode || r.approvedCode)
+                        );
+                        const primary = IFRS_MAPPING_CODES.find((m) => m.code === r.approvedCode);
+                        return (
+                          <tr key={r.seq} className="hover:bg-[#f3f3f3]/40">
+                            <td className="p-2 font-mono text-[#707070]">{r.seq}</td>
+                            <td className="p-2 font-mono">
+                              <input
+                                type="text"
+                                value={r.erpCode}
+                                onChange={(e) => handleUpdateRow(r.seq, { erpCode: e.target.value })}
+                                className="w-20 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
+                              />
+                            </td>
+                            <td className="p-2 font-bold text-[#141414] min-w-[200px]">
+                              <input
+                                type="text"
+                                value={r.accountName}
+                                onChange={(e) => handleUpdateRow(r.seq, { accountName: e.target.value })}
+                                className="w-full bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 text-xs font-bold text-[#141414]"
+                              />
+                            </td>
+                            <td className="p-2 font-mono text-[#141414] min-w-[220px]">
+                              <select
+                                value={r.manualCode || r.approvedSubCode || r.approvedCode || ''}
+                                onChange={(e) => handleUpdateRow(r.seq, { manualCode: e.target.value })}
+                                className="w-full bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 text-[11px] font-mono text-[#141414]"
+                              >
+                                <option value="">-- غير مصنف --</option>
+                                <optgroup label="الأكواد الرئيسية الـ 34 (A-01 .. R-10)">
+                                  {IFRS_MAPPING_CODES.map((c) => (
+                                    <option key={c.code} value={c.code}>
+                                      {c.code} - {c.nameAr}
+                                    </option>
+                                  ))}
+                                </optgroup>
+                                <optgroup label="التصنيفات الفرعية الموسعة (314 تصنيفاً)">
+                                  {EXTENDED_IFRS_CLASSIFICATIONS.filter((c) => c.level === 3).map((c) => (
+                                    <option key={c.code} value={c.code}>
+                                      {c.code} - {c.nameAr}
+                                    </option>
+                                  ))}
+                                </optgroup>
+                              </select>
+                            </td>
+                            <td className="p-2">
+                              <div className="font-semibold text-[#141414]">{r.approvedSubItemName || r.approvedItemName || 'غير مصنف'}</div>
+                              <div className="text-[10px] text-[#707070]">{r.approvedCode} — {r.approvedItemName}</div>
+                            </td>
+                            <td className="p-2 font-mono text-[#707070]">{ext?.ifrsRef || primary?.ifrsRef || '-'}</td>
+                            <td className="p-2 font-mono font-bold">
+                              <input
+                                type="number"
+                                value={r.closingDebit}
+                                onChange={(e) => handleUpdateClosingDebit(r, parseFloat(e.target.value) || 0)}
+                                className="w-24 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                              />
+                            </td>
+                            <td className="p-2 font-mono font-bold">
+                              <input
+                                type="number"
+                                value={r.closingCredit}
+                                onChange={(e) => handleUpdateClosingCredit(r, parseFloat(e.target.value) || 0)}
+                                className="w-24 bg-[#f3f3f3] focus:bg-white border border-[#e0e0e0] focus:border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                              />
+                            </td>
+                            <td className="p-2 text-center">
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteAccountRow(r.seq, r.accountName)}
+                                className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                                title="حذف الحساب"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>

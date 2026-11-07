@@ -1929,7 +1929,26 @@ export const FinancePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => {
+                  const { accounts, addedCount } = chartOfAccountsService.syncAndCompleteMissingAccounts(activeCompany.id);
+                  setFinCoaAccounts(accounts);
+                  addNotification({
+                    title: 'ترتيب واستكمال الشجرة القياسية',
+                    message: addedCount > 0
+                      ? `تم استكمال (${addedCount}) حساباً ومستوى قياسياً ناقصاً وترتيب الشجرة (${accounts.length} حساباً) بنجاح.`
+                      : `تمت مراجعة وترتيب الشجرة القياسية (${accounts.length} حساباً في 4 مستويات) وإعادة احتساب الأرصدة التجميعية.`,
+                    type: 'success',
+                  });
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '11.5px', minHeight: '34px' }}
+              >
+                <FolderTree className="w-3.5 h-3.5 ml-1 text-[#141414]" />
+                <span>ترتيب واستكمال الشجرة ({finCoaAccounts.length} حساب)</span>
+              </button>
               <button
                 onClick={handleAddQuickFinCoaAccount}
                 className="button-primary-pill"

@@ -697,13 +697,24 @@ export const SmaccAccountingPage: React.FC = () => {
     return matchedEntries;
   }, [selectedLedgerAccount, rawAccounts, journals]);
 
-  // Financial Statements Dynamic Rollups
-  const totalAssets = rawAccounts.filter(a => a.category === 'أصول').reduce((sum, a) => sum + (a.balance || 0), 0);
-  const totalLiabilities = rawAccounts.filter(a => a.category === 'خصوم').reduce((sum, a) => sum + (a.balance || 0), 0);
-  const totalEquity = rawAccounts.filter(a => a.category === 'حقوق ملكية').reduce((sum, a) => sum + (a.balance || 0), 0);
-  const totalRevenues = rawAccounts.filter(a => a.category === 'إيرادات').reduce((sum, a) => sum + (a.balance || 0), 0) +
+  // Financial Statements Dynamic Rollups (using leaf accounts only to prevent parent/child double counting)
+  const leafAccountsOnly = rawAccounts.filter(a => !a.isHeader);
+  const totalAssets = leafAccountsOnly
+    .filter(a => a.category === 'أصول')
+    .reduce((sum, a) => sum + (a.nature === 'مدين' ? (a.balance || 0) : -(a.balance || 0)), 0);
+  const totalLiabilities = leafAccountsOnly
+    .filter(a => a.category === 'خصوم')
+    .reduce((sum, a) => sum + (a.nature === 'دائن' ? (a.balance || 0) : -(a.balance || 0)), 0);
+  const totalEquity = leafAccountsOnly
+    .filter(a => a.category === 'حقوق ملكية')
+    .reduce((sum, a) => sum + (a.nature === 'دائن' ? (a.balance || 0) : -(a.balance || 0)), 0);
+  const totalRevenues = leafAccountsOnly
+    .filter(a => a.category === 'إيرادات')
+    .reduce((sum, a) => sum + (a.balance || 0), 0) +
     journals.flatMap(j => j.lines || []).filter(l => l.accountCode.startsWith('4')).reduce((sum, l) => sum + Number(l.credit), 0);
-  const totalExpenses = rawAccounts.filter(a => a.category === 'مصروفات').reduce((sum, a) => sum + (a.balance || 0), 0) +
+  const totalExpenses = leafAccountsOnly
+    .filter(a => a.category === 'مصروفات')
+    .reduce((sum, a) => sum + (a.balance || 0), 0) +
     journals.flatMap(j => j.lines || []).filter(l => l.accountCode.startsWith('5')).reduce((sum, l) => sum + Number(l.debit), 0);
   const netProfit = totalRevenues - totalExpenses;
 
@@ -1060,7 +1071,51 @@ export const SmaccAccountingPage: React.FC = () => {
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => {
+                  const { accounts, addedCount } = chartOfAccountsService.syncAndCompleteMissingAccounts(activeCompanyId);
+                  setRawAccounts(accounts);
+                  const exp: Record<string, boolean> = {};
+                  accounts.filter(a => a.isHeader && a.level <= 3).forEach(a => {
+                    exp[a.code] = true;
+                  });
+                  setExpandedNodes(exp);
+                  addNotification({
+                    title: 'ترتيب واستكمال الشجرة القياسية',
+                    message: addedCount > 0
+                      ? `تم استكمال (${addedCount}) حساباً ومستوى قياسياً ناقصاً وترتيب الشجرة (4 مستويات) بنجاح.`
+                      : `تمت مراجعة وترتيب الشجرة القياسية (${accounts.length} حساباً في 4 مستويات) وإعادة احتساب الأرصدة التجميعية.`,
+                    type: 'success',
+                  });
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <RefreshCw className="w-4 h-4 ml-1 text-[#141414]" />
+                <span>ترتيب واستكمال الشجرة القياسية ({rawAccounts.length} حساب)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const exp: Record<string, boolean> = {};
+                  rawAccounts.forEach(a => { exp[a.code] = true; });
+                  setExpandedNodes(exp);
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 12px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <span>توسيع الكل</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setExpandedNodes({ '1': true, '2': true, '3': true, '4': true, '5': true })}
+                className="button-outline-on-light"
+                style={{ padding: '6px 12px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <span>طي للمستوى الرئيسي</span>
+              </button>
               <button
                 onClick={() => {
                   setNewAccount({
