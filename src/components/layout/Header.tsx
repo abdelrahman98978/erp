@@ -348,7 +348,7 @@ export const Header: React.FC<HeaderProps> = ({
                   />
                 </div>
 
-                <div className="max-h-60 overflow-y-auto space-y-0.5 pr-1">
+                <div data-no-translate="true" className="max-h-60 overflow-y-auto space-y-0.5 pr-1">
                   {filteredLanguages.map((lang) => {
                     const isSelected = currentLanguage.code === lang.code;
                     return (

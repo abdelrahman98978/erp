@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { LANGUAGES, Language, TRANSLATIONS } from './languages';
 import i18n from './config';
+import { translateDomSubtree, lookupExactTranslation } from './liveDomTranslator';
 
 export interface LanguageContextType {
   currentLanguage: Language;
@@ -61,6 +62,49 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     document.documentElement.setAttribute('dir', currentLanguage.dir);
     i18n.changeLanguage(currentLanguage.code);
     localStorage.setItem(STORAGE_KEYS.LANGUAGE, JSON.stringify(currentLanguage.code));
+
+    // Immediately translate or restore the entire document tree
+    translateDomSubtree(document.body, currentLanguage.code);
+
+    if (currentLanguage.code === 'ar') {
+      return;
+    }
+
+    let rafId: number | null = null;
+    const pendingRoots = new Set<Node>();
+
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.type === 'characterData' && m.target) {
+          pendingRoots.add(m.target);
+        } else if (m.type === 'childList') {
+          m.addedNodes.forEach((n) => pendingRoots.add(n));
+        }
+      }
+      if (pendingRoots.size > 0 && rafId === null) {
+        rafId = window.requestAnimationFrame(() => {
+          rafId = null;
+          const nodes = Array.from(pendingRoots);
+          pendingRoots.clear();
+          for (const n of nodes) {
+            if (n.isConnected) {
+              translateDomSubtree(n, currentLanguage.code);
+            }
+          }
+        });
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    return () => {
+      observer.disconnect();
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+    };
   }, [currentLanguage]);
 
   useEffect(() => {
@@ -83,6 +127,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       if (langDict && langDict[key]) {
         resolved = langDict[key];
+      } else if (defaultText && currentLanguage.code !== 'ar') {
+        resolved =
+          lookupExactTranslation(defaultText, currentLanguage.code) ||
+          lookupExactTranslation(key, currentLanguage.code) ||
+          TRANSLATIONS['en']?.[key] ||
+          defaultText;
       } else if (defaultText && currentLanguage.code === 'ar') {
         resolved = defaultText;
       } else if (TRANSLATIONS['en'] && TRANSLATIONS['en'][key]) {
