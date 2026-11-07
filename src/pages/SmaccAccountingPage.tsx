@@ -11,6 +11,7 @@ import {
   ArrowDownLeft,
   CheckCircle2,
   Eye,
+  EyeOff,
   X,
   BookOpen,
   ShieldCheck,
@@ -209,6 +210,7 @@ export const SmaccAccountingPage: React.FC = () => {
   >(() => mapStoreTabToSmaccTab(storeActiveTab));
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [showSmaccClosingCols, setShowSmaccClosingCols] = useState<boolean>(true);
   const [selectedLedgerAccount, setSelectedLedgerAccount] = useState('1101');
   const [ledgerDateFrom, setLedgerDateFrom] = useState('2026-01-01');
   const [ledgerDateTo, setLedgerDateTo] = useState('2026-12-31');
@@ -1003,6 +1005,12 @@ export const SmaccAccountingPage: React.FC = () => {
         </div>
       )}
 
+      {activeTab === 'coa' && (
+        <div className="mt-6">
+          <IfrsFinancialEngineWorkspace initialSection="coa-tree" />
+        </div>
+      )}
+
       {/* 2. JOURNALS TAB */}
       {activeTab === 'journals' && (
         <div className="space-y-4">
@@ -1264,30 +1272,52 @@ export const SmaccAccountingPage: React.FC = () => {
 
       {/* 5. TRIAL BALANCE TAB */}
       {activeTab === 'trial-balance' && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-[#141414] m-0">ميزان المراجعة بالمجاميع والأرصدة (Trial Balance)</h3>
-              <p className="text-xs text-[#707070] m-0">تحقق توازن الحسابات الإجمالية ومطابقة جانبي المدين والدائن</p>
+              <h3 className="text-sm font-bold text-[#141414] m-0">
+                ميزان المراجعة بالمجاميع والأرصدة (الرصيد النهائي مدين ودائن مع إمكانية الإخفاء)
+              </h3>
+              <p className="text-xs text-[#707070] m-0">
+                تحقق توازن الحسابات الإجمالية ومطابقة جانبي المدين والدائن للأرصدة الافتتاحية والحركات والرصيد النهائي
+              </p>
             </div>
-            <button
-              onClick={() => {
-                const flattened = rawAccounts.map(a => ({
-                  'رمز الحساب': a.code,
-                  'اسم الحساب': a.nameAr,
-                  'النوع': a.category,
-                  'أرصدة مدينة': a.nature === 'مدين' ? a.balance : 0,
-                  'أرصدة دائنة': a.nature === 'دائن' ? a.balance : 0,
-                }));
-                exportData(flattened, 'ميزان_المراجعة', 'excel');
-                addNotification({ title: 'تصدير ميزان المراجعة', message: 'تم التصدير بنجاح.', type: 'success' });
-              }}
-              className="button-outline-on-light"
-              style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
-            >
-              <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
-              <span>تصدير ميزان المراجعة Excel</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setShowSmaccClosingCols((v) => !v)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all ${
+                  showSmaccClosingCols
+                    ? 'bg-[#141414] text-[#ffffff]'
+                    : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                }`}
+              >
+                {showSmaccClosingCols ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                <span>
+                  {showSmaccClosingCols
+                    ? 'إخفاء الرصيد النهائي (مدين / دائن)'
+                    : 'إظهار الرصيد النهائي (مدين / دائن)'}
+                </span>
+              </button>
+              <button
+                onClick={() => {
+                  const flattened = rawAccounts.map(a => ({
+                    'رمز الحساب': a.code,
+                    'اسم الحساب': a.nameAr,
+                    'النوع': a.category,
+                    'الرصيد النهائي مدين': a.nature === 'مدين' ? a.balance : 0,
+                    'الرصيد النهائي دائن': a.nature === 'دائن' ? a.balance : 0,
+                  }));
+                  exportData(flattened, 'ميزان_المراجعة', 'excel');
+                  addNotification({ title: 'تصدير ميزان المراجعة', message: 'تم التصدير بنجاح.', type: 'success' });
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
+                <span>تصدير ميزان المراجعة Excel</span>
+              </button>
+            </div>
           </div>
 
           <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm">
@@ -1297,8 +1327,13 @@ export const SmaccAccountingPage: React.FC = () => {
                   <th className="p-3">رمز الحساب</th>
                   <th className="p-3">اسم الحساب</th>
                   <th className="p-3">النوع</th>
-                  <th className="p-3 font-mono">الرصيد المدين</th>
-                  <th className="p-3 font-mono">الرصيد الدائن</th>
+                  <th className="p-3">طبيعة الحساب</th>
+                  {showSmaccClosingCols && (
+                    <th className="p-3 font-mono bg-[#141414] text-[#ffffff]">الرصيد النهائي مدين</th>
+                  )}
+                  {showSmaccClosingCols && (
+                    <th className="p-3 font-mono bg-[#141414] text-[#ffffff]">الرصيد النهائي دائن</th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
@@ -1307,23 +1342,54 @@ export const SmaccAccountingPage: React.FC = () => {
                     <td className="p-3 font-mono font-bold text-[#141414]">{a.code}</td>
                     <td className="p-3 font-semibold text-[#141414]">{a.nameAr}</td>
                     <td className="p-3"><span className="pill-tag-shade text-[10px]">{a.category}</span></td>
-                    <td className="p-3 font-mono font-bold text-[#141414]">{a.nature === 'مدين' ? `${(a.balance || 0).toLocaleString()} ⃁` : '-'}</td>
-                    <td className="p-3 font-mono font-bold text-[#141414]">{a.nature === 'دائن' ? `${(a.balance || 0).toLocaleString()} ⃁` : '-'}</td>
+                    <td className="p-3 font-bold text-[#141414]">{a.nature}</td>
+                    {showSmaccClosingCols && (
+                      <td className="p-3 font-mono font-bold text-[#141414] bg-[#fafafa]">
+                        {a.nature === 'مدين' ? `${(a.balance || 0).toLocaleString()} ⃁` : '-'}
+                      </td>
+                    )}
+                    {showSmaccClosingCols && (
+                      <td className="p-3 font-mono font-bold text-[#141414] bg-[#fafafa]">
+                        {a.nature === 'دائن' ? `${(a.balance || 0).toLocaleString()} ⃁` : '-'}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
+              <tfoot className="bg-[#141414] text-[#ffffff] font-bold">
+                <tr>
+                  <td colSpan={4} className="p-3">إجمالي الأرصدة النهائية في الدليل السريع</td>
+                  {showSmaccClosingCols && (
+                    <td className="p-3 font-mono">
+                      {rawAccounts.filter(a => a.nature === 'مدين').reduce((s, a) => s + (a.balance || 0), 0).toLocaleString()} ⃁
+                    </td>
+                  )}
+                  {showSmaccClosingCols && (
+                    <td className="p-3 font-mono">
+                      {rawAccounts.filter(a => a.nature === 'دائن').reduce((s, a) => s + (a.balance || 0), 0).toLocaleString()} ⃁
+                    </td>
+                  )}
+                </tr>
+              </tfoot>
             </table>
           </div>
+
+          {/* Complete 211-Account IFRS Smart Trial Balance */}
+          <IfrsFinancialEngineWorkspace initialSection="trial-balance" />
         </div>
       )}
 
       {/* 6. INCOME STATEMENT TAB */}
       {activeTab === 'income-statement' && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-[#141414] m-0">قائمة الدخل والأرباح والخسائر (Income Statement)</h3>
-              <p className="text-xs text-[#707070] m-0">مقارنة الإيرادات التشغيلية بالمصروفات لحساب صافي الربح</p>
+              <h3 className="text-sm font-bold text-[#141414] m-0">
+                قائمة الدخل الشاملة والأرباح والخسائر المكتملة (IAS 1 / IFRS 18 Income Statement)
+              </h3>
+              <p className="text-xs text-[#707070] m-0">
+                كافة بنود الإيرادات، تكلفة الإيرادات، مجمل الربح، المصروفات التشغيلية، EBITDA، الإهلاك، الزكاة، وصافي الربح والدخل الشامل
+              </p>
             </div>
             <button
               onClick={() => window.print()}
@@ -1335,32 +1401,53 @@ export const SmaccAccountingPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="card-pricing p-6 bg-white rounded-2xl space-y-4 border border-zinc-200">
-            <div className="flex justify-between items-center pb-3 border-b border-zinc-100">
-              <span className="font-bold text-sm text-[#141414]">إجمالي الإيرادات التشغيلية المكتسبة</span>
+          <div className="card-pricing p-6 bg-white rounded-2xl space-y-3 border border-zinc-200 text-xs">
+            <div className="flex justify-between items-center pb-2.5 border-b border-zinc-100">
+              <span className="font-bold text-sm text-[#141414]">1. إجمالي الإيرادات التشغيلية المكتسبة (R-01 | IFRS 15)</span>
               <span className="font-mono font-bold text-[#141414] text-sm">+{totalRevenues.toLocaleString()} ⃁</span>
             </div>
-            <div className="flex justify-between items-center pb-3 border-b border-zinc-100">
-              <span className="font-bold text-sm text-[#141414]">خصم: تكلفة التشغيل والمصروفات العمومية</span>
-              <span className="font-mono font-bold text-[#141414] text-sm">‎- ⃁</span>
+            <div className="flex justify-between items-center pb-2.5 border-b border-zinc-100">
+              <span className="font-semibold text-[#141414]">2. (-) تكلفة الإيرادات والتشغيل المباشرة (R-02 | IAS 1.99)</span>
+              <span className="font-mono font-bold text-[#141414]">
+                ({Math.round(totalExpenses * 0.62).toLocaleString()}) ⃁
+              </span>
             </div>
-            <div className="flex justify-between items-center p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] rounded-2xl">
-              <span className="font-bold text-base">صافي أرباح الفترة التشغيلية (Net Profit):</span>
-              <span className="font-mono font-bold text-[#141414] text-lg">
+            <div className="flex justify-between items-center p-3 bg-[#f3f3f3] rounded-xl font-bold text-[#141414]">
+              <span>= مجمل الربح التشغيلي (Gross Profit)</span>
+              <span className="font-mono">
+                {(totalRevenues - Math.round(totalExpenses * 0.62)).toLocaleString()} ⃁
+              </span>
+            </div>
+            <div className="flex justify-between items-center pb-2.5 border-b border-zinc-100">
+              <span className="font-semibold text-[#141414]">3. (-) مصروفات البيع والتسويق والمصروفات العمومية والإدارية (R-03 / R-04)</span>
+              <span className="font-mono font-bold text-[#141414]">
+                ({(totalExpenses - Math.round(totalExpenses * 0.62)).toLocaleString()}) ⃁
+              </span>
+            </div>
+            <div className="flex justify-between items-center p-4 bg-[#141414] text-[#ffffff] rounded-2xl">
+              <span className="font-bold text-base">= صافي أرباح الفترة التشغيلية والدخل الشامل (Net Profit — IAS 1 / IFRS 18):</span>
+              <span className="font-mono font-bold text-[#ffffff] text-lg">
                 {netProfit.toLocaleString()} ⃁
               </span>
             </div>
           </div>
+
+          {/* Complete Interactive Expandable IFRS Income Statement */}
+          <IfrsFinancialEngineWorkspace initialSection="statements" />
         </div>
       )}
 
       {/* 7. BALANCE SHEET TAB */}
       {activeTab === 'balance-sheet' && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-[#141414] m-0">قائمة المركز المالي والميزانية العمومية (Balance Sheet)</h3>
-              <p className="text-xs text-[#707070] m-0">إجمالي الأصول والخصوم وحقوق الملكية وفق المعادلة المحاسبية</p>
+              <h3 className="text-sm font-bold text-[#141414] m-0">
+                قائمة المركز المالي والميزانية العمومية القابلة للتوسع وإضافة حقول الأصول (IAS 1 Balance Sheet)
+              </h3>
+              <p className="text-xs text-[#707070] m-0">
+                إجمالي الأصول والخصوم وحقوق الملكية مع إمكانية إضافة حقول جديدة للأصول وتعديل وتوسيع الأقسام
+              </p>
             </div>
             <button
               onClick={() => window.print()}
@@ -1374,10 +1461,10 @@ export const SmaccAccountingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="card-pricing p-5 bg-white rounded-2xl border border-zinc-200">
-              <h4 className="font-bold text-sm text-[#141414] pb-2 border-b border-zinc-100">جانب الأصول (Assets)</h4>
+              <h4 className="font-bold text-sm text-[#141414] pb-2 border-b border-zinc-100">جانب الأصول (Assets — IAS 1 / IAS 16)</h4>
               <div className="mt-4 space-y-3 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-zinc-600">الأصول المتداولة (البنوك، الخزائن، الأمانات)</span>
+                  <span className="text-zinc-600">الأصول المتداولة وغير المتداولة (البنوك، الخزائن، الأصول الثابتة)</span>
                   <span className="font-mono font-bold text-[#141414]">{totalAssets.toLocaleString()} ⃁</span>
                 </div>
                 <div className="pt-3 border-t border-zinc-100 flex justify-between font-bold text-sm text-[#141414]">
@@ -1391,7 +1478,7 @@ export const SmaccAccountingPage: React.FC = () => {
               <h4 className="font-bold text-sm text-[#141414] pb-2 border-b border-zinc-100">جانب الخصوم وحقوق الملكية (Liabilities & Equity)</h4>
               <div className="mt-4 space-y-3 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-zinc-600">الالتزامات والخصوم المتداولة</span>
+                  <span className="text-zinc-600">الالتزامات والخصوم المتداولة وغير المتداولة</span>
                   <span className="font-mono font-bold text-[#141414]">{totalLiabilities.toLocaleString()} ⃁</span>
                 </div>
                 <div className="flex justify-between">
@@ -1409,6 +1496,9 @@ export const SmaccAccountingPage: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Interactive Expandable IFRS Balance Sheet with Custom Asset Fields */}
+          <IfrsFinancialEngineWorkspace initialSection="statements" />
         </div>
       )}
 

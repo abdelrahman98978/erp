@@ -21,6 +21,16 @@ import {
   Target,
   Calculator,
   RotateCcw,
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  EyeOff,
+  Edit3,
+  Trash2,
+  FolderTree,
+  Check,
+  X,
+  PlusCircle,
 } from 'lucide-react';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useAppStore } from '../../stores/appStore';
@@ -32,10 +42,25 @@ import {
   computeIfrsEngine,
   ifrsFinancialEngineService,
   suggestIfrsCode,
+  extractPrimaryIfrsCode,
 } from '../../services/accounting/ifrsFinancialEngineService';
+import {
+  EXTENDED_IFRS_CLASSIFICATIONS,
+  EXCEL_ACCOUNTING_TREE,
+  EXCEL_SEARCH_KEYWORDS,
+  ARABIC_CODES_GUIDE,
+  MOVEMENTS_AND_BALANCES_GUIDE,
+  COA_GOVERNANCE_RULES,
+  SYSTEM_MESSAGES_AR,
+} from '../../services/accounting/ifrsExtendedReferenceData';
+import {
+  AccountItem,
+  CustomFieldDefinition,
+  chartOfAccountsService,
+} from '../../services/accounting/chartOfAccountsService';
 
 interface IfrsFinancialEngineWorkspaceProps {
-  initialSection?: 'overview' | 'trial-balance' | 'diagnostics' | 'statements' | 'ratios-plan' | 'mapping-settings';
+  initialSection?: 'overview' | 'trial-balance' | 'diagnostics' | 'statements' | 'ratios-plan' | 'mapping-settings' | 'coa-tree';
 }
 
 export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspaceProps> = ({
@@ -45,7 +70,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   const { addNotification } = useAppStore();
 
   const [activeSubTab, setActiveSubTab] = useState<
-    'overview' | 'trial-balance' | 'diagnostics' | 'statements' | 'ratios-plan' | 'mapping-settings'
+    'overview' | 'trial-balance' | 'diagnostics' | 'statements' | 'ratios-plan' | 'mapping-settings' | 'coa-tree'
   >(initialSection);
 
   const [activeStatementView, setActiveStatementView] = useState<
@@ -63,6 +88,69 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   const [tbSearch, setTbSearch] = useState('');
   const [tbFilter, setTbFilter] = useState<'all' | 'unclassified' | 'warnings' | 'classified'>('all');
   const [tbCodeFilter, setTbCodeFilter] = useState<string>('ALL');
+
+  // Column visibility toggles in Trial Balance (including Closing Debit & Credit hide/show)
+  const [showClosingBalanceCols, setShowClosingBalanceCols] = useState<boolean>(true);
+  const [showOpeningCols, setShowOpeningCols] = useState<boolean>(true);
+  const [showMovementCols, setShowMovementCols] = useState<boolean>(true);
+  const [showNetBalanceCol, setShowNetBalanceCol] = useState<boolean>(false);
+
+  // Expandable sections in Balance Sheet & Income Statement
+  const [expandedStatementCodes, setExpandedStatementCodes] = useState<Record<string, boolean>>({
+    'A-01': true,
+    'R-01': true,
+    'R-02': true,
+  });
+
+  // Custom Dynamic Fields for Assets & Expandable Sections
+  const [customFieldDefs, setCustomFieldDefs] = useState<CustomFieldDefinition[]>(() =>
+    chartOfAccountsService.getCustomFieldDefinitions(activeCompanyId)
+  );
+  const [rowCustomValues, setRowCustomValues] = useState<Record<number, Record<string, string>>>(() => {
+    try {
+      const saved = localStorage.getItem(`erp_ifrs_row_custom_vals_${activeCompanyId}`);
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return {};
+  });
+  const [newFieldLabel, setNewFieldLabel] = useState('');
+  const [newFieldType, setNewFieldType] = useState<'text' | 'number' | 'percent' | 'date'>('text');
+  const [newFieldSection, setNewFieldSection] = useState<'أصول' | 'خصوم' | 'حقوق ملكية' | 'إيرادات' | 'مصروفات' | 'ALL'>('أصول');
+  const [showCustomFieldManager, setShowCustomFieldManager] = useState(false);
+
+  // Chart of Accounts & Tree (الدليل والشجرة القابلة للتوسع)
+  const [coaAccounts, setCoaAccounts] = useState<AccountItem[]>(() =>
+    chartOfAccountsService.getAccountsByCompany(activeCompanyId)
+  );
+  const [expandedTreeIds, setExpandedTreeIds] = useState<Record<string, boolean>>({
+    '1': true, '11': true, '12': true, '2': true, '21': true, '22': true,
+    '3': true, '4': true, '41': true, '5': true, '51': true, '52': true,
+  });
+  const [coaSearch, setCoaSearch] = useState('');
+  const [editingCoaId, setEditingCoaId] = useState<string | null>(null);
+  const [coaEditDraft, setCoaEditDraft] = useState<Partial<AccountItem>>({});
+  const [addingChildParent, setAddingChildParent] = useState<AccountItem | null>(null);
+  const [newCoaCode, setNewCoaCode] = useState('');
+  const [newCoaName, setNewCoaName] = useState('');
+  const [newCoaIfrsCode, setNewCoaIfrsCode] = useState('A-01');
+  const [newCoaCustomFields, setNewCoaCustomFields] = useState<Record<string, string>>({});
+
+  // Excel 319-Node Reference Tree & Linked COA sub-view
+  const [coaSubView, setCoaSubView] = useState<'excel-tree-319' | 'company-coa-tree' | 'linked-coa-sheet'>('excel-tree-319');
+  const [expandedExcelTreeCodes, setExpandedExcelTreeCodes] = useState<Record<string, boolean>>({
+    'A': true, 'L': true, 'E': true, 'O': true, 'R': true,
+    'A-01': true, 'A-10': true, 'L-04': true, 'R-01': true, 'R-02': true, 'R-04': true,
+  });
+  const [excelTreeSearch, setExcelTreeSearch] = useState('');
+
+  // Reference Guides Sub-View in mapping-settings
+  const [refGuideSubTab, setRefGuideSubTab] = useState<
+    'primary-34' | 'extended-314' | 'arabic-guide-34' | 'search-keywords-257' | 'movements-governance'
+  >('primary-34');
+  const [extClassSearch, setExtClassSearch] = useState('');
+  const [keywordSearch, setKeywordSearch] = useState('');
 
   // Interactive Financial Ratios Plan What-If Simulator State
   const [simRevenueGrowthPct, setSimRevenueGrowthPct] = useState<number>(15);
@@ -86,6 +174,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
           r.accountName.toLowerCase().includes(q) ||
           r.erpCode.toLowerCase().includes(q) ||
           r.approvedCode.toLowerCase().includes(q) ||
+          r.manualCode.toLowerCase().includes(q) ||
           r.approvedItemName.toLowerCase().includes(q)
         );
       }
@@ -173,6 +262,215 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
     ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, next);
   };
 
+  const handleUpdateClosingDebit = (row: TrialBalanceEntry, targetClosingDebit: number) => {
+    const netBeforePeriod = row.openingDebit - row.openingCredit;
+    const neededMovement = targetClosingDebit - netBeforePeriod;
+    if (neededMovement >= 0) {
+      handleUpdateRow(row.seq, { periodDebit: neededMovement, periodCredit: 0 });
+    } else {
+      handleUpdateRow(row.seq, { periodDebit: 0, periodCredit: Math.abs(neededMovement) });
+    }
+  };
+
+  const handleUpdateClosingCredit = (row: TrialBalanceEntry, targetClosingCredit: number) => {
+    const netBeforePeriod = row.openingCredit - row.openingDebit;
+    const neededMovement = targetClosingCredit - netBeforePeriod;
+    if (neededMovement >= 0) {
+      handleUpdateRow(row.seq, { periodCredit: neededMovement, periodDebit: 0 });
+    } else {
+      handleUpdateRow(row.seq, { periodCredit: 0, periodDebit: Math.abs(neededMovement) });
+    }
+  };
+
+  const handleDeleteAccountRow = (seq: number, name: string) => {
+    const next = entries.filter((item) => item.seq !== seq);
+    setEntries(next);
+    ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, next);
+    addNotification({
+      title: 'حذف بند من الميزان',
+      message: `تم حذف الحساب (${name}) وإعادة احتساب الميزان والقوائم المالية.`,
+      type: 'info',
+    });
+  };
+
+  const handleAddStatementLineAccount = (ifrsCode: string, defaultNamePrefix: string) => {
+    const nextSeq = entries.length > 0 ? Math.max(...entries.map((e) => e.seq)) + 1 : 1;
+    const newRow: TrialBalanceEntry = {
+      seq: nextSeq,
+      erpCode: `${1000 + nextSeq}`,
+      accountName: `${defaultNamePrefix} #${nextSeq}`,
+      manualCode: ifrsCode,
+      openingDebit: 0,
+      openingCredit: 0,
+      periodDebit: 0,
+      periodCredit: 0,
+      movementSource: 'فعلي',
+    };
+    const next = [...entries, newRow];
+    setEntries(next);
+    ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, next);
+    const pCode = extractPrimaryIfrsCode(ifrsCode) || ifrsCode;
+    setExpandedStatementCodes((prev) => ({ ...prev, [pCode]: true }));
+    setExpandedExcelTreeCodes((prev) => ({ ...prev, [ifrsCode]: true, [pCode]: true }));
+    addNotification({
+      title: 'إضافة بند جديد للقسم',
+      message: `تمت إضافة (${newRow.accountName}) تحت البند (${ifrsCode}) ويمكنك الآن تعديل أرصدته وحقوله مباشرة.`,
+      type: 'success',
+    });
+  };
+
+  const handleAddCustomFieldDef = () => {
+    if (!newFieldLabel.trim()) return;
+    const key = `cf_${Date.now()}`;
+    const newDef: CustomFieldDefinition = {
+      key,
+      label: newFieldLabel.trim(),
+      fieldType: newFieldType,
+      section: newFieldSection,
+      defaultValue: '',
+    };
+    const next = [...customFieldDefs, newDef];
+    setCustomFieldDefs(next);
+    chartOfAccountsService.saveCustomFieldDefinitions(activeCompanyId, next);
+    setNewFieldLabel('');
+    addNotification({
+      title: 'إضافة حقل مخصص جديد',
+      message: `تمت إضافة الحقل (${newDef.label}) لقسم (${newDef.section === 'ALL' ? 'كافة الأقسام' : newDef.section}) بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleRemoveCustomFieldDef = (key: string) => {
+    const next = customFieldDefs.filter((f) => f.key !== key);
+    setCustomFieldDefs(next);
+    chartOfAccountsService.saveCustomFieldDefinitions(activeCompanyId, next);
+  };
+
+  const handleUpdateRowCustomField = (seq: number, fieldKey: string, val: string) => {
+    const next = {
+      ...rowCustomValues,
+      [seq]: {
+        ...(rowCustomValues[seq] || {}),
+        [fieldKey]: val,
+      },
+    };
+    setRowCustomValues(next);
+    try {
+      localStorage.setItem(`erp_ifrs_row_custom_vals_${activeCompanyId}`, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  };
+
+  const toggleStatementSection = (code: string) => {
+    setExpandedStatementCodes((prev) => ({ ...prev, [code]: !prev[code] }));
+  };
+
+  const toggleTreeExpand = (id: string) => {
+    setExpandedTreeIds((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const expandAllCoaTree = () => {
+    const all: Record<string, boolean> = {};
+    coaAccounts.forEach((a) => {
+      all[a.code] = true;
+    });
+    setExpandedTreeIds(all);
+  };
+
+  const collapseAllCoaTree = () => {
+    setExpandedTreeIds({});
+  };
+
+  const handleStartEditCoa = (acc: AccountItem) => {
+    setEditingCoaId(acc.code);
+    setCoaEditDraft({
+      code: acc.code,
+      nameAr: acc.nameAr,
+      category: acc.category,
+      balance: acc.balance,
+      ifrsCode: acc.ifrsCode || suggestIfrsCode(acc.nameAr),
+      customFields: { ...(acc.customFields || {}) },
+    });
+  };
+
+  const handleSaveEditCoa = (accCode: string) => {
+    chartOfAccountsService.updateAccount(activeCompanyId, accCode, coaEditDraft);
+    setCoaAccounts(chartOfAccountsService.getAccountsByCompany(activeCompanyId));
+    setEditingCoaId(null);
+    addNotification({
+      title: 'حفظ تعديل الحساب في الدليل والشجرة',
+      message: `تم تحديث بيانات الحساب (${coaEditDraft.nameAr}) وحقوله المخصصة بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleDeleteCoaAccount = (acc: AccountItem) => {
+    const hasChildren = coaAccounts.some((a) => a.parentCode === acc.code);
+    if (hasChildren) {
+      addNotification({
+        title: 'تنبيه هيكلي في الشجرة',
+        message: 'لا يمكن حذف حساب رئيسي يحتوي على حسابات فرعية تحته.',
+        type: 'warning',
+      });
+      return;
+    }
+    const next = coaAccounts.filter((a) => a.code !== acc.code);
+    chartOfAccountsService.saveAccountsForCompany(activeCompanyId, next);
+    setCoaAccounts(next);
+    addNotification({
+      title: 'حذف حساب من الشجرة',
+      message: `تم حذف الحساب (${acc.code} - ${acc.nameAr}) من الدليل.`,
+      type: 'info',
+    });
+  };
+
+  const handleOpenAddSubAccount = (parentAcc: AccountItem | null) => {
+    setAddingChildParent(parentAcc);
+    if (parentAcc) {
+      const children = coaAccounts.filter((a) => a.parentCode === parentAcc.code);
+      const suggestedCode = `${parentAcc.code}${String(children.length + 1).padStart(parentAcc.level >= 2 ? 2 : 1, '0')}`;
+      setNewCoaCode(suggestedCode);
+      setNewCoaIfrsCode(parentAcc.ifrsCode || suggestIfrsCode(parentAcc.nameAr) || 'A-01');
+    } else {
+      setNewCoaCode(`${coaAccounts.filter((a) => !a.parentCode).length + 1}`);
+      setNewCoaIfrsCode('A-01');
+    }
+    setNewCoaName('');
+    setNewCoaCustomFields({});
+  };
+
+  const handleConfirmAddCoaAccount = () => {
+    if (!newCoaCode.trim() || !newCoaName.trim()) return;
+    const parentAcc = addingChildParent;
+    const created = chartOfAccountsService.addAccount(activeCompanyId, {
+      code: newCoaCode.trim(),
+      nameAr: newCoaName.trim(),
+      nameEn: newCoaName.trim(),
+      category: parentAcc ? parentAcc.category : 'أصول',
+      nature: parentAcc ? parentAcc.nature : 'مدين',
+      statementType: parentAcc ? parentAcc.statementType : 'قائمة المركز المالي (ميزانية)',
+      parentCode: parentAcc ? parentAcc.code : undefined,
+      level: parentAcc ? parentAcc.level + 1 : 1,
+      openingBalance: 0,
+      balance: 0,
+      currency: 'SAR',
+      isActive: true,
+      ifrsCode: newCoaIfrsCode,
+      customFields: { ...newCoaCustomFields },
+    });
+    setCoaAccounts(chartOfAccountsService.getAccountsByCompany(activeCompanyId));
+    if (parentAcc) {
+      setExpandedTreeIds((prev) => ({ ...prev, [parentAcc.code]: true }));
+    }
+    setAddingChildParent(null);
+    addNotification({
+      title: 'إضافة حساب جديد للشجرة والدليل',
+      message: `تمت إضافة الحساب (${created.code} - ${created.nameAr}) في المستوى (${created.level}) بنجاح.`,
+      type: 'success',
+    });
+  };
+
   const handleFreezeSuggestedMappings = () => {
     let updatedCount = 0;
     const next = entries.map((item) => {
@@ -218,7 +516,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   };
 
   const handleAddAccountRow = () => {
-    const nextSeq = entries.length + 1;
+    const nextSeq = entries.length > 0 ? Math.max(...entries.map((e) => e.seq)) + 1 : 1;
     const newRow: TrialBalanceEntry = {
       seq: nextSeq,
       erpCode: `${1000 + nextSeq}`,
@@ -245,22 +543,23 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
       'م': r.seq,
       'رقم الحساب ERP': r.erpCode,
       'اسم الحساب': r.accountName,
-      'التصنيف المعتمد': r.approvedCode,
-      'البند في القوائم': r.approvedItemName,
+      'التصنيف المختار (رئيسي/فرعي)': r.manualCode || r.approvedCode,
+      'البند المعتمد بالقوائم': r.approvedCode,
+      'اسم البند في القوائم': r.approvedItemName,
       'الطبيعة': r.naturalBalance,
       'أول المدة - مدين': r.openingDebit,
       'أول المدة - دائن': r.openingCredit,
       'حركات السنة - مدين': r.periodDebit,
       'حركات السنة - دائن': r.periodCredit,
-      'آخر المدة - مدين': r.closingDebit,
-      'آخر المدة - دائن': r.closingCredit,
+      'الرصيد النهائي - مدين': r.closingDebit,
+      'الرصيد النهائي - دائن': r.closingCredit,
       'حالة الفحص': r.statusText,
       'ملاحظات الفحص': r.auditNote,
     }));
     exportData(exportRows, `ميزان_المراجعة_IFRS_${activeCompany.code}`, 'excel');
     addNotification({
       title: 'تصدير ميزان المراجعة IFRS',
-      message: 'تم تصدير ميزان المراجعة الكامل (211 حساباً) بصيغة Excel.',
+      message: 'تم تصدير ميزان المراجعة الكامل بصيغة Excel.',
       type: 'success',
     });
   };
@@ -286,8 +585,176 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
     });
   };
 
-  const fmt = (n: number) =>
-    `${Math.round(n).toLocaleString()} ⃁`;
+  const fmt = (n: number) => `${Math.round(n).toLocaleString()} ⃁`;
+
+  // Helper to render expandable sub-accounts & custom asset fields inside Balance Sheet & Income Statement
+  const renderExpandableCodeRows = (
+    codes: string[],
+    sectionCategory: 'أصول' | 'خصوم' | 'حقوق ملكية' | 'إيرادات' | 'مصروفات',
+    colSpanCount: number
+  ) => {
+    const primaryCode = codes[0];
+    if (!expandedStatementCodes[primaryCode]) return null;
+    const matchingRows = engine.rows.filter((r) => codes.includes(r.approvedCode));
+    const relevantFields = customFieldDefs.filter(
+      (f) => f.section === sectionCategory || f.section === 'ALL'
+    );
+
+    return (
+      <tr className="bg-[#fafafa]">
+        <td colSpan={colSpanCount} className="p-3 border-r-4 border-[#141414]">
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <span className="text-xs font-bold text-[#141414]">
+                البنود والحسابات التفصيلية المدرجة تحت ({codes.join(' / ')}) — عدد الحسابات: ({matchingRows.length})
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowCustomFieldManager((v) => !v)}
+                  className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-[11px] font-semibold cursor-pointer"
+                >
+                  + إدارة / إضافة حقول جديدة ({relevantFields.length} حقل)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleAddStatementLineAccount(
+                      primaryCode,
+                      sectionCategory === 'أصول' ? 'أصل جديد' : 'بند فرعي جديد'
+                    )
+                  }
+                  className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] hover:opacity-90 text-[11px] font-bold cursor-pointer flex items-center gap-1"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>+ إضافة {sectionCategory === 'أصول' ? 'أصل / بند جديد' : 'بند فرعي جديد'}</span>
+                </button>
+              </div>
+            </div>
+
+            {matchingRows.length === 0 ? (
+              <div className="text-[11px] text-[#707070] p-2 bg-white rounded-xl border border-[#e0e0e0]">
+                لا توجد حسابات فرعية مضافة تحت هذا البند حالياً. اضغط (+ إضافة بند جديد) لإضافة حساب وتعديل أرصدته وحقوله.
+              </div>
+            ) : (
+              <div className="overflow-x-auto bg-white rounded-2xl border border-[#e0e0e0]">
+                <table className="w-full text-right text-[11px]">
+                  <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
+                    <tr>
+                      <th className="p-2">كود الحساب</th>
+                      <th className="p-2">اسم الأصل / البند الفرعي (قابل للتعديل)</th>
+                      <th className="p-2">التصنيف الموسع</th>
+                      <th className="p-2 font-mono">أول المدة مدين</th>
+                      <th className="p-2 font-mono">أول المدة دائن</th>
+                      <th className="p-2 font-mono">الرصيد النهائي مدين</th>
+                      <th className="p-2 font-mono">الرصيد النهائي دائن</th>
+                      {relevantFields.map((cf) => (
+                        <th key={cf.key} className="p-2 text-[#141414]">
+                          {cf.label}
+                        </th>
+                      ))}
+                      <th className="p-2 text-center">إجراء</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#e0e0e0]">
+                    {matchingRows.map((sub) => (
+                      <tr key={sub.seq} className="hover:bg-[#f3f3f3]/40">
+                        <td className="p-1.5 font-mono text-[#707070]">{sub.erpCode}</td>
+                        <td className="p-1.5 min-w-[180px]">
+                          <input
+                            type="text"
+                            value={sub.accountName}
+                            onChange={(e) => handleUpdateRow(sub.seq, { accountName: e.target.value })}
+                            className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 text-[11px] font-bold text-[#141414]"
+                          />
+                        </td>
+                        <td className="p-1.5 min-w-[150px]">
+                          <select
+                            value={sub.manualCode || sub.approvedCode}
+                            onChange={(e) => handleUpdateRow(sub.seq, { manualCode: e.target.value })}
+                            className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-1.5 text-[10px] font-mono text-[#141414]"
+                          >
+                            {EXTENDED_IFRS_CLASSIFICATIONS.filter((ext) =>
+                              codes.includes(ext.parentStatementCode)
+                            ).map((ext) => (
+                              <option key={ext.code} value={ext.code}>
+                                {ext.code} - {ext.nameAr}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="p-1.5">
+                          <input
+                            type="number"
+                            value={sub.openingDebit}
+                            onChange={(e) =>
+                              handleUpdateRow(sub.seq, { openingDebit: parseFloat(e.target.value) || 0 })
+                            }
+                            className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-[11px]"
+                          />
+                        </td>
+                        <td className="p-1.5">
+                          <input
+                            type="number"
+                            value={sub.openingCredit}
+                            onChange={(e) =>
+                              handleUpdateRow(sub.seq, { openingCredit: parseFloat(e.target.value) || 0 })
+                            }
+                            className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-[11px]"
+                          />
+                        </td>
+                        <td className="p-1.5">
+                          <input
+                            type="number"
+                            value={sub.closingDebit}
+                            onChange={(e) => handleUpdateClosingDebit(sub, parseFloat(e.target.value) || 0)}
+                            className="w-24 bg-white border border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-[11px] text-[#141414]"
+                          />
+                        </td>
+                        <td className="p-1.5">
+                          <input
+                            type="number"
+                            value={sub.closingCredit}
+                            onChange={(e) => handleUpdateClosingCredit(sub, parseFloat(e.target.value) || 0)}
+                            className="w-24 bg-white border border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-[11px] text-[#141414]"
+                          />
+                        </td>
+                        {relevantFields.map((cf) => (
+                          <td key={cf.key} className="p-1.5 min-w-[120px]">
+                            <input
+                              type={cf.fieldType === 'number' ? 'number' : cf.fieldType === 'date' ? 'date' : 'text'}
+                              placeholder={cf.defaultValue || cf.label}
+                              value={
+                                (rowCustomValues[sub.seq] && rowCustomValues[sub.seq][cf.key]) ??
+                                cf.defaultValue ??
+                                ''
+                              }
+                              onChange={(e) => handleUpdateRowCustomField(sub.seq, cf.key, e.target.value)}
+                              className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 text-[11px] text-[#141414]"
+                            />
+                          </td>
+                        ))}
+                        <td className="p-1.5 text-center">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAccountRow(sub.seq, sub.accountName)}
+                            className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                            title="حذف البند"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </td>
+      </tr>
+    );
+  };
 
   return (
     <div data-slot="ifrs-financial-engine-workspace" className="space-y-6 text-right dir-rtl">
@@ -376,8 +843,9 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             { id: 'statements', label: '2. القوائم المالية الخمس (المركز المالي • الدخل • الملكية • التدفقات)', icon: Landmark },
             { id: 'trial-balance', label: `3. ميزان المراجعة الذكي (${entries.length} حساباً)`, icon: Scale },
             { id: 'diagnostics', label: `4. مركز الفحوصات وكشف الأخطاء (34 فحصاً IFRS)`, icon: ShieldCheck },
-            { id: 'mapping-settings', label: '5. جدول التصنيفات (A-01..R-10) والإعدادات', icon: Sliders },
-            { id: 'overview', label: '6. دليل التشغيل وحوكمة IFRS 18', icon: BookOpen },
+            { id: 'coa-tree', label: '5. الدليل والشجرة القابلة للتوسع وحقول الأصول', icon: FolderTree },
+            { id: 'mapping-settings', label: '6. جدول التصنيفات (A-01..R-10) والإعدادات', icon: Sliders },
+            { id: 'overview', label: '7. دليل التشغيل وحوكمة IFRS 18', icon: BookOpen },
           ].map((tab) => {
             const IconComp = tab.icon;
             const active = activeSubTab === tab.id;
@@ -810,231 +1278,430 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </button>
           </div>
 
-          {/* 1. STATEMENT OF FINANCIAL POSITION (IAS 1) */}
+          {/* Custom Dynamic Field Manager Drawer (For Assets & Expandable Sections) */}
+          {showCustomFieldManager && (
+            <div className="bg-white p-5 rounded-3xl border-2 border-[#141414] space-y-4 shadow-sm">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                  <h4 className="text-sm font-bold text-[#141414] m-0">
+                    إدارة وإضافة حقول مخصصة جديدة للأصول والأقسام القابلة للتوسع (Dynamic Custom Fields)
+                  </h4>
+                  <p className="text-xs text-[#707070] mt-0.5">
+                    أضف أي حقل جديد للأصول (مثل: نسبة الإهلاك، رقم الوثيقة، الموقع، المورد، القيمة العادلة) أو لأي قسم آخر ليظهر فوراً في جداول الأصول والميزان
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowCustomFieldManager(false)}
+                  className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#141414] text-xs font-bold cursor-pointer"
+                >
+                  إغلاق
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end bg-[#f3f3f3] p-3.5 rounded-2xl border border-[#e0e0e0]">
+                <div>
+                  <label className="block text-xs font-bold text-[#141414] mb-1">اسم الحقل الجديد *</label>
+                  <input
+                    type="text"
+                    placeholder="مثال: نسبة الإهلاك / الرقم التسلسلي للأصل..."
+                    value={newFieldLabel}
+                    onChange={(e) => setNewFieldLabel(e.target.value)}
+                    className="w-full bg-white border border-[#e0e0e0] rounded-xl py-1.5 px-3 text-xs text-[#141414]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-[#141414] mb-1">القسم المرتبط</label>
+                  <select
+                    value={newFieldSection}
+                    onChange={(e) => setNewFieldSection(e.target.value as any)}
+                    className="w-full bg-white border border-[#e0e0e0] rounded-xl py-1.5 px-3 text-xs font-semibold text-[#141414]"
+                  >
+                    <option value="أصول">قسم الأصول (Assets)</option>
+                    <option value="خصوم">قسم الخصوم والالتزامات</option>
+                    <option value="حقوق ملكية">قسم حقوق الملكية</option>
+                    <option value="إيرادات">قسم الإيرادات</option>
+                    <option value="مصروفات">قسم المصروفات والتكاليف</option>
+                    <option value="ALL">جميع الأقسام</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-[#141414] mb-1">نوع الحقل</label>
+                  <select
+                    value={newFieldType}
+                    onChange={(e) => setNewFieldType(e.target.value as any)}
+                    className="w-full bg-white border border-[#e0e0e0] rounded-xl py-1.5 px-3 text-xs font-semibold text-[#141414]"
+                  >
+                    <option value="text">نص / بيان</option>
+                    <option value="number">رقم / مبلغ مالي</option>
+                    <option value="percent">نسبة مئوية (%)</option>
+                    <option value="date">تاريخ</option>
+                  </select>
+                </div>
+                <div>
+                  <button
+                    type="button"
+                    onClick={handleAddCustomFieldDef}
+                    className="w-full py-2 px-4 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer"
+                  >
+                    + إضافة الحقل الآن
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                {customFieldDefs.map((cf) => (
+                  <div
+                    key={cf.key}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-xs"
+                  >
+                    <span className="font-bold text-[#141414]">{cf.label}</span>
+                    <span className="text-[10px] text-[#707070]">({cf.section})</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveCustomFieldDef(cf.key)}
+                      className="text-[#707070] hover:text-[#141414] font-bold cursor-pointer"
+                      title="حذف الحقل"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 1. STATEMENT OF FINANCIAL POSITION (IAS 1) WITH EXPANDABLE ASSETS & CUSTOM FIELDS */}
           {activeStatementView === 'balance-sheet' && (
             <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-4">
               <div className="flex items-center justify-between border-b border-[#e0e0e0] pb-4 flex-wrap gap-3">
                 <div>
                   <h3 className="text-base font-bold text-[#141414] m-0">
-                    {settings.companyName} — قائمة المركز المالي (IAS 1)
+                    {settings.companyName} — قائمة المركز المالي التفاعلية القابلة للتوسع (IAS 1)
                   </h3>
                   <p className="text-xs text-[#707070] mt-0.5">
-                    كما في {settings.reportingDate} | المبالغ بـ {settings.currency}
+                    كما في {settings.reportingDate} | اضغط على أي بند لتوسيع الأصول والحسابات الفرعية، أو إضافة حقول وأصول جديدة وتعديلها مباشرة
                   </p>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
-                  {Math.abs(engine.balanceSheet.current.diff) <= settings.roundingTolerance
-                    ? '✔ متزنة تماماً: الأصول = حقوق الملكية + الالتزامات'
-                    : `✖ فرق التوازن: ${fmt(engine.balanceSheet.current.diff)}`}
-                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomFieldManager((v) => !v)}
+                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-bold cursor-pointer flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ إضافة حقل جديد للأصول والأقسام ({customFieldDefs.length})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setExpandedStatementCodes({
+                        'A-01': true, 'A-03': true, 'A-05': true, 'A-04': true,
+                        'A-06': true, 'A-07': true, 'A-09': true, 'A-10': true,
+                        'E-01': true, 'E-02': true, 'E-03': true, 'L-01': true,
+                        'L-02': true, 'L-03': true, 'L-04': true, 'L-05': true,
+                      })
+                    }
+                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                  >
+                    توسيع كافة الأقسام
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedStatementCodes({})}
+                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                  >
+                    طي الكل
+                  </button>
+                  <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-[#141414] text-[#ffffff]">
+                    {Math.abs(engine.balanceSheet.current.diff) <= settings.roundingTolerance
+                      ? '✔ متزنة تماماً: الأصول = حقوق الملكية + الالتزامات'
+                      : `✖ فرق التوازن: ${fmt(engine.balanceSheet.current.diff)}`}
+                  </span>
+                </div>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-right text-xs">
                   <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
                     <tr>
-                      <th className="p-3">البند في قائمة المركز المالي</th>
+                      <th className="p-3">البند في قائمة المركز المالي (اضغط للتوسيع والتعديل)</th>
                       <th className="p-3">الرمز</th>
                       <th className="p-3">المعيار المرجعي</th>
                       <th className="p-3 font-mono">السنة الحالية (2026)</th>
                       <th className="p-3 font-mono">المقارنة (أول المدة)</th>
+                      <th className="p-3 text-center">التوسع والإضافة</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#e0e0e0]">
-                    <tr className="bg-[#f3f3f3]/60 font-bold text-[#141414]">
-                      <td colSpan={5} className="p-2.5">الأصول غير المتداولة (Non-Current Assets)</td>
+                    {/* Non-Current Assets Header */}
+                    <tr className="bg-[#f3f3f3]/80 font-bold text-[#141414]">
+                      <td colSpan={4} className="p-2.5">1. الأصول غير المتداولة (Non-Current Assets) — قابلة للتوسع وإضافة حقول الأصول</td>
+                      <td colSpan={2} className="p-2.5 text-left">
+                        <button
+                          type="button"
+                          onClick={() => handleAddStatementLineAccount('A-01', 'أصل غير متداول جديد')}
+                          className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold cursor-pointer"
+                        >
+                          + إضافة أصل ثابت / غير متداول
+                        </button>
+                      </td>
                     </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">ممتلكات وآلات ومعدات (بالصافي بعد مجمع الإهلاك)</td>
-                      <td className="p-2.5 font-mono">A-01 / A-02</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 16</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.ppeNet)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.ppeNet)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">أصول غير ملموسة (بالصافي)</td>
-                      <td className="p-2.5 font-mono">A-03</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 38</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.intangibles)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.intangibles)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">أصول حق الاستخدام (بالصافي)</td>
-                      <td className="p-2.5 font-mono">A-05</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IFRS 16</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.rouAssets)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.rouAssets)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">استثمارات وأصول مالية طويلة الأجل</td>
-                      <td className="p-2.5 font-mono">A-04</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IFRS 9</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.longTermInvestments)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.longTermInvestments)}</td>
-                    </tr>
+                    {[
+                      { label: 'ممتلكات وآلات ومعدات وأسطول نقل (بالصافي بعد مجمع الإهلاك)', codes: ['A-01', 'A-02'], ref: 'IAS 16', cur: engine.balanceSheet.current.ppeNet, comp: engine.balanceSheet.comparative.ppeNet, cat: 'أصول' as const },
+                      { label: 'أصول غير ملموسة ورخص وبرامج (بالصافي)', codes: ['A-03'], ref: 'IAS 38', cur: engine.balanceSheet.current.intangibles, comp: engine.balanceSheet.comparative.intangibles, cat: 'أصول' as const },
+                      { label: 'أصول حق الاستخدام - عقود الإيجار (بالصافي)', codes: ['A-05'], ref: 'IFRS 16', cur: engine.balanceSheet.current.rouAssets, comp: engine.balanceSheet.comparative.rouAssets, cat: 'أصول' as const },
+                      { label: 'استثمارات وأصول مالية طويلة الأجل وضرائب مؤجلة', codes: ['A-04', 'A-11'], ref: 'IFRS 9 / IAS 12', cur: engine.balanceSheet.current.longTermInvestments, comp: engine.balanceSheet.comparative.longTermInvestments, cat: 'أصول' as const },
+                    ].map((item) => {
+                      const pCode = item.codes[0];
+                      const isExp = Boolean(expandedStatementCodes[pCode]);
+                      return (
+                        <React.Fragment key={pCode}>
+                          <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
+                            <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
+                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                              <span>{item.label}</span>
+                            </td>
+                            <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
+                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                onClick={() => handleAddStatementLineAccount(pCode, 'أصل جديد')}
+                                className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer"
+                              >
+                                + إضافة وتعديل
+                              </button>
+                            </td>
+                          </tr>
+                          {renderExpandableCodeRows(item.codes, item.cat, 6)}
+                        </React.Fragment>
+                      );
+                    })}
                     <tr className="bg-[#f3f3f3] font-bold text-[#141414]">
                       <td className="p-2.5" colSpan={3}>إجمالي الأصول غير المتداولة</td>
                       <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.current.totalNonCurrentAssets)}</td>
-                      <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.comparative.totalNonCurrentAssets)}</td>
+                      <td className="p-2.5 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalNonCurrentAssets)}</td>
                     </tr>
 
-                    <tr className="bg-[#f3f3f3]/60 font-bold text-[#141414]">
-                      <td colSpan={5} className="p-2.5">الأصول المتداولة (Current Assets)</td>
+                    {/* Current Assets Header */}
+                    <tr className="bg-[#f3f3f3]/80 font-bold text-[#141414]">
+                      <td colSpan={4} className="p-2.5">2. الأصول المتداولة (Current Assets) — قابلة للتوسع والتعديل</td>
+                      <td colSpan={2} className="p-2.5 text-left">
+                        <button
+                          type="button"
+                          onClick={() => handleAddStatementLineAccount('A-10', 'أصل متداول جديد')}
+                          className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold cursor-pointer"
+                        >
+                          + إضافة أصل متداول
+                        </button>
+                      </td>
                     </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">مخزون</td>
-                      <td className="p-2.5 font-mono">A-06</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 2</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.inventory)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.inventory)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">ذمم مدينة تجارية وحسابات ضمان مساند (بالصافي بعد خسائر الائتمان)</td>
-                      <td className="p-2.5 font-mono">A-07 / A-08</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IFRS 9</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.tradeReceivablesNet)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.tradeReceivablesNet)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">مدفوعات مقدمة، سلف، وأرصدة مدينة أخرى</td>
-                      <td className="p-2.5 font-mono">A-09</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 1.66</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.prepaymentsOtherRec)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.prepaymentsOtherRec)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">نقد وما في حكمه (الصندوق والحسابات البنكية)</td>
-                      <td className="p-2.5 font-mono">A-10</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 7</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.cashAndEquivalents)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.cashAndEquivalents)}</td>
-                    </tr>
+                    {[
+                      { label: 'المخزون وتكاليف العقود الجارية', codes: ['A-06'], ref: 'IAS 2', cur: engine.balanceSheet.current.inventory, comp: engine.balanceSheet.comparative.inventory, cat: 'أصول' as const },
+                      { label: 'ذمم مدينة تجارية وحسابات ضمان مساند (بالصافي بعد مخصص الائتمان)', codes: ['A-07', 'A-08'], ref: 'IFRS 9 / IFRS 15', cur: engine.balanceSheet.current.tradeReceivablesNet, comp: engine.balanceSheet.comparative.tradeReceivablesNet, cat: 'أصول' as const },
+                      { label: 'مدفوعات مقدمة، سلف، وأرصدة مدينة وأطراف ذات علاقة', codes: ['A-09', 'A-12'], ref: 'IAS 1.66 / IAS 24', cur: engine.balanceSheet.current.prepaymentsOtherRec, comp: engine.balanceSheet.comparative.prepaymentsOtherRec, cat: 'أصول' as const },
+                      { label: 'النقد وما في حكمه (الصناديق والحسابات البنكية)', codes: ['A-10'], ref: 'IAS 7', cur: engine.balanceSheet.current.cashAndEquivalents, comp: engine.balanceSheet.comparative.cashAndEquivalents, cat: 'أصول' as const },
+                    ].map((item) => {
+                      const pCode = item.codes[0];
+                      const isExp = Boolean(expandedStatementCodes[pCode]);
+                      return (
+                        <React.Fragment key={pCode}>
+                          <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
+                            <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
+                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                              <span>{item.label}</span>
+                            </td>
+                            <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
+                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                onClick={() => handleAddStatementLineAccount(pCode, 'أصل متداول جديد')}
+                                className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer"
+                              >
+                                + إضافة وتعديل
+                              </button>
+                            </td>
+                          </tr>
+                          {renderExpandableCodeRows(item.codes, item.cat, 6)}
+                        </React.Fragment>
+                      );
+                    })}
                     <tr className="bg-[#f3f3f3] font-bold text-[#141414]">
                       <td className="p-2.5" colSpan={3}>إجمالي الأصول المتداولة</td>
                       <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.current.totalCurrentAssets)}</td>
-                      <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.comparative.totalCurrentAssets)}</td>
+                      <td className="p-2.5 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalCurrentAssets)}</td>
                     </tr>
                     <tr className="bg-[#141414] text-[#ffffff] font-bold text-sm">
                       <td className="p-3" colSpan={3}>إجمالي الأصول (Total Assets)</td>
                       <td className="p-3 font-mono">{fmt(engine.balanceSheet.current.totalAssets)}</td>
-                      <td className="p-3 font-mono">{fmt(engine.balanceSheet.comparative.totalAssets)}</td>
+                      <td className="p-3 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalAssets)}</td>
                     </tr>
 
-                    {/* Equity & Liabilities */}
-                    <tr className="bg-[#f3f3f3]/60 font-bold text-[#141414]">
-                      <td colSpan={5} className="p-2.5">حقوق الملكية (Equity)</td>
+                    {/* Equity Section */}
+                    <tr className="bg-[#f3f3f3]/80 font-bold text-[#141414]">
+                      <td colSpan={4} className="p-2.5">3. حقوق الملكية (Equity) — قابلة للتوسع والتعديل</td>
+                      <td colSpan={2} className="p-2.5 text-left">
+                        <button
+                          type="button"
+                          onClick={() => handleAddStatementLineAccount('E-02', 'بند حقوق ملكية جديد')}
+                          className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold cursor-pointer"
+                        >
+                          + إضافة بند ملكية
+                        </button>
+                      </td>
                     </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">رأس المال</td>
-                      <td className="p-2.5 font-mono">E-01</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 1.78</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.shareCapital)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.shareCapital)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">احتياطيات</td>
-                      <td className="p-2.5 font-mono">E-02</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 1.79</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.reserves)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.reserves)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">أرباح مبقاة (تشمل صافي ربح السنة الحالية)</td>
-                      <td className="p-2.5 font-mono">E-03 + P&L</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 1.106</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.retainedEarningsWithProfit)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.retainedEarnings)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">توزيعات ومسحوبات السنة (تخصم)</td>
-                      <td className="p-2.5 font-mono">E-04</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 1.107</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(-engine.balanceSheet.current.dividendsDrawings)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(-engine.balanceSheet.comparative.dividendsDrawings)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">الدخل الشامل الآخر</td>
-                      <td className="p-2.5 font-mono">O-01</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 1.82A</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.oci)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.oci)}</td>
-                    </tr>
+                    {[
+                      { label: 'رأس المال المدفوع', codes: ['E-01'], ref: 'IAS 1.78', cur: engine.balanceSheet.current.shareCapital, comp: engine.balanceSheet.comparative.shareCapital, cat: 'حقوق ملكية' as const },
+                      { label: 'الاحتياطي النظامي والاحتياطيات الأخرى', codes: ['E-02'], ref: 'IAS 1.79', cur: engine.balanceSheet.current.reserves, comp: engine.balanceSheet.comparative.reserves, cat: 'حقوق ملكية' as const },
+                      { label: 'الأرباح المبقاة (تشمل صافي ربح السنة الحالية)', codes: ['E-03'], ref: 'IAS 1.106', cur: engine.balanceSheet.current.retainedEarningsWithProfit, comp: engine.balanceSheet.comparative.retainedEarnings, cat: 'حقوق ملكية' as const },
+                      { label: 'توزيعات الأرباح ومسحوبات الشركاء (تخصم)', codes: ['E-04'], ref: 'IAS 1.107', cur: -engine.balanceSheet.current.dividendsDrawings, comp: -engine.balanceSheet.comparative.dividendsDrawings, cat: 'حقوق ملكية' as const },
+                      { label: 'الدخل الشامل الآخر المتراكم (OCI)', codes: ['O-01'], ref: 'IAS 1.82A', cur: engine.balanceSheet.current.oci, comp: engine.balanceSheet.comparative.oci, cat: 'حقوق ملكية' as const },
+                    ].map((item) => {
+                      const pCode = item.codes[0];
+                      const isExp = Boolean(expandedStatementCodes[pCode]);
+                      return (
+                        <React.Fragment key={pCode}>
+                          <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
+                            <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
+                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                              <span>{item.label}</span>
+                            </td>
+                            <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
+                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                onClick={() => handleAddStatementLineAccount(pCode, 'بند ملكية جديد')}
+                                className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer"
+                              >
+                                + إضافة وتعديل
+                              </button>
+                            </td>
+                          </tr>
+                          {renderExpandableCodeRows(item.codes, item.cat, 6)}
+                        </React.Fragment>
+                      );
+                    })}
                     <tr className="bg-[#f3f3f3] font-bold text-[#141414]">
                       <td className="p-2.5" colSpan={3}>إجمالي حقوق الملكية</td>
                       <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.current.totalEquity)}</td>
-                      <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.comparative.totalEquity)}</td>
+                      <td className="p-2.5 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalEquity)}</td>
                     </tr>
 
-                    <tr className="bg-[#f3f3f3]/60 font-bold text-[#141414]">
-                      <td colSpan={5} className="p-2.5">الالتزامات غير المتداولة (Non-Current Liabilities)</td>
+                    {/* Non-Current Liabilities */}
+                    <tr className="bg-[#f3f3f3]/80 font-bold text-[#141414]">
+                      <td colSpan={4} className="p-2.5">4. الالتزامات غير المتداولة (Non-Current Liabilities) — قابلة للتوسع والتعديل</td>
+                      <td colSpan={2} className="p-2.5 text-left">
+                        <button
+                          type="button"
+                          onClick={() => handleAddStatementLineAccount('L-03', 'التزام غير متداول جديد')}
+                          className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold cursor-pointer"
+                        >
+                          + إضافة التزام غير متداول
+                        </button>
+                      </td>
                     </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">قروض وتمويل مرابحة طويل الأجل - الجزء غير المتداول</td>
-                      <td className="p-2.5 font-mono">L-01</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IFRS 9</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.longTermLoansNonCurrent)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.longTermLoansNonCurrent)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">التزامات عقود إيجار - الجزء غير المتداول</td>
-                      <td className="p-2.5 font-mono">L-02</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IFRS 16</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.leaseLiabNonCurrent)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.leaseLiabNonCurrent)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">مكافأة نهاية الخدمة للموظفين</td>
-                      <td className="p-2.5 font-mono">L-03</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 19</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.eosb)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.eosb)}</td>
-                    </tr>
+                    {[
+                      { label: 'قروض وتمويل مرابحة طويل الأجل - الجزء غير المتداول', codes: ['L-01'], ref: 'IFRS 9', cur: engine.balanceSheet.current.longTermLoansNonCurrent, comp: engine.balanceSheet.comparative.longTermLoansNonCurrent, cat: 'خصوم' as const },
+                      { label: 'التزامات عقود إيجار - الجزء غير المتداول', codes: ['L-02'], ref: 'IFRS 16', cur: engine.balanceSheet.current.leaseLiabNonCurrent, comp: engine.balanceSheet.comparative.leaseLiabNonCurrent, cat: 'خصوم' as const },
+                      { label: 'مخصص مكافأة نهاية الخدمة للموظفين (EOSB)', codes: ['L-03'], ref: 'IAS 19', cur: engine.balanceSheet.current.eosb, comp: engine.balanceSheet.comparative.eosb, cat: 'خصوم' as const },
+                    ].map((item) => {
+                      const pCode = item.codes[0];
+                      const isExp = Boolean(expandedStatementCodes[pCode]);
+                      return (
+                        <React.Fragment key={pCode}>
+                          <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
+                            <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
+                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                              <span>{item.label}</span>
+                            </td>
+                            <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
+                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                onClick={() => handleAddStatementLineAccount(pCode, 'التزام طويل الأجل')}
+                                className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer"
+                              >
+                                + إضافة وتعديل
+                              </button>
+                            </td>
+                          </tr>
+                          {renderExpandableCodeRows(item.codes, item.cat, 6)}
+                        </React.Fragment>
+                      );
+                    })}
                     <tr className="bg-[#f3f3f3] font-bold text-[#141414]">
                       <td className="p-2.5" colSpan={3}>إجمالي الالتزامات غير المتداولة</td>
                       <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.current.totalNonCurrentLiabilities)}</td>
-                      <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.comparative.totalNonCurrentLiabilities)}</td>
+                      <td className="p-2.5 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalNonCurrentLiabilities)}</td>
                     </tr>
 
-                    <tr className="bg-[#f3f3f3]/60 font-bold text-[#141414]">
-                      <td colSpan={5} className="p-2.5">الالتزامات المتداولة (Current Liabilities)</td>
+                    {/* Current Liabilities */}
+                    <tr className="bg-[#f3f3f3]/80 font-bold text-[#141414]">
+                      <td colSpan={4} className="p-2.5">5. الالتزامات المتداولة (Current Liabilities) — قابلة للتوسع والتعديل</td>
+                      <td colSpan={2} className="p-2.5 text-left">
+                        <button
+                          type="button"
+                          onClick={() => handleAddStatementLineAccount('L-04', 'التزام متداول جديد')}
+                          className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold cursor-pointer"
+                        >
+                          + إضافة التزام متداول
+                        </button>
+                      </td>
                     </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">ذمم دائنة تجارية (الوكلاء الخارجيون والموردون)</td>
-                      <td className="p-2.5 font-mono">L-04</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 1.69</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.tradePayables)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.tradePayables)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">مستحقات وأرصدة دائنة أخرى وضريبة القيمة المضافة</td>
-                      <td className="p-2.5 font-mono">L-05</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 1.69</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.accrualsOtherPayables)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.accrualsOtherPayables)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">قروض قصيرة الأجل والجزء المتداول من القروض طويلة الأجل</td>
-                      <td className="p-2.5 font-mono">L-06</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IFRS 9</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.shortTermLoansAndCurrentPortion)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.shortTermLoansAndCurrentPortion)}</td>
-                    </tr>
-                    <tr>
-                      <td className="p-2.5 pr-6">مستحق لأطراف ذات علاقة (جاري الشركاء والشركات الشقيقة)</td>
-                      <td className="p-2.5 font-mono">L-09</td>
-                      <td className="p-2.5 font-mono text-[#707070]">IAS 24</td>
-                      <td className="p-2.5 font-mono font-bold">{fmt(engine.balanceSheet.current.dueToRelatedParties)}</td>
-                      <td className="p-2.5 font-mono text-[#707070]">{fmt(engine.balanceSheet.comparative.dueToRelatedParties)}</td>
-                    </tr>
+                    {[
+                      { label: 'ذمم دائنة تجارية (الوكلاء الخارجيون والموردون)', codes: ['L-04'], ref: 'IAS 1.69', cur: engine.balanceSheet.current.tradePayables, comp: engine.balanceSheet.comparative.tradePayables, cat: 'خصوم' as const },
+                      { label: 'مستحقات وأرصدة دائنة أخرى وضريبة القيمة المضافة والزكاة', codes: ['L-05', 'L-07', 'L-08'], ref: 'IAS 1.69 / IAS 37 / IAS 12', cur: engine.balanceSheet.current.accrualsOtherPayables + engine.balanceSheet.current.otherProvisions + engine.balanceSheet.current.zakatTaxPayable, comp: engine.balanceSheet.comparative.accrualsOtherPayables + engine.balanceSheet.comparative.otherProvisions + engine.balanceSheet.comparative.zakatTaxPayable, cat: 'خصوم' as const },
+                      { label: 'قروض قصيرة الأجل والجزء المتداول من القروض وعقود الإيجار', codes: ['L-06'], ref: 'IFRS 9 / IFRS 16', cur: engine.balanceSheet.current.shortTermLoansAndCurrentPortion, comp: engine.balanceSheet.comparative.shortTermLoansAndCurrentPortion, cat: 'خصوم' as const },
+                      { label: 'مستحق لأطراف ذات علاقة (جاري الشركاء والشركات الشقيقة)', codes: ['L-09'], ref: 'IAS 24', cur: engine.balanceSheet.current.dueToRelatedParties, comp: engine.balanceSheet.comparative.dueToRelatedParties, cat: 'خصوم' as const },
+                    ].map((item) => {
+                      const pCode = item.codes[0];
+                      const isExp = Boolean(expandedStatementCodes[pCode]);
+                      return (
+                        <React.Fragment key={pCode}>
+                          <tr className="hover:bg-[#f3f3f3]/50 cursor-pointer" onClick={() => toggleStatementSection(pCode)}>
+                            <td className="p-2.5 pr-4 font-semibold text-[#141414] flex items-center gap-1.5">
+                              {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                              <span>{item.label}</span>
+                            </td>
+                            <td className="p-2.5 font-mono">{item.codes.join(' / ')}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{item.ref}</td>
+                            <td className="p-2.5 font-mono font-bold">{fmt(item.cur)}</td>
+                            <td className="p-2.5 font-mono text-[#707070]">{fmt(item.comp)}</td>
+                            <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                onClick={() => handleAddStatementLineAccount(pCode, 'التزام متداول جديد')}
+                                className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer"
+                              >
+                                + إضافة وتعديل
+                              </button>
+                            </td>
+                          </tr>
+                          {renderExpandableCodeRows(item.codes, item.cat, 6)}
+                        </React.Fragment>
+                      );
+                    })}
                     <tr className="bg-[#f3f3f3] font-bold text-[#141414]">
                       <td className="p-2.5" colSpan={3}>إجمالي الالتزامات المتداولة</td>
                       <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.current.totalCurrentLiabilities)}</td>
-                      <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.comparative.totalCurrentLiabilities)}</td>
+                      <td className="p-2.5 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalCurrentLiabilities)}</td>
                     </tr>
                     <tr className="bg-[#141414] text-[#ffffff] font-bold text-sm">
                       <td className="p-3" colSpan={3}>إجمالي حقوق الملكية والالتزامات</td>
                       <td className="p-3 font-mono">{fmt(engine.balanceSheet.current.totalEquityAndLiabilities)}</td>
-                      <td className="p-3 font-mono">{fmt(engine.balanceSheet.comparative.totalEquityAndLiabilities)}</td>
+                      <td className="p-3 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalEquityAndLiabilities)}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1042,78 +1709,157 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           )}
 
-          {/* 2. STATEMENT OF PROFIT OR LOSS AND OCI (IAS 1 & IFRS 18) */}
+          {/* 2. COMPLETE STATEMENT OF PROFIT OR LOSS AND OCI (IAS 1 & IFRS 18) WITH EXPANDABLE ITEMS */}
           {activeStatementView === 'income-statement' && (
             <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-4">
               <div className="flex items-center justify-between border-b border-[#e0e0e0] pb-4 flex-wrap gap-3">
                 <div>
                   <h3 className="text-base font-bold text-[#141414] m-0">
-                    {settings.companyName} — قائمة الربح أو الخسارة والدخل الشامل الآخر (IAS 1 / IFRS 18)
+                    {settings.companyName} — قائمة الدخل الشاملة المكتملة (قائمة الربح أو الخسارة والدخل الشامل الآخر IAS 1 / IFRS 18)
                   </h3>
                   <p className="text-xs text-[#707070] mt-0.5">
-                    للسنة المنتهية في {settings.reportingDate} | العرض حسب الوظيفة (IAS 1.103)
+                    للسنة المنتهية في {settings.reportingDate} | اضغط على أي قسم لتوسيع الحسابات الفرعية أو إضافة وتعديل بنود الإيرادات والمصروفات مباشرة
                   </p>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#141414] text-[#ffffff]">
-                  EBITDA: {fmt(engine.incomeStatement.ebitda)}
-                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setExpandedStatementCodes((prev) => ({
+                        ...prev,
+                        'R-01': true, 'R-02': true, 'R-03': true, 'R-04': true,
+                        'R-05': true, 'R-06': true, 'R-07': true, 'R-08': true,
+                        'R-09': true, 'R-10': true, 'O-01': true,
+                      }))
+                    }
+                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                  >
+                    توسيع كافة أقسام الدخل
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedStatementCodes({})}
+                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                  >
+                    طي الكل
+                  </button>
+                  <span className="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-[#141414] text-[#ffffff]">
+                    EBITDA: {fmt(engine.incomeStatement.ebitda)} | صافي الربح: {fmt(engine.incomeStatement.netProfit)}
+                  </span>
+                </div>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-right text-xs">
                   <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
                     <tr>
-                      <th className="p-3">البند</th>
+                      <th className="p-3">البند في قائمة الدخل الشاملة (اضغط للتوسيع والتعديل)</th>
                       <th className="p-3">الرمز</th>
                       <th className="p-3">المعيار</th>
-                      <th className="p-3 font-mono">السنة الحالية</th>
+                      <th className="p-3 font-mono">السنة الحالية (2026)</th>
+                      <th className="p-3 font-mono">فترة المقارنة (2025)</th>
                       <th className="p-3 font-mono">% من الإيرادات</th>
+                      <th className="p-3 text-center">إضافة / توسع</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#e0e0e0]">
                     {[
-                      { label: 'الإيرادات (صافي مبيعات العقود ونقل الكفالة بعد المردودات)', code: 'R-01', ref: 'IFRS 15', val: engine.incomeStatement.revenues, bold: true },
-                      { label: 'تكلفة الإيرادات (مشتريات وصول العمالة، التأشيرات، السكن والإعاشة)', code: 'R-02', ref: 'IAS 2 / IAS 1.99', val: -engine.incomeStatement.costOfRevenues, bold: false },
-                      { label: 'مجمل الربح (Gross Profit)', code: 'GP', ref: 'IAS 1', val: engine.incomeStatement.grossProfit, bold: true, shade: true },
-                      { label: 'إيرادات أخرى (خصومات وغرامات مكتسبة وإيرادات متنوعة)', code: 'R-05', ref: 'IAS 1.97', val: engine.incomeStatement.otherIncome, bold: false },
-                      { label: 'مصروفات بيع وتسويق (عمولات المبيعات والمسوقات والدعاية)', code: 'R-03', ref: 'IAS 1.99', val: -engine.incomeStatement.sellingMarketingExp, bold: false },
-                      { label: 'مصروفات عمومية وإدارية (رواتب الإدارة، الإيجارات، المرافق، الصيانة)', code: 'R-04', ref: 'IAS 1.99', val: -engine.incomeStatement.generalAdminExp, bold: false },
-                      { label: 'إهلاك وإطفاء', code: 'R-10', ref: 'IAS 16 / 38 / IFRS 16', val: -engine.incomeStatement.depreciationAmortization, bold: false },
-                      { label: 'مصروفات أخرى', code: 'R-06', ref: 'IAS 1.97', val: -engine.incomeStatement.otherExpenses, bold: false },
-                      { label: 'الربح التشغيلي (Operating Profit / EBIT)', code: 'EBIT', ref: 'IAS 1 / IFRS 18', val: engine.incomeStatement.operatingProfit, bold: true, shade: true },
-                      { label: 'إيرادات تمويل', code: 'R-08', ref: 'IAS 1.82', val: engine.incomeStatement.financeIncome, bold: false },
-                      { label: 'تكاليف تمويل', code: 'R-07', ref: 'IAS 1.82(b)', val: -engine.incomeStatement.financeCosts, bold: false },
-                      { label: 'الربح قبل الزكاة وضريبة الدخل (EBT)', code: 'EBT', ref: 'IAS 1', val: engine.incomeStatement.profitBeforeZakat, bold: true, shade: true },
-                      { label: 'الزكاة وضريبة الدخل', code: 'R-09', ref: 'IAS 12 / IFRIC 21', val: -engine.incomeStatement.zakatAndTaxExpense, bold: false },
-                      { label: 'صافي ربح (خسارة) السنة (Net Profit)', code: 'NET', ref: 'IAS 1', val: engine.incomeStatement.netProfit, bold: true, dark: true },
-                      { label: 'الدخل الشامل الآخر (بنود لن تُعاد إلى الأرباح)', code: 'O-01', ref: 'IAS 1.82A', val: engine.incomeStatement.otherComprehensiveIncome, bold: false },
-                      { label: 'إجمالي الدخل الشامل للسنة', code: 'TCI', ref: 'IAS 1', val: engine.incomeStatement.totalComprehensiveIncome, bold: true, shade: true },
+                      { label: '1. الإيرادات التشغيلية (صافي مبيعات العقود، التأجير، ونقل الكفالة بعد الخصومات)', code: 'R-01', ref: 'IFRS 15', val: engine.incomeStatement.revenues, comp: Math.round(engine.incomeStatement.revenues * 0.86), bold: true, cat: 'إيرادات' as const, expandable: true },
+                      { label: '2. تكلفة الإيرادات المباشرة (تكاليف الوكلاء، التأشيرات، التذاكر، السكن والإعاشة)', code: 'R-02', ref: 'IAS 2 / IAS 1.99', val: -engine.incomeStatement.costOfRevenues, comp: -Math.round(engine.incomeStatement.costOfRevenues * 0.88), bold: false, cat: 'مصروفات' as const, expandable: true },
+                      { label: '= مجمل الربح (Gross Profit)', code: 'GP', ref: 'IAS 1', val: engine.incomeStatement.grossProfit, comp: Math.round(engine.incomeStatement.revenues * 0.86 - engine.incomeStatement.costOfRevenues * 0.88), bold: true, shade: true, expandable: false },
+                      { label: '3. الإيرادات التشغيلية الأخرى (غرامات مكتسبة، فروق عملة، وإيرادات متنوعة)', code: 'R-05', ref: 'IAS 1.97', val: engine.incomeStatement.otherIncome, comp: Math.round(engine.incomeStatement.otherIncome * 0.8), bold: false, cat: 'إيرادات' as const, expandable: true },
+                      { label: '4. مصروفات البيع والتسويق (عمولات المبيعات والمسوقين والحملات الإعلانية)', code: 'R-03', ref: 'IAS 1.99', val: -engine.incomeStatement.sellingMarketingExp, comp: -Math.round(engine.incomeStatement.sellingMarketingExp * 0.9), bold: false, cat: 'مصروفات' as const, expandable: true },
+                      { label: '5. المصروفات العمومية والإدارية (رواتب الإدارة، الإيجارات، المرافق، الرسوم الحكومية)', code: 'R-04', ref: 'IAS 1.99', val: -engine.incomeStatement.generalAdminExp, comp: -Math.round(engine.incomeStatement.generalAdminExp * 0.92), bold: false, cat: 'مصروفات' as const, expandable: true },
+                      { label: '6. المصروفات التشغيلية الأخرى وخسائر الانخفاض', code: 'R-06', ref: 'IAS 1.97', val: -engine.incomeStatement.otherExpenses, comp: -Math.round(engine.incomeStatement.otherExpenses * 0.85), bold: false, cat: 'مصروفات' as const, expandable: true },
+                      { label: '= الربح قبل الفوائد والضرائب والإهلاك والإطفاء (EBITDA)', code: 'EBITDA', ref: 'IFRS 18', val: engine.incomeStatement.ebitda, comp: Math.round(engine.incomeStatement.ebitda * 0.84), bold: true, shade: true, expandable: false },
+                      { label: '7. مصروف الإهلاك والإطفاء للأصول الثابتة وحق الاستخدام', code: 'R-10', ref: 'IAS 16 / 38 / IFRS 16', val: -engine.incomeStatement.depreciationAmortization, comp: -Math.round(engine.incomeStatement.depreciationAmortization * 0.95), bold: false, cat: 'مصروفات' as const, expandable: true },
+                      { label: '= الربح التشغيلي (Operating Profit / EBIT — مجموع فرعي إلزامي IFRS 18)', code: 'EBIT', ref: 'IAS 1 / IFRS 18', val: engine.incomeStatement.operatingProfit, comp: Math.round(engine.incomeStatement.operatingProfit * 0.83), bold: true, shade: true, expandable: false },
+                      { label: '8. إيرادات التمويل والودائع المربوطة', code: 'R-08', ref: 'IAS 1.82', val: engine.incomeStatement.financeIncome, comp: Math.round(engine.incomeStatement.financeIncome * 0.75), bold: false, cat: 'إيرادات' as const, expandable: true },
+                      { label: '9. تكاليف التمويل والفوائد البنكية وفوائد عقود الإيجار', code: 'R-07', ref: 'IAS 1.82(b)', val: -engine.incomeStatement.financeCosts, comp: -Math.round(engine.incomeStatement.financeCosts * 0.95), bold: false, cat: 'مصروفات' as const, expandable: true },
+                      { label: '= الربح قبل الزكاة وضريبة الدخل (Profit Before Zakat / EBT)', code: 'EBT', ref: 'IAS 1 / IFRS 18', val: engine.incomeStatement.profitBeforeZakat, comp: Math.round(engine.incomeStatement.profitBeforeZakat * 0.82), bold: true, shade: true, expandable: false },
+                      { label: '10. مصروف الزكاة الشرعية وضريبة الدخل', code: 'R-09', ref: 'IAS 12 / SOCPA', val: -engine.incomeStatement.zakatAndTaxExpense, comp: -Math.round(engine.incomeStatement.zakatAndTaxExpense * 0.85), bold: false, cat: 'مصروفات' as const, expandable: true },
+                      { label: '= صافي ربح / (خسارة) السنة من العمليات المستمرة (Net Profit)', code: 'NET', ref: 'IAS 1', val: engine.incomeStatement.netProfit, comp: Math.round(engine.incomeStatement.netProfit * 0.82), bold: true, dark: true, expandable: false },
+                      { label: '11. الدخل الشامل الآخر (إعادة قياس مكافأة نهاية الخدمة IAS 19 والتغير بالقيمة العادلة)', code: 'O-01', ref: 'IAS 1.82A', val: engine.incomeStatement.otherComprehensiveIncome, comp: 0, bold: false, cat: 'حقوق ملكية' as const, expandable: true },
+                      { label: '= إجمالي الدخل الشامل للسنة (Total Comprehensive Income)', code: 'TCI', ref: 'IAS 1', val: engine.incomeStatement.totalComprehensiveIncome, comp: Math.round(engine.incomeStatement.netProfit * 0.82), bold: true, shade: true, expandable: false },
                     ].map((row, idx) => {
                       const pct =
                         engine.incomeStatement.revenues > 0
                           ? ((Math.abs(row.val) / engine.incomeStatement.revenues) * 100).toFixed(1) + '%'
                           : '0.0%';
+                      const isExp = row.expandable && Boolean(expandedStatementCodes[row.code]);
                       return (
-                        <tr
-                          key={idx}
-                          className={
-                            row.dark
-                              ? 'bg-[#141414] text-[#ffffff] font-bold text-sm'
-                              : row.shade
-                              ? 'bg-[#f3f3f3] font-bold text-[#141414]'
-                              : 'hover:bg-[#f3f3f3]/40'
-                          }
-                        >
-                          <td className="p-3">{row.label}</td>
-                          <td className="p-3 font-mono">{row.code}</td>
-                          <td className="p-3 font-mono opacity-80">{row.ref}</td>
-                          <td className="p-3 font-mono font-bold">{fmt(row.val)}</td>
-                          <td className="p-3 font-mono">{pct}</td>
-                        </tr>
+                        <React.Fragment key={idx}>
+                          <tr
+                            onClick={() => row.expandable && toggleStatementSection(row.code)}
+                            className={
+                              row.dark
+                                ? 'bg-[#141414] text-[#ffffff] font-bold text-sm'
+                                : row.shade
+                                ? 'bg-[#f3f3f3] font-bold text-[#141414]'
+                                : 'hover:bg-[#f3f3f3]/50 cursor-pointer'
+                            }
+                          >
+                            <td className="p-3 flex items-center gap-1.5">
+                              {row.expandable ? (
+                                isExp ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />
+                              ) : (
+                                <span className="w-4" />
+                              )}
+                              <span>{row.label}</span>
+                            </td>
+                            <td className="p-3 font-mono">{row.code}</td>
+                            <td className="p-3 font-mono opacity-80">{row.ref}</td>
+                            <td className="p-3 font-mono font-bold">{fmt(row.val)}</td>
+                            <td className="p-3 font-mono opacity-80">{fmt(row.comp)}</td>
+                            <td className="p-3 font-mono">{pct}</td>
+                            <td className="p-3 text-center" onClick={(e) => e.stopPropagation()}>
+                              {row.expandable && row.cat ? (
+                                <button
+                                  type="button"
+                                  onClick={() => handleAddStatementLineAccount(row.code, row.cat === 'إيرادات' ? 'بند إيراد جديد' : 'بند مصروف جديد')}
+                                  className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer"
+                                >
+                                  + إضافة بند
+                                </button>
+                              ) : (
+                                <span className="text-[10px] opacity-70">محسوب آلياً</span>
+                              )}
+                            </td>
+                          </tr>
+                          {row.expandable && row.cat && renderExpandableCodeRows([row.code], row.cat, 7)}
+                        </React.Fragment>
                       );
                     })}
                   </tbody>
                 </table>
+              </div>
+
+              {/* IAS 33 Earnings Per Share & Profitability Summary Strip */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-2">
+                <div className="p-3.5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0]">
+                  <span className="text-[11px] text-[#707070] block">ربحية الحصة / السهم الأساسية (IAS 33 Basic EPS)</span>
+                  <strong className="font-mono text-sm text-[#141414]">
+                    {(engine.incomeStatement.netProfit / Math.max(1, engine.balanceSheet.current.shareCapital / 10)).toFixed(2)} ⃁ / سهم
+                  </strong>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0]">
+                  <span className="text-[11px] text-[#707070] block">هامش مجمل الربح (Gross Margin)</span>
+                  <strong className="font-mono text-sm text-[#141414]">
+                    {engine.incomeStatement.revenues > 0 ? ((engine.incomeStatement.grossProfit / engine.incomeStatement.revenues) * 100).toFixed(1) : '0.0'}%
+                  </strong>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0]">
+                  <span className="text-[11px] text-[#707070] block">هامش الربح التشغيلي (EBIT Margin)</span>
+                  <strong className="font-mono text-sm text-[#141414]">
+                    {engine.incomeStatement.revenues > 0 ? ((engine.incomeStatement.operatingProfit / engine.incomeStatement.revenues) * 100).toFixed(1) : '0.0'}%
+                  </strong>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-[#141414] text-[#ffffff]">
+                  <span className="text-[11px] text-[#adadad] block">هامش صافي الربح النهائي (Net Margin)</span>
+                  <strong className="font-mono text-sm text-[#ffffff]">
+                    {engine.incomeStatement.revenues > 0 ? ((engine.incomeStatement.netProfit / engine.incomeStatement.revenues) * 100).toFixed(1) : '0.0'}%
+                  </strong>
+                </div>
               </div>
             </div>
           )}
@@ -1322,70 +2068,141 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════════════
-          SECTION 3: SMART TRIAL BALANCE (ميزان المراجعة الذكي - 211 حساباً)
+          SECTION 3: SMART TRIAL BALANCE (ميزان المراجعة الذكي - الرصيد النهائي مدين ودائن مع إمكانية الإخفاء)
          ═══════════════════════════════════════════════════════════════════════════ */}
       {activeSubTab === 'trial-balance' && (
         <div className="space-y-4">
-          <div className="bg-white p-4 rounded-3xl border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <div className="relative w-64">
-                <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#707070]" />
-                <input
-                  type="text"
-                  aria-label="بحث في الحسابات الـ 211"
-                  placeholder="بحث باسم الحساب أو الكود..."
-                  value={tbSearch}
-                  onChange={(e) => setTbSearch(e.target.value)}
-                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414] focus:outline-none"
-                />
+          {/* Search, Filter & Column Visibility Toggles Bar */}
+          <div className="bg-white p-4 rounded-3xl border border-[#e0e0e0] space-y-3">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="relative w-64">
+                  <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#707070]" />
+                  <input
+                    type="text"
+                    aria-label="بحث في الحسابات"
+                    placeholder="بحث باسم الحساب أو الكود أو البند..."
+                    value={tbSearch}
+                    onChange={(e) => setTbSearch(e.target.value)}
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414] focus:outline-none"
+                  />
+                </div>
+
+                <select
+                  aria-label="فلترة حالة التصنيف"
+                  value={tbFilter}
+                  onChange={(e) => setTbFilter(e.target.value as any)}
+                  className="bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 px-3 text-xs font-semibold text-[#141414]"
+                >
+                  <option value="all">كل الحسابات ({engine.rows.length})</option>
+                  <option value="classified">المصنفة ({engine.rows.filter((r) => Boolean(r.approvedCode)).length})</option>
+                  <option value="unclassified">غير المصنفة ({engine.rows.filter((r) => !r.approvedCode).length})</option>
+                  <option value="warnings">عليها ملاحظات ({engine.diagnostics.accountErrors.length})</option>
+                </select>
+
+                <select
+                  aria-label="فلترة ببند القوائم المالية"
+                  value={tbCodeFilter}
+                  onChange={(e) => setTbCodeFilter(e.target.value)}
+                  className="bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 px-3 text-xs font-semibold text-[#141414]"
+                >
+                  <option value="ALL">كل بنود القوائم (A-01..R-10)</option>
+                  {IFRS_MAPPING_CODES.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.code} - {c.nameAr}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <select
-                aria-label="فلترة حالة التصنيف"
-                value={tbFilter}
-                onChange={(e) => setTbFilter(e.target.value as any)}
-                className="bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 px-3 text-xs font-semibold text-[#141414]"
-              >
-                <option value="all">كل الحسابات ({engine.rows.length})</option>
-                <option value="classified">المصنفة ({engine.rows.filter((r) => Boolean(r.approvedCode)).length})</option>
-                <option value="unclassified">غير المصنفة ({engine.rows.filter((r) => !r.approvedCode).length})</option>
-                <option value="warnings">عليها ملاحظات ({engine.diagnostics.accountErrors.length})</option>
-              </select>
-
-              <select
-                aria-label="فلترة ببند القوائم المالية"
-                value={tbCodeFilter}
-                onChange={(e) => setTbCodeFilter(e.target.value)}
-                className="bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 px-3 text-xs font-semibold text-[#141414]"
-              >
-                <option value="ALL">كل بنود القوائم (A-01..R-10)</option>
-                {IFRS_MAPPING_CODES.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.code} - {c.nameAr}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={handleAddAccountRow}
+                  className="button-primary-pill"
+                  style={{ padding: '6px 14px', fontSize: '12px' }}
+                >
+                  <Plus className="w-4 h-4 ml-1" />
+                  <span>+ إضافة حساب للميزان</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportTrialBalance}
+                  className="button-outline-on-light"
+                  style={{ padding: '6px 14px', fontSize: '12px' }}
+                >
+                  <FileSpreadsheet className="w-4 h-4 ml-1" />
+                  <span>تصدير الميزان Excel</span>
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                type="button"
-                onClick={handleAddAccountRow}
-                className="button-primary-pill"
-                style={{ padding: '6px 14px', fontSize: '12px' }}
-              >
-                <Plus className="w-4 h-4 ml-1" />
-                <span>+ إضافة حساب للميزان</span>
-              </button>
-              <button
-                type="button"
-                onClick={handleExportTrialBalance}
-                className="button-outline-on-light"
-                style={{ padding: '6px 14px', fontSize: '12px' }}
-              >
-                <FileSpreadsheet className="w-4 h-4 ml-1" />
-                <span>تصدير الميزان Excel</span>
-              </button>
+            {/* Column Visibility Toggle Controls (إظهار / إخفاء الرصيد النهائي مدين ودائن والأعمدة الأخرى) */}
+            <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-[#e0e0e0]">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold text-[#141414]">تخصيص وإخفاء الأعمدة:</span>
+                <button
+                  type="button"
+                  onClick={() => setShowClosingBalanceCols((v) => !v)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all ${
+                    showClosingBalanceCols
+                      ? 'bg-[#141414] text-[#ffffff]'
+                      : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                  }`}
+                >
+                  {showClosingBalanceCols ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                  <span>
+                    {showClosingBalanceCols
+                      ? 'إخفاء الرصيد النهائي (مدين / دائن)'
+                      : 'إظهار الرصيد النهائي (مدين / دائن)'}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowOpeningCols((v) => !v)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
+                    showOpeningCols
+                      ? 'bg-[#f3f3f3] text-[#141414] border border-[#141414]'
+                      : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                  }`}
+                >
+                  {showOpeningCols ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                  <span>{showOpeningCols ? 'إخفاء أول المدة' : 'إظهار أول المدة'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowMovementCols((v) => !v)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
+                    showMovementCols
+                      ? 'bg-[#f3f3f3] text-[#141414] border border-[#141414]'
+                      : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                  }`}
+                >
+                  {showMovementCols ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                  <span>{showMovementCols ? 'إخفاء حركة السنة' : 'إظهار حركة السنة'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowNetBalanceCol((v) => !v)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
+                    showNetBalanceCol
+                      ? 'bg-[#f3f3f3] text-[#141414] border border-[#141414]'
+                      : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                  }`}
+                >
+                  {showNetBalanceCol ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                  <span>{showNetBalanceCol ? 'إخفاء صافي الرصيد' : 'إظهار صافي الرصيد النهائي'}</span>
+                </button>
+              </div>
+
+              <span className="text-[11px] font-bold text-[#141414]">
+                {engine.closingDiff <= settings.roundingTolerance
+                  ? '✔ الرصيد النهائي متزن (مدين = دائن)'
+                  : `✖ فرق توازن الرصيد النهائي: ${fmt(engine.closingDiff)}`}
+              </span>
             </div>
           </div>
 
@@ -1407,128 +2224,222 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <span className="text-[#707070] block">حركة السنة - دائن (S):</span>
               <strong className="font-mono text-[#141414]">{fmt(engine.totals.periodCredit)}</strong>
             </div>
-            <div>
-              <span className="text-[#707070] block">آخر المدة - مدين (T):</span>
-              <strong className="font-mono text-[#141414]">{fmt(engine.totals.closingDebit)}</strong>
+            <div className="bg-[#141414] text-[#ffffff] p-2 rounded-xl">
+              <span className="text-[#adadad] block text-[11px]">الرصيد النهائي - مدين (T):</span>
+              <strong className="font-mono text-[#ffffff] text-sm">{fmt(engine.totals.closingDebit)}</strong>
             </div>
-            <div>
-              <span className="text-[#707070] block">آخر المدة - دائن (U):</span>
-              <strong className="font-mono text-[#141414]">{fmt(engine.totals.closingCredit)}</strong>
+            <div className="bg-[#141414] text-[#ffffff] p-2 rounded-xl">
+              <span className="text-[#adadad] block text-[11px]">الرصيد النهائي - دائن (U):</span>
+              <strong className="font-mono text-[#ffffff] text-sm">{fmt(engine.totals.closingCredit)}</strong>
             </div>
           </div>
 
           <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
-            <div className="overflow-x-auto max-h-[620px]">
+            <div className="overflow-x-auto max-h-[650px]">
               <table className="w-full text-right text-xs">
                 <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0] sticky top-0 z-10">
                   <tr>
                     <th className="p-2.5">#</th>
-                    <th className="p-2.5">اسم الحساب (من بببب.xlsx)</th>
-                    <th className="p-2.5">التصنيف اليدوي المعتمد (G)</th>
-                    <th className="p-2.5">المقترح (H)</th>
-                    <th className="p-2.5 font-mono">أول مدة مدين</th>
-                    <th className="p-2.5 font-mono">أول مدة دائن</th>
-                    <th className="p-2.5 font-mono">حركة مدين</th>
-                    <th className="p-2.5 font-mono">حركة دائن</th>
-                    <th className="p-2.5 font-mono">ختامي مدين</th>
-                    <th className="p-2.5 font-mono">ختامي دائن</th>
+                    <th className="p-2.5">كود ERP</th>
+                    <th className="p-2.5">اسم الحساب (قابل للتعديل)</th>
+                    <th className="p-2.5">التصنيف اليدوي المعتمد (رئيسي أو موسع 314 بنداً)</th>
+                    <th className="p-2.5">المعيار</th>
+                    {showOpeningCols && <th className="p-2.5 font-mono">أول مدة مدين (P)</th>}
+                    {showOpeningCols && <th className="p-2.5 font-mono">أول مدة دائن (Q)</th>}
+                    {showMovementCols && <th className="p-2.5 font-mono">حركة مدين (R)</th>}
+                    {showMovementCols && <th className="p-2.5 font-mono">حركة دائن (S)</th>}
+                    {showClosingBalanceCols && (
+                      <th className="p-2.5 font-mono bg-[#141414] text-[#ffffff]">الرصيد النهائي مدين (T)</th>
+                    )}
+                    {showClosingBalanceCols && (
+                      <th className="p-2.5 font-mono bg-[#141414] text-[#ffffff]">الرصيد النهائي دائن (U)</th>
+                    )}
+                    {showNetBalanceCol && <th className="p-2.5 font-mono">صافي الرصيد النهائي</th>}
                     <th className="p-2.5">حالة الفحص</th>
+                    <th className="p-2.5 text-center">إجراء</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#e0e0e0]">
-                  {filteredRows.map((row) => (
-                    <tr
-                      key={row.seq}
-                      className={`hover:bg-[#f3f3f3]/50 ${
-                        !row.approvedCode ? 'bg-[#f3f3f3]/70' : ''
-                      }`}
-                    >
-                      <td className="p-2 font-mono text-[#707070]">{row.seq}</td>
-                      <td className="p-2 font-semibold text-[#141414] min-w-[200px]">
-                        <input
-                          type="text"
-                          aria-label={`اسم الحساب ${row.seq}`}
-                          value={row.accountName}
-                          onChange={(e) => handleUpdateRow(row.seq, { accountName: e.target.value })}
-                          className="w-full bg-transparent border-b border-transparent focus:border-[#141414] focus:outline-none text-xs font-semibold text-[#141414]"
-                        />
-                      </td>
-                      <td className="p-2 min-w-[210px]">
-                        <select
-                          aria-label={`تصنيف الحساب ${row.accountName}`}
-                          value={row.approvedCode}
-                          onChange={(e) => handleUpdateRow(row.seq, { manualCode: e.target.value })}
-                          className={`w-full rounded-lg py-1 px-2 text-[11px] font-semibold border ${
-                            row.approvedCode
-                              ? 'bg-white border-[#e0e0e0] text-[#141414]'
-                              : 'bg-[#141414] text-[#ffffff] border-[#141414]'
-                          }`}
-                        >
-                          <option value="">-- غير مصنف (اختر البند) --</option>
-                          {IFRS_MAPPING_CODES.map((c) => (
-                            <option key={c.code} value={c.code}>
-                              {c.code} ({c.nameAr})
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="p-2 font-mono text-[11px] text-[#707070]">{row.suggestedCode}</td>
-                      <td className="p-2">
-                        <input
-                          type="number"
-                          aria-label={`أول المدة مدين ${row.seq}`}
-                          value={row.openingDebit}
-                          onChange={(e) =>
-                            handleUpdateRow(row.seq, { openingDebit: parseFloat(e.target.value) || 0 })
-                          }
-                          className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
-                        />
-                      </td>
-                      <td className="p-2">
-                        <input
-                          type="number"
-                          aria-label={`أول المدة دائن ${row.seq}`}
-                          value={row.openingCredit}
-                          onChange={(e) =>
-                            handleUpdateRow(row.seq, { openingCredit: parseFloat(e.target.value) || 0 })
-                          }
-                          className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
-                        />
-                      </td>
-                      <td className="p-2">
-                        <input
-                          type="number"
-                          aria-label={`حركة السنة مدين ${row.seq}`}
-                          value={row.periodDebit}
-                          onChange={(e) =>
-                            handleUpdateRow(row.seq, { periodDebit: parseFloat(e.target.value) || 0 })
-                          }
-                          className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
-                        />
-                      </td>
-                      <td className="p-2">
-                        <input
-                          type="number"
-                          aria-label={`حركة السنة دائن ${row.seq}`}
-                          value={row.periodCredit}
-                          onChange={(e) =>
-                            handleUpdateRow(row.seq, { periodCredit: parseFloat(e.target.value) || 0 })
-                          }
-                          className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
-                        />
-                      </td>
-                      <td className="p-2 font-mono font-bold text-[#141414]">
-                        {row.closingDebit > 0 ? row.closingDebit.toLocaleString() : '-'}
-                      </td>
-                      <td className="p-2 font-mono font-bold text-[#141414]">
-                        {row.closingCredit > 0 ? row.closingCredit.toLocaleString() : '-'}
-                      </td>
-                      <td className="p-2 whitespace-nowrap">
-                        <span className="text-[11px] font-medium text-[#141414]">{row.statusText}</span>
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredRows.map((row) => {
+                    const extItem = EXTENDED_IFRS_CLASSIFICATIONS.find(
+                      (x) => x.code === (row.manualCode || row.approvedCode)
+                    );
+                    const ifrsRef =
+                      extItem?.ifrsRef ||
+                      IFRS_MAPPING_CODES.find((m) => m.code === row.approvedCode)?.ifrsRef ||
+                      '-';
+                    return (
+                      <tr
+                        key={row.seq}
+                        className={`hover:bg-[#f3f3f3]/50 ${
+                          !row.approvedCode ? 'bg-[#f3f3f3]/70' : ''
+                        }`}
+                      >
+                        <td className="p-2 font-mono text-[#707070]">{row.seq}</td>
+                        <td className="p-2 font-mono text-[11px] text-[#707070]">{row.erpCode}</td>
+                        <td className="p-2 font-semibold text-[#141414] min-w-[200px]">
+                          <input
+                            type="text"
+                            aria-label={`اسم الحساب ${row.seq}`}
+                            value={row.accountName}
+                            onChange={(e) => handleUpdateRow(row.seq, { accountName: e.target.value })}
+                            className="w-full bg-transparent border-b border-transparent focus:border-[#141414] focus:outline-none text-xs font-semibold text-[#141414]"
+                          />
+                        </td>
+                        <td className="p-2 min-w-[230px]">
+                          <select
+                            aria-label={`تصنيف الحساب ${row.accountName}`}
+                            value={row.manualCode || row.approvedCode}
+                            onChange={(e) => handleUpdateRow(row.seq, { manualCode: e.target.value })}
+                            className={`w-full rounded-lg py-1 px-2 text-[11px] font-semibold border ${
+                              row.approvedCode
+                                ? 'bg-white border-[#e0e0e0] text-[#141414]'
+                                : 'bg-[#141414] text-[#ffffff] border-[#141414]'
+                            }`}
+                          >
+                            <option value="">-- غير مصنف (اختر البند: مقترح {row.suggestedCode}) --</option>
+                            <optgroup label="البنود الرئيسية للقوائم (34 رمزاً A-01..R-10)">
+                              {IFRS_MAPPING_CODES.map((c) => (
+                                <option key={c.code} value={c.code}>
+                                  {c.code} ({c.nameAr})
+                                </option>
+                              ))}
+                            </optgroup>
+                            <optgroup label="دليل التصنيف الموسع التفصيلي (314 بنداً فرعياً)">
+                              {EXTENDED_IFRS_CLASSIFICATIONS.filter((x) => x.level === 3).map((x) => (
+                                <option key={x.code} value={x.code}>
+                                  {x.code} — {x.nameAr} [{x.ifrsRef}]
+                                </option>
+                              ))}
+                            </optgroup>
+                          </select>
+                        </td>
+                        <td className="p-2 font-mono text-[11px] text-[#707070] whitespace-nowrap">{ifrsRef}</td>
+                        {showOpeningCols && (
+                          <td className="p-2">
+                            <input
+                              type="number"
+                              aria-label={`أول المدة مدين ${row.seq}`}
+                              value={row.openingDebit}
+                              onChange={(e) =>
+                                handleUpdateRow(row.seq, { openingDebit: parseFloat(e.target.value) || 0 })
+                              }
+                              className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
+                            />
+                          </td>
+                        )}
+                        {showOpeningCols && (
+                          <td className="p-2">
+                            <input
+                              type="number"
+                              aria-label={`أول المدة دائن ${row.seq}`}
+                              value={row.openingCredit}
+                              onChange={(e) =>
+                                handleUpdateRow(row.seq, { openingCredit: parseFloat(e.target.value) || 0 })
+                              }
+                              className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
+                            />
+                          </td>
+                        )}
+                        {showMovementCols && (
+                          <td className="p-2">
+                            <input
+                              type="number"
+                              aria-label={`حركة السنة مدين ${row.seq}`}
+                              value={row.periodDebit}
+                              onChange={(e) =>
+                                handleUpdateRow(row.seq, { periodDebit: parseFloat(e.target.value) || 0 })
+                              }
+                              className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
+                            />
+                          </td>
+                        )}
+                        {showMovementCols && (
+                          <td className="p-2">
+                            <input
+                              type="number"
+                              aria-label={`حركة السنة دائن ${row.seq}`}
+                              value={row.periodCredit}
+                              onChange={(e) =>
+                                handleUpdateRow(row.seq, { periodCredit: parseFloat(e.target.value) || 0 })
+                              }
+                              className="w-24 bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg py-1 px-2 font-mono text-xs text-[#141414]"
+                            />
+                          </td>
+                        )}
+                        {showClosingBalanceCols && (
+                          <td className="p-2 bg-[#fafafa]">
+                            <input
+                              type="number"
+                              aria-label={`الرصيد النهائي مدين ${row.seq}`}
+                              value={row.closingDebit}
+                              onChange={(e) =>
+                                handleUpdateClosingDebit(row, parseFloat(e.target.value) || 0)
+                              }
+                              className="w-28 bg-white border border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                            />
+                          </td>
+                        )}
+                        {showClosingBalanceCols && (
+                          <td className="p-2 bg-[#fafafa]">
+                            <input
+                              type="number"
+                              aria-label={`الرصيد النهائي دائن ${row.seq}`}
+                              value={row.closingCredit}
+                              onChange={(e) =>
+                                handleUpdateClosingCredit(row, parseFloat(e.target.value) || 0)
+                              }
+                              className="w-28 bg-white border border-[#141414] rounded-lg py-1 px-2 font-mono font-bold text-xs text-[#141414]"
+                            />
+                          </td>
+                        )}
+                        {showNetBalanceCol && (
+                          <td className="p-2 font-mono font-bold text-[#141414]">
+                            {fmt(row.closingDebit - row.closingCredit)}
+                          </td>
+                        )}
+                        <td className="p-2 whitespace-nowrap">
+                          <span className="text-[11px] font-medium text-[#141414]">{row.statusText}</span>
+                        </td>
+                        <td className="p-2 text-center">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAccountRow(row.seq, row.accountName)}
+                            className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                            title="حذف الحساب"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
+                <tfoot className="bg-[#141414] text-[#ffffff] font-bold sticky bottom-0">
+                  <tr>
+                    <td colSpan={5} className="p-3">
+                      إجمالي ميزان المراجعة ({filteredRows.length} حساباً معروضاً من أصل {engine.rows.length})
+                    </td>
+                    {showOpeningCols && <td className="p-3 font-mono">{fmt(engine.totals.openingDebit)}</td>}
+                    {showOpeningCols && <td className="p-3 font-mono">{fmt(engine.totals.openingCredit)}</td>}
+                    {showMovementCols && <td className="p-3 font-mono">{fmt(engine.totals.periodDebit)}</td>}
+                    {showMovementCols && <td className="p-3 font-mono">{fmt(engine.totals.periodCredit)}</td>}
+                    {showClosingBalanceCols && (
+                      <td className="p-3 font-mono text-sm">{fmt(engine.totals.closingDebit)}</td>
+                    )}
+                    {showClosingBalanceCols && (
+                      <td className="p-3 font-mono text-sm">{fmt(engine.totals.closingCredit)}</td>
+                    )}
+                    {showNetBalanceCol && (
+                      <td className="p-3 font-mono">
+                        {fmt(engine.totals.closingDebit - engine.totals.closingCredit)}
+                      </td>
+                    )}
+                    <td colSpan={2} className="p-3 text-xs">
+                      {engine.closingDiff <= settings.roundingTolerance ? '✔ الميزان متزن' : `فرق: ${fmt(engine.closingDiff)}`}
+                    </td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
@@ -1536,17 +2447,17 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════════════
-          SECTION 4: DIAGNOSTICS & 34 IFRS AUDIT CHECKS (مركز الفحوصات وكشف الأخطاء)
+          SECTION 4: DIAGNOSTICS & 34 IFRS AUDIT CHECKS + ACCOUNT ERROR DETAILS (ورقتا الفحوصات وتفصيل_الأخطاء)
          ═══════════════════════════════════════════════════════════════════════════ */}
       {activeSubTab === 'diagnostics' && (
-        <div className="space-y-5">
+        <div className="space-y-6">
           <div className="bg-white p-5 rounded-3xl border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-4">
             <div>
               <h3 className="text-base font-bold text-[#141414] m-0">
-                مركز الفحوصات وكشف الأخطاء المعياري (34 فحصاً مرتبطاً بمعايير IFRS / IAS)
+                مركز الفحوصات وكشف الأخطاء المعياري (34 فحصاً IFRS / IAS + جدول تفصيل الأخطاء على مستوى الحسابات)
               </h3>
               <p className="text-xs text-[#707070] mt-1">
-                كل فحص مرتبط بمعيار دولي، وعند ظهور تنبيه أو خطأ يظهر شرح المشكلة وطريقة الحل في نفس الصف
+                يطابق ورقتي (الفحوصات) و(تفصيل_الأخطاء) من المرجع، حيث يعرض كل فحص معياري وشرح المشكلة وطريقة الحل وأي حساب به ملاحظة
               </p>
             </div>
             <div className="flex items-center gap-3 text-xs font-bold">
@@ -1560,6 +2471,11 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
           </div>
 
           <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
+              <h4 className="text-sm font-bold text-[#141414] m-0">
+                أولاً: جدول الفحوصات المعيارية الـ 34 (ورقة الفحوصات — IFRS / IAS / SOCPA)
+              </h4>
+            </div>
             <div className="overflow-x-auto">
               <table className="w-full text-right text-xs">
                 <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
@@ -1601,119 +2517,1168 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               </table>
             </div>
           </div>
+
+          {/* Account-Level Error Details (ورقة تفصيل_الأخطاء) */}
+          <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] flex items-center justify-between flex-wrap gap-2">
+              <div>
+                <h4 className="text-sm font-bold text-[#141414] m-0">
+                  ثانياً: تفصيل الأخطاء والملاحظات على مستوى الحسابات (ورقة تفصيل_الأخطاء)
+                </h4>
+                <p className="text-xs text-[#707070] mt-0.5">
+                  يعرض تلقائياً أي حساب في ميزان المراجعة غير مصنف أو رصيده النهائي عكس طبيعته المحاسبية أو يجمع بين مدين ودائن
+                </p>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold">
+                عدد الحسابات التي عليها ملاحظة: {engine.diagnostics.accountErrors.length}
+              </span>
+            </div>
+            {engine.diagnostics.accountErrors.length === 0 ? (
+              <div className="p-6 text-center text-xs font-bold text-[#141414]">
+                ✔ لا توجد أي أخطاء أو ملاحظات على مستوى الحسابات الـ {engine.rows.length} — كافة الحسابات مصنفة ومتزنة ومطابقة لطبيعتها.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
+                    <tr>
+                      <th className="p-3">صف الميزان</th>
+                      <th className="p-3">رقم الحساب</th>
+                      <th className="p-3">اسم الحساب</th>
+                      <th className="p-3 font-mono">الرصيد النهائي مدين</th>
+                      <th className="p-3 font-mono">الرصيد النهائي دائن</th>
+                      <th className="p-3">التصنيف الحالي</th>
+                      <th className="p-3">الملاحظة / الخطأ المكتشف</th>
+                      <th className="p-3">الإجراء المقترح للتصحيح</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#e0e0e0]">
+                    {engine.diagnostics.accountErrors.map((errRow) => (
+                      <tr key={errRow.seq} className="hover:bg-[#f3f3f3]/40">
+                        <td className="p-3 font-mono font-bold">{errRow.seq}</td>
+                        <td className="p-3 font-mono text-[#707070]">{errRow.erpCode}</td>
+                        <td className="p-3 font-bold text-[#141414]">{errRow.accountName}</td>
+                        <td className="p-3 font-mono">{fmt(errRow.closingDebit)}</td>
+                        <td className="p-3 font-mono">{fmt(errRow.closingCredit)}</td>
+                        <td className="p-3 font-mono">
+                          {errRow.approvedCode || `غير مصنف (مقترح: ${errRow.suggestedCode})`}
+                        </td>
+                        <td className="p-3 font-bold text-[#141414]">{errRow.auditNote}</td>
+                        <td className="p-3 text-[#707070]">
+                          {!errRow.approvedCode ? (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateRow(errRow.seq, { manualCode: errRow.suggestedCode })}
+                              className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold cursor-pointer"
+                            >
+                              اعتماد المقترح ({errRow.suggestedCode})
+                            </button>
+                          ) : (
+                            'راجع طبيعة الرصيد أو أعد تصنيف الحساب للبند المقابل'
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════════════
-          SECTION 5: CHART OF MAPPING & GENERAL SETTINGS (جدول التصنيفات والإعدادات)
+          SECTION 5: EXPANDABLE CHART OF ACCOUNTS & EXCEL 319-NODE TREE (شجرة_الحسابات ودليل_الحسابات)
+         ═══════════════════════════════════════════════════════════════════════════ */}
+      {activeSubTab === 'coa-tree' && (
+        <div className="space-y-5">
+          {/* Sub-Navigation between the 3 Tree & COA views from Excel */}
+          <div className="bg-white p-4 rounded-3xl border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              {[
+                {
+                  id: 'excel-tree-319',
+                  label: '1. شجرة الحسابات المرجعية الكاملة من الإكسل (319 عقدة معيارية + الحسابات الفرعية بالمستوى 4)',
+                },
+                {
+                  id: 'company-coa-tree',
+                  label: `2. الدليل والشجرة التشغيلية القابلة للتوسع وحقول الأصول (${coaAccounts.length} حساب)`,
+                },
+                {
+                  id: 'linked-coa-sheet',
+                  label: `3. ورقة دليل_الحسابات المرتبط بميزان المراجعة (${engine.rows.length} حساباً)`,
+                },
+              ].map((st) => (
+                <button
+                  key={st.id}
+                  type="button"
+                  onClick={() => setCoaSubView(st.id as any)}
+                  className={`px-4 py-2 rounded-full text-xs cursor-pointer transition-all ${
+                    coaSubView === st.id
+                      ? 'bg-[#141414] text-[#ffffff] font-bold'
+                      : 'bg-[#f3f3f3] text-[#141414] hover:bg-[#e0e0e0] font-medium'
+                  }`}
+                >
+                  {st.label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowCustomFieldManager((v) => !v)}
+              className="px-3.5 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-bold cursor-pointer"
+            >
+              + إضافة / إدارة حقول الأصول ({customFieldDefs.length})
+            </button>
+          </div>
+
+          {/* 5A: EXCEL 319-NODE HIERARCHICAL ACCOUNTING TREE + LEVEL 4 LEDGER ACCOUNTS */}
+          {coaSubView === 'excel-tree-319' && (
+            <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#e0e0e0] pb-4">
+                <div>
+                  <h3 className="text-base font-bold text-[#141414] m-0">
+                    شجرة الحسابات المرجعية الكاملة (ورقة شجرة_الحسابات — 319 عقدة معيارية + المستوى الرابع للحسابات الفعلية)
+                  </h3>
+                  <p className="text-xs text-[#707070] mt-1">
+                    تضم المستويات الأربعة: المستوى 1 (أبواب القوائم A, L, E, O, R) ← المستوى 2 (بنود القوائم الـ 34) ← المستوى 3 (التصنيفات الموسعة الـ 280) ← المستوى 4 (حسابات الأستاذ الفعلية الـ 211+ مع إمكانية الإضافة والتعديل)
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="relative w-64">
+                    <Search className="w-4 h-4 absolute right-3 top-2 text-[#707070]" />
+                    <input
+                      type="text"
+                      placeholder="بحث في الـ 319 عقدة والحسابات..."
+                      value={excelTreeSearch}
+                      onChange={(e) => setExcelTreeSearch(e.target.value)}
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414]"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const all: Record<string, boolean> = {};
+                      EXCEL_ACCOUNTING_TREE.forEach((n) => {
+                        all[n.code] = true;
+                      });
+                      setExpandedExcelTreeCodes(all);
+                    }}
+                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                  >
+                    توسيع الشجرة بالكامل (319 عقدة)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedExcelTreeCodes({ A: true, L: true, E: true, O: true, R: true })}
+                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                  >
+                    طي للمستوى الرئيسي
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto max-h-[680px]">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0] sticky top-0 z-10">
+                    <tr>
+                      <th className="p-3">هيكل شجرة الحسابات (اضغط لتوسيع الأبواب والبنود والحسابات الفرعية)</th>
+                      <th className="p-3">الكود</th>
+                      <th className="p-3">المستوى</th>
+                      <th className="p-3">كود القائمة الأب</th>
+                      <th className="p-3">مرجع المعيار (IFRS / IAS)</th>
+                      <th className="p-3 font-mono">الرصيد النهائي مدين</th>
+                      <th className="p-3 font-mono">الرصيد النهائي دائن</th>
+                      <th className="p-3 text-center">إضافة وتوسع</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#e0e0e0]">
+                    {(() => {
+                      const q = excelTreeSearch.trim().toLowerCase();
+                      const renderedRows: React.ReactNode[] = [];
+
+                      const level1Nodes = EXCEL_ACCOUNTING_TREE.filter((n) => n.level === 1);
+                      level1Nodes.forEach((l1) => {
+                        const l2Nodes = EXCEL_ACCOUNTING_TREE.filter((n) => n.level === 2 && n.parentCode === l1.code);
+                        const l1Rows = engine.rows.filter((r) => r.approvedCode.startsWith(l1.code + '-'));
+                        const l1Debit = l1Rows.reduce((s, r) => s + r.closingDebit, 0);
+                        const l1Credit = l1Rows.reduce((s, r) => s + r.closingCredit, 0);
+                        const l1Expanded = Boolean(expandedExcelTreeCodes[l1.code]) || Boolean(q);
+
+                        renderedRows.push(
+                          <tr
+                            key={`tree_l1_${l1.code}`}
+                            onClick={() =>
+                              setExpandedExcelTreeCodes((prev) => ({ ...prev, [l1.code]: !prev[l1.code] }))
+                            }
+                            className="bg-[#141414] text-[#ffffff] font-bold cursor-pointer"
+                          >
+                            <td className="p-3 flex items-center gap-2">
+                              {l1Expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                              <FolderTree className="w-4 h-4" />
+                              <span>{l1.titleAr}</span>
+                              <span className="text-[11px] opacity-80">({l2Nodes.length} بند رئيسي • {l1Rows.length} حساب فعلي)</span>
+                            </td>
+                            <td className="p-3 font-mono">{l1.code}</td>
+                            <td className="p-3">المستوى 1 (باب رئيسي)</td>
+                            <td className="p-3 font-mono">{l1.statementCode}</td>
+                            <td className="p-3 font-mono">IAS 1 / IFRS 18</td>
+                            <td className="p-3 font-mono">{fmt(l1Debit)}</td>
+                            <td className="p-3 font-mono">{fmt(l1Credit)}</td>
+                            <td className="p-3 text-center">-</td>
+                          </tr>
+                        );
+
+                        if (!l1Expanded) return;
+
+                        l2Nodes.forEach((l2) => {
+                          const l3Nodes = EXCEL_ACCOUNTING_TREE.filter(
+                            (n) => n.level === 3 && n.parentCode === l2.code
+                          );
+                          const l2LedgerRows = engine.rows.filter((r) => r.approvedCode === l2.code);
+                          const l2Debit = l2LedgerRows.reduce((s, r) => s + r.closingDebit, 0);
+                          const l2Credit = l2LedgerRows.reduce((s, r) => s + r.closingCredit, 0);
+                          const l2Meta = IFRS_MAPPING_CODES.find((m) => m.code === l2.code);
+                          const l2Expanded = Boolean(expandedExcelTreeCodes[l2.code]) || Boolean(q);
+
+                          const matchesL2 =
+                            !q ||
+                            l2.titleAr.toLowerCase().includes(q) ||
+                            l2.code.toLowerCase().includes(q) ||
+                            l3Nodes.some((x) => x.titleAr.toLowerCase().includes(q) || x.code.toLowerCase().includes(q)) ||
+                            l2LedgerRows.some((r) => r.accountName.toLowerCase().includes(q));
+
+                          if (!matchesL2) return;
+
+                          renderedRows.push(
+                            <tr
+                              key={`tree_l2_${l2.code}`}
+                              onClick={() =>
+                                setExpandedExcelTreeCodes((prev) => ({ ...prev, [l2.code]: !prev[l2.code] }))
+                              }
+                              className="bg-[#f3f3f3] text-[#141414] font-bold cursor-pointer hover:bg-[#e8e8e8]"
+                            >
+                              <td className="p-2.5 pr-7 flex items-center gap-1.5">
+                                {l2Expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                                <span>{l2.titleAr}</span>
+                                <span className="text-[10px] text-[#707070] font-normal">
+                                  ({l3Nodes.length} تصنيف فرعي • {l2LedgerRows.length} حساب مرتبط)
+                                </span>
+                              </td>
+                              <td className="p-2.5 font-mono">{l2.code}</td>
+                              <td className="p-2.5">المستوى 2 (بند قائمة)</td>
+                              <td className="p-2.5 font-mono">{l2.statementCode}</td>
+                              <td className="p-2.5 font-mono text-[#707070]">{l2Meta?.ifrsRef || 'IAS 1'}</td>
+                              <td className="p-2.5 font-mono">{fmt(l2Debit)}</td>
+                              <td className="p-2.5 font-mono">{fmt(l2Credit)}</td>
+                              <td className="p-2.5 text-center" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleAddStatementLineAccount(l2.code, l2.titleAr.replace(/^[↳\s]+/, ''))}
+                                  className="px-2.5 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold cursor-pointer"
+                                >
+                                  + إضافة حساب تحت {l2.code}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+
+                          if (!l2Expanded) return;
+
+                          // Render Level 3 Extended Sub-Classifications (from دليل_التصنيف_الموسع / شجرة_الحسابات)
+                          l3Nodes.forEach((l3) => {
+                            const extMeta = EXTENDED_IFRS_CLASSIFICATIONS.find((x) => x.code === l3.code);
+                            const l3LedgerRows = l2LedgerRows.filter((r) => r.manualCode === l3.code);
+                            const l3Debit = l3LedgerRows.reduce((s, r) => s + r.closingDebit, 0);
+                            const l3Credit = l3LedgerRows.reduce((s, r) => s + r.closingCredit, 0);
+                            if (
+                              q &&
+                              !l3.titleAr.toLowerCase().includes(q) &&
+                              !l3.code.toLowerCase().includes(q) &&
+                              l3LedgerRows.length === 0
+                            ) {
+                              return;
+                            }
+
+                            renderedRows.push(
+                              <tr key={`tree_l3_${l3.code}`} className="bg-white hover:bg-[#f3f3f3]/50">
+                                <td className="p-2 pr-14 font-semibold text-[#141414] flex items-center gap-1.5">
+                                  <span className="text-[#707070]">├──</span>
+                                  <span>{l3.titleAr.replace(/^[↳\s]+/, '')}</span>
+                                  {l3LedgerRows.length > 0 && (
+                                    <span className="px-2 py-0.5 rounded-full bg-[#141414] text-[#ffffff] text-[10px]">
+                                      {l3LedgerRows.length} حساب
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="p-2 font-mono text-[#141414]">{l3.code}</td>
+                                <td className="p-2 text-[#707070]">المستوى 3 (فرعي موسع)</td>
+                                <td className="p-2 font-mono text-[#707070]">{l3.statementCode}</td>
+                                <td className="p-2 font-mono text-[#707070]">{extMeta?.ifrsRef || l2Meta?.ifrsRef || 'IFRS'}</td>
+                                <td className="p-2 font-mono font-bold">{l3Debit > 0 ? fmt(l3Debit) : '-'}</td>
+                                <td className="p-2 font-mono font-bold">{l3Credit > 0 ? fmt(l3Credit) : '-'}</td>
+                                <td className="p-2 text-center">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleAddStatementLineAccount(l3.code, l3.titleAr.replace(/^[↳\s]+/, ''))
+                                    }
+                                    className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-[10px] font-semibold cursor-pointer"
+                                  >
+                                    + إضافة حساب بـ {l3.code}
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          });
+
+                          // Render Level 4 Actual Trial Balance Accounts linked to this L2 statement item
+                          l2LedgerRows.forEach((accRow) => {
+                            if (q && !accRow.accountName.toLowerCase().includes(q) && !accRow.erpCode.includes(q)) {
+                              return;
+                            }
+                            renderedRows.push(
+                              <tr key={`tree_l4_${accRow.seq}`} className="bg-[#fafafa] hover:bg-[#f3f3f3]/70">
+                                <td className="p-2 pr-20 text-[#141414] flex items-center gap-2">
+                                  <span className="text-[#707070] font-mono">└── حساب #{accRow.seq}:</span>
+                                  <input
+                                    type="text"
+                                    value={accRow.accountName}
+                                    onChange={(e) => handleUpdateRow(accRow.seq, { accountName: e.target.value })}
+                                    className="bg-white border border-[#e0e0e0] rounded-lg py-0.5 px-2 text-xs font-bold text-[#141414] min-w-[220px]"
+                                  />
+                                </td>
+                                <td className="p-2 font-mono text-[#707070]">{accRow.erpCode}</td>
+                                <td className="p-2 text-[#141414] font-semibold">المستوى 4 (حساب أستاذ)</td>
+                                <td className="p-2 font-mono">
+                                  <select
+                                    value={accRow.manualCode || accRow.approvedCode}
+                                    onChange={(e) => handleUpdateRow(accRow.seq, { manualCode: e.target.value })}
+                                    className="bg-white border border-[#e0e0e0] rounded-lg py-0.5 px-1.5 text-[10px] font-mono text-[#141414]"
+                                  >
+                                    <option value={l2.code}>{l2.code} (رئيسي)</option>
+                                    {l3Nodes.map((subOpt) => (
+                                      <option key={subOpt.code} value={subOpt.code}>
+                                        {subOpt.code} - {subOpt.titleAr.replace(/^[↳\s]+/, '')}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td>
+                                <td className="p-2 font-mono text-[#707070]">{l2Meta?.ifrsRef || 'IFRS'}</td>
+                                <td className="p-2">
+                                  <input
+                                    type="number"
+                                    value={accRow.closingDebit}
+                                    onChange={(e) =>
+                                      handleUpdateClosingDebit(accRow, parseFloat(e.target.value) || 0)
+                                    }
+                                    className="w-24 bg-white border border-[#141414] rounded-lg py-0.5 px-2 font-mono font-bold text-xs"
+                                  />
+                                </td>
+                                <td className="p-2">
+                                  <input
+                                    type="number"
+                                    value={accRow.closingCredit}
+                                    onChange={(e) =>
+                                      handleUpdateClosingCredit(accRow, parseFloat(e.target.value) || 0)
+                                    }
+                                    className="w-24 bg-white border border-[#141414] rounded-lg py-0.5 px-2 font-mono font-bold text-xs"
+                                  />
+                                </td>
+                                <td className="p-2 text-center">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteAccountRow(accRow.seq, accRow.accountName)}
+                                    className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                                    title="حذف الحساب"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          });
+                        });
+                      });
+
+                      return renderedRows;
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 5B: COMPANY OPERATIONAL COA TREE WITH DYNAMIC ASSET CUSTOM FIELDS */}
+          {coaSubView === 'company-coa-tree' && (
+            <div className="space-y-4">
+              <div className="bg-white p-5 rounded-3xl border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h3 className="text-base font-bold text-[#141414] m-0 flex items-center gap-2">
+                    <FolderTree className="w-5 h-5 text-[#141414]" />
+                    <span>الدليل والشجرة المحاسبية القابلة للتوسع (مع الحقول المخصصة للأصول)</span>
+                  </h3>
+                  <p className="text-xs text-[#707070] mt-1">
+                    يمكنك توسيع وطي أي فرع، إضافة حسابات رئيسية أو فرعية بأي عمق، وتعديل حقول الأصول مباشرة
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="relative w-56">
+                    <Search className="w-4 h-4 absolute right-3 top-2 text-[#707070]" />
+                    <input
+                      type="text"
+                      placeholder="بحث بالكود أو اسم الحساب..."
+                      value={coaSearch}
+                      onChange={(e) => setCoaSearch(e.target.value)}
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414]"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={expandAllCoaTree}
+                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                  >
+                    توسيع الشجرة بالكامل
+                  </button>
+                  <button
+                    type="button"
+                    onClick={collapseAllCoaTree}
+                    className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+                  >
+                    طي الشجرة
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAddSubAccount(null)}
+                    className="px-3.5 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer flex items-center gap-1"
+                  >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    <span>+ إضافة باب / حساب رئيسي</span>
+                  </button>
+                </div>
+              </div>
+
+              {addingChildParent !== undefined && (newCoaCode || addingChildParent !== null) && (
+                <div className="bg-white p-5 rounded-3xl border-2 border-[#141414] space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-[#141414] m-0">
+                      {addingChildParent
+                        ? `إضافة حساب / قسم فرعي جديد تحت: (${addingChildParent.code} - ${addingChildParent.nameAr})`
+                        : 'إضافة حساب رئيسي جديد في الشجرة'}
+                    </h4>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAddingChildParent(null);
+                        setNewCoaCode('');
+                      }}
+                      className="px-3 py-1 rounded-full bg-[#f3f3f3] text-xs font-bold cursor-pointer"
+                    >
+                      إلغاء
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                    <div>
+                      <label className="block font-bold mb-1">كود الحساب الجديد *</label>
+                      <input
+                        type="text"
+                        value={newCoaCode}
+                        onChange={(e) => setNewCoaCode(e.target.value)}
+                        className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-1.5 px-3 font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-bold mb-1">اسم الحساب / الأصل *</label>
+                      <input
+                        type="text"
+                        placeholder="أدخل اسم الحساب أو الأصل..."
+                        value={newCoaName}
+                        onChange={(e) => setNewCoaName(e.target.value)}
+                        className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-1.5 px-3"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-bold mb-1">ربط ببند القوائم (IFRS)</label>
+                      <select
+                        value={newCoaIfrsCode}
+                        onChange={(e) => setNewCoaIfrsCode(e.target.value)}
+                        className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-1.5 px-3 font-semibold"
+                      >
+                        {EXTENDED_IFRS_CLASSIFICATIONS.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.code} - {c.nameAr}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex items-end">
+                      <button
+                        type="button"
+                        onClick={handleConfirmAddCoaAccount}
+                        className="w-full py-2 px-4 rounded-full bg-[#141414] text-[#ffffff] font-bold cursor-pointer"
+                      >
+                        حفظ وإضافة للشجرة
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-right text-xs">
+                    <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
+                      <tr>
+                        <th className="p-3">الشجرة والكود التراتبي</th>
+                        <th className="p-3">اسم الحساب / القسم</th>
+                        <th className="p-3">النوع</th>
+                        <th className="p-3">المستوى</th>
+                        <th className="p-3">تصنيف IFRS</th>
+                        <th className="p-3 font-mono">الرصيد (⃁)</th>
+                        <th className="p-3">الحقول الإضافية للأصول</th>
+                        <th className="p-3 text-center">التوسيع / الإضافة / التعديل</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#e0e0e0]">
+                      {(() => {
+                        const renderTreeNodes = (parentCode: string | null, depth: number): React.ReactNode[] => {
+                          const children = coaAccounts.filter((a) => (a.parentCode || null) === parentCode);
+                          const nodes: React.ReactNode[] = [];
+                          for (const acc of children) {
+                            const subChildren = coaAccounts.filter((a) => a.parentCode === acc.code);
+                            const hasSub = subChildren.length > 0;
+                            const isExp = Boolean(expandedTreeIds[acc.code]);
+                            const isEditing = editingCoaId === acc.code;
+                            const matchesSearch =
+                              !coaSearch.trim() ||
+                              acc.nameAr.toLowerCase().includes(coaSearch.toLowerCase()) ||
+                              acc.code.toLowerCase().includes(coaSearch.toLowerCase());
+
+                            if (matchesSearch || hasSub) {
+                              nodes.push(
+                                <tr
+                                  key={acc.code}
+                                  className={`hover:bg-[#f3f3f3]/50 ${
+                                    acc.level === 1
+                                      ? 'bg-[#f3f3f3] font-bold'
+                                      : acc.level === 2
+                                      ? 'bg-[#fafafa] font-semibold'
+                                      : ''
+                                  }`}
+                                >
+                                  <td className="p-2.5 font-mono" style={{ paddingRight: `${12 + depth * 22}px` }}>
+                                    <div className="flex items-center gap-1.5">
+                                      {hasSub ? (
+                                        <button
+                                          type="button"
+                                          onClick={() => toggleTreeExpand(acc.code)}
+                                          className="p-0.5 rounded hover:bg-[#e0e0e0] cursor-pointer"
+                                        >
+                                          {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                                        </button>
+                                      ) : (
+                                        <span className="w-5 inline-block text-center text-[#707070]">•</span>
+                                      )}
+                                      <span>{acc.code}</span>
+                                    </div>
+                                  </td>
+                                  <td className="p-2.5">
+                                    {isEditing ? (
+                                      <input
+                                        type="text"
+                                        value={coaEditDraft.nameAr || ''}
+                                        onChange={(e) => setCoaEditDraft({ ...coaEditDraft, nameAr: e.target.value })}
+                                        className="w-full bg-white border border-[#141414] rounded-lg py-1 px-2 text-xs font-bold"
+                                      />
+                                    ) : (
+                                      <span className="text-[#141414]">{acc.nameAr}</span>
+                                    )}
+                                  </td>
+                                  <td className="p-2.5">{acc.category}</td>
+                                  <td className="p-2.5 font-mono text-[#707070]">مستوى {acc.level}</td>
+                                  <td className="p-2.5 font-mono">
+                                    {isEditing ? (
+                                      <select
+                                        value={coaEditDraft.ifrsCode || ''}
+                                        onChange={(e) => setCoaEditDraft({ ...coaEditDraft, ifrsCode: e.target.value })}
+                                        className="bg-white border border-[#141414] rounded-lg py-1 px-2 text-[11px]"
+                                      >
+                                        {EXTENDED_IFRS_CLASSIFICATIONS.map((c) => (
+                                          <option key={c.code} value={c.code}>
+                                            {c.code} - {c.nameAr}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    ) : (
+                                      acc.ifrsCode || suggestIfrsCode(acc.nameAr)
+                                    )}
+                                  </td>
+                                  <td className="p-2.5 font-mono font-bold">
+                                    {isEditing ? (
+                                      <input
+                                        type="number"
+                                        value={coaEditDraft.balance ?? 0}
+                                        onChange={(e) =>
+                                          setCoaEditDraft({ ...coaEditDraft, balance: parseFloat(e.target.value) || 0 })
+                                        }
+                                        className="w-28 bg-white border border-[#141414] rounded-lg py-1 px-2 font-mono text-xs"
+                                      />
+                                    ) : (
+                                      fmt(acc.balance)
+                                    )}
+                                  </td>
+                                  <td className="p-2.5">
+                                    {isEditing ? (
+                                      <div className="flex flex-wrap gap-1.5">
+                                        {customFieldDefs
+                                          .filter((cf) => cf.section === acc.category || cf.section === 'ALL')
+                                          .map((cf) => (
+                                            <input
+                                              key={cf.key}
+                                              type="text"
+                                              placeholder={cf.label}
+                                              value={(coaEditDraft.customFields && coaEditDraft.customFields[cf.key]) || ''}
+                                              onChange={(e) =>
+                                                setCoaEditDraft({
+                                                  ...coaEditDraft,
+                                                  customFields: {
+                                                    ...(coaEditDraft.customFields || {}),
+                                                    [cf.key]: e.target.value,
+                                                  },
+                                                })
+                                              }
+                                              className="w-28 bg-white border border-[#e0e0e0] rounded px-2 py-0.5 text-[10px]"
+                                            />
+                                          ))}
+                                      </div>
+                                    ) : (
+                                      <div className="flex flex-wrap gap-1">
+                                        {acc.customFields &&
+                                          Object.entries(acc.customFields).map(([k, v]) => {
+                                            if (!v) return null;
+                                            const def = customFieldDefs.find((d) => d.key === k);
+                                            return (
+                                              <span
+                                                key={k}
+                                                className="px-2 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[10px]"
+                                              >
+                                                {def ? def.label : k}: <strong>{v}</strong>
+                                              </span>
+                                            );
+                                          })}
+                                      </div>
+                                    )}
+                                  </td>
+                                  <td className="p-2.5 text-center">
+                                    <div className="flex items-center justify-center gap-1.5">
+                                      {isEditing ? (
+                                        <>
+                                          <button
+                                            type="button"
+                                            onClick={() => handleSaveEditCoa(acc.code)}
+                                            className="px-2.5 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold cursor-pointer flex items-center gap-1"
+                                          >
+                                            <Check className="w-3 h-3" />
+                                            <span>حفظ</span>
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={() => setEditingCoaId(null)}
+                                            className="px-2 py-1 rounded-full bg-[#f3f3f3] text-[#141414] text-[11px] cursor-pointer"
+                                          >
+                                            <X className="w-3 h-3" />
+                                          </button>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <button
+                                            type="button"
+                                            onClick={() => handleOpenAddSubAccount(acc)}
+                                            className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-[11px] font-semibold cursor-pointer"
+                                          >
+                                            + فرعي
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={() => handleStartEditCoa(acc)}
+                                            className="p-1 text-[#141414] hover:bg-[#e0e0e0] rounded cursor-pointer"
+                                            title="تعديل الحساب وحقول الأصول"
+                                          >
+                                            <Edit3 className="w-3.5 h-3.5" />
+                                          </button>
+                                          {!hasSub && (
+                                            <button
+                                              type="button"
+                                              onClick={() => handleDeleteCoaAccount(acc)}
+                                              className="p-1 text-[#707070] hover:text-[#141414] rounded cursor-pointer"
+                                              title="حذف الحساب"
+                                            >
+                                              <Trash2 className="w-3.5 h-3.5" />
+                                            </button>
+                                          )}
+                                        </>
+                                      )}
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            }
+                            if (hasSub && (isExp || Boolean(coaSearch.trim()))) {
+                              nodes.push(...renderTreeNodes(acc.code, depth + 1));
+                            }
+                          }
+                          return nodes;
+                        };
+                        return renderTreeNodes(null, 0);
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 5C: LINKED CHART OF ACCOUNTS SHEET (ورقة دليل_الحسابات من الإكسل) */}
+          {coaSubView === 'linked-coa-sheet' && (
+            <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#e0e0e0] pb-4">
+                <div>
+                  <h3 className="text-base font-bold text-[#141414] m-0">
+                    ورقة دليل الحسابات المرتبط بميزان المراجعة (دليل_الحسابات — {engine.rows.length} حساباً)
+                  </h3>
+                  <p className="text-xs text-[#707070] mt-1">
+                    يعرض كل حساب في الميزان، التصنيف اليدوي/الفرعي المختار، الكود المعتمد بالقوائم، مرجع المعيار الدولي IFRS، وحالة الربط (مرتبط / غير مصنف)
+                  </p>
+                </div>
+                <span className="px-3 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold">
+                  مرتبط: {engine.rows.filter((r) => Boolean(r.approvedCode)).length} | غير مصنف:{' '}
+                  {engine.rows.filter((r) => !r.approvedCode).length}
+                </span>
+              </div>
+
+              <div className="overflow-x-auto max-h-[640px]">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0] sticky top-0">
+                    <tr>
+                      <th className="p-2.5">الرقم التسلسلي</th>
+                      <th className="p-2.5">رقم الحساب ERP</th>
+                      <th className="p-2.5">اسم الحساب</th>
+                      <th className="p-2.5">التصنيف المختار (رئيسي / فرعي موسع)</th>
+                      <th className="p-2.5">البند المالي المعتمد</th>
+                      <th className="p-2.5">مرجع المعيار (IFRS)</th>
+                      <th className="p-2.5 font-mono">الرصيد النهائي مدين</th>
+                      <th className="p-2.5 font-mono">الرصيد النهائي دائن</th>
+                      <th className="p-2.5">حالة الربط</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#e0e0e0]">
+                    {engine.rows.map((r) => {
+                      const ext = EXTENDED_IFRS_CLASSIFICATIONS.find(
+                        (x) => x.code === (r.manualCode || r.approvedCode)
+                      );
+                      const primary = IFRS_MAPPING_CODES.find((m) => m.code === r.approvedCode);
+                      return (
+                        <tr key={r.seq} className="hover:bg-[#f3f3f3]/40">
+                          <td className="p-2 font-mono text-[#707070]">{r.seq}</td>
+                          <td className="p-2 font-mono">{r.erpCode}</td>
+                          <td className="p-2 font-bold text-[#141414]">{r.accountName}</td>
+                          <td className="p-2 font-mono text-[#141414]">
+                            {ext ? `${ext.code} (${ext.nameAr})` : r.manualCode || r.approvedCode || '-'}
+                          </td>
+                          <td className="p-2">{r.approvedItemName || 'غير مصنف'}</td>
+                          <td className="p-2 font-mono text-[#707070]">{ext?.ifrsRef || primary?.ifrsRef || '-'}</td>
+                          <td className="p-2 font-mono font-bold">{r.closingDebit > 0 ? fmt(r.closingDebit) : '-'}</td>
+                          <td className="p-2 font-mono font-bold">{r.closingCredit > 0 ? fmt(r.closingCredit) : '-'}</td>
+                          <td className="p-2">
+                            <span
+                              className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                                r.approvedCode
+                                  ? 'bg-[#141414] text-[#ffffff]'
+                                  : 'bg-[#f3f3f3] text-[#141414] border border-[#141414]'
+                              }`}
+                            >
+                              {r.approvedCode ? '✔ مرتبط' : '⚠ غير مصنف'}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════════
+          SECTION 6: ALL EXCEL REFERENCE SHEETS & MAPPING SETTINGS (الأقسام المرجعية الكاملة من الإكسل)
          ═══════════════════════════════════════════════════════════════════════════ */}
       {activeSubTab === 'mapping-settings' && (
         <div className="space-y-6">
-          {/* General Settings Card */}
-          <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-4">
-            <h3 className="text-base font-bold text-[#141414] m-0">
-              الإعدادات العامة للقوائم المالية وفصل الجزء المتداول (IAS 1.69 / IFRS 16)
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-              <div>
-                <label className="font-bold text-[#141414] block mb-1">اسم الشركة في ترويسة القوائم</label>
-                <input
-                  type="text"
-                  value={settings.companyName}
-                  onChange={(e) => {
-                    const next = { ...settings, companyName: e.target.value };
-                    setSettings(next);
-                    ifrsFinancialEngineService.saveSettings(activeCompanyId, next);
-                  }}
-                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
-                />
-              </div>
-              <div>
-                <label className="font-bold text-[#141414] block mb-1">تاريخ نهاية الفترة المالية</label>
-                <input
-                  type="date"
-                  value={settings.reportingDate}
-                  onChange={(e) => {
-                    const next = { ...settings, reportingDate: e.target.value };
-                    setSettings(next);
-                    ifrsFinancialEngineService.saveSettings(activeCompanyId, next);
-                  }}
-                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs font-mono text-[#141414]"
-                />
-              </div>
-              <div>
-                <label className="font-bold text-[#141414] block mb-1">
-                  الجزء المتداول من القروض طويلة الأجل - السنة الحالية (⃁)
-                </label>
-                <input
-                  type="number"
-                  value={settings.currentPortionLongTermLoansCurrent}
-                  onChange={(e) => {
-                    const next = {
-                      ...settings,
-                      currentPortionLongTermLoansCurrent: parseFloat(e.target.value) || 0,
-                    };
-                    setSettings(next);
-                    ifrsFinancialEngineService.saveSettings(activeCompanyId, next);
-                  }}
-                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs font-mono text-[#141414]"
-                />
-              </div>
+          {/* Reference Sheets Sub-Navigation Bar */}
+          <div className="bg-white p-4 rounded-3xl border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              {[
+                { id: 'primary-34', label: '1. الإعدادات وجدول التصنيفات الرئيسي (34 رمزاً A-01..R-10)' },
+                { id: 'extended-314', label: `2. دليل التصنيف الموسع الكامل (${EXTENDED_IFRS_CLASSIFICATIONS.length} بنداً ومرجع IFRS)` },
+                { id: 'arabic-guide-34', label: `3. دليل الأكواد العربي المبسط (${ARABIC_CODES_GUIDE.length} رمزاً مع الأمثلة)` },
+                { id: 'search-keywords-257', label: `4. قاموس كلمات البحث التلقائي (${EXCEL_SEARCH_KEYWORDS.length} كلمة مفتاحية)` },
+                { id: 'movements-governance', label: '5. شرح الحركات والأرصدة (P..U) وحوكمة الشجرة' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setRefGuideSubTab(tab.id as any)}
+                  className={`px-3.5 py-2 rounded-full text-xs cursor-pointer transition-all ${
+                    refGuideSubTab === tab.id
+                      ? 'bg-[#141414] text-[#ffffff] font-bold'
+                      : 'bg-[#f3f3f3] text-[#141414] hover:bg-[#e0e0e0] font-medium'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* 34 IFRS Mapping Codes Table */}
-          <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
-            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
-              <h4 className="text-sm font-bold text-[#141414] m-0">
-                جدول التصنيفات المعياري (Chart of Mapping A-01..R-10) — يربط كل حساب ببند في القوائم المالية
-              </h4>
+          {/* 6.1 Primary 34 Codes & General Settings */}
+          {refGuideSubTab === 'primary-34' && (
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-4">
+                <h3 className="text-base font-bold text-[#141414] m-0">
+                  الإعدادات العامة للقوائم المالية وفصل الجزء المتداول (ورقة الإعدادات — IAS 1.69 / IFRS 16)
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                  <div>
+                    <label className="font-bold text-[#141414] block mb-1">اسم الشركة في ترويسة القوائم</label>
+                    <input
+                      type="text"
+                      value={settings.companyName}
+                      onChange={(e) => {
+                        const next = { ...settings, companyName: e.target.value };
+                        setSettings(next);
+                        ifrsFinancialEngineService.saveSettings(activeCompanyId, next);
+                      }}
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-[#141414] block mb-1">تاريخ نهاية الفترة المالية</label>
+                    <input
+                      type="date"
+                      value={settings.reportingDate}
+                      onChange={(e) => {
+                        const next = { ...settings, reportingDate: e.target.value };
+                        setSettings(next);
+                        ifrsFinancialEngineService.saveSettings(activeCompanyId, next);
+                      }}
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs font-mono text-[#141414]"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-[#141414] block mb-1">
+                      الجزء المتداول من القروض طويلة الأجل - السنة الحالية (⃁)
+                    </label>
+                    <input
+                      type="number"
+                      value={settings.currentPortionLongTermLoansCurrent}
+                      onChange={(e) => {
+                        const next = {
+                          ...settings,
+                          currentPortionLongTermLoansCurrent: parseFloat(e.target.value) || 0,
+                        };
+                        setSettings(next);
+                        ifrsFinancialEngineService.saveSettings(activeCompanyId, next);
+                      }}
+                      className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs font-mono text-[#141414]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+                <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
+                  <h4 className="text-sm font-bold text-[#141414] m-0">
+                    جدول التصنيفات المعياري الرئيسي (ورقة التصنيفات — 34 كوداً A-01..R-10)
+                  </h4>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-right text-xs">
+                    <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
+                      <tr>
+                        <th className="p-3">الكود</th>
+                        <th className="p-3">اسم البند في القوائم</th>
+                        <th className="p-3">القائمة / القسم</th>
+                        <th className="p-3">الطبيعة</th>
+                        <th className="p-3">مرجع المعيار (IFRS / IAS)</th>
+                        <th className="p-3">نوع التدفق النقدي</th>
+                        <th className="p-3">ملاحظات</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#e0e0e0]">
+                      {IFRS_MAPPING_CODES.map((m) => (
+                        <tr key={m.code} className="hover:bg-[#f3f3f3]/40">
+                          <td className="p-3 font-mono font-bold text-[#141414]">{m.code}</td>
+                          <td className="p-3 font-bold text-[#141414]">{m.nameAr}</td>
+                          <td className="p-3 text-[#707070]">{m.sectionAr}</td>
+                          <td className="p-3 font-mono font-bold">{m.naturalBalance}</td>
+                          <td className="p-3 font-mono text-[#141414]">{m.ifrsRef}</td>
+                          <td className="p-3 font-semibold text-[#141414]">{m.cashFlowType}</td>
+                          <td className="p-3 text-[#707070]">{m.notes}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-right text-xs">
-                <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
-                  <tr>
-                    <th className="p-3">الكود</th>
-                    <th className="p-3">اسم البند في القوائم</th>
-                    <th className="p-3">القائمة / القسم</th>
-                    <th className="p-3">الطبيعة</th>
-                    <th className="p-3">مرجع المعيار</th>
-                    <th className="p-3">نوع التدفق النقدي</th>
-                    <th className="p-3">ملاحظات</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#e0e0e0]">
-                  {IFRS_MAPPING_CODES.map((m) => (
-                    <tr key={m.code} className="hover:bg-[#f3f3f3]/40">
-                      <td className="p-3 font-mono font-bold text-[#141414]">{m.code}</td>
-                      <td className="p-3 font-bold text-[#141414]">{m.nameAr}</td>
-                      <td className="p-3 text-[#707070]">{m.sectionAr}</td>
-                      <td className="p-3 font-mono font-bold">{m.naturalBalance}</td>
-                      <td className="p-3 font-mono text-[#707070]">{m.ifrsRef}</td>
-                      <td className="p-3 font-semibold text-[#141414]">{m.cashFlowType}</td>
-                      <td className="p-3 text-[#707070]">{m.notes}</td>
+          )}
+
+          {/* 6.2 Extended 314 Sub-Classifications (ورقة دليل_التصنيف_الموسع) */}
+          {refGuideSubTab === 'extended-314' && (
+            <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+              <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <h4 className="text-sm font-bold text-[#141414] m-0">
+                    دليل التصنيف الموسع الكامل من الإكسل (ورقة دليل_التصنيف_الموسع — {EXTENDED_IFRS_CLASSIFICATIONS.length} بنداً معيارياً)
+                  </h4>
+                  <p className="text-xs text-[#707070] mt-0.5">
+                    يغطي كافة الحسابات الفرعية والتفصيلية (A-01-01 إلى R-10-06) مع الكود الأب بالقوائم المالية ومرجع المعيار الدولي IFRS / IAS
+                  </p>
+                </div>
+                <div className="relative w-64">
+                  <Search className="w-4 h-4 absolute right-3 top-2 text-[#707070]" />
+                  <input
+                    type="text"
+                    placeholder="بحث بالكود الفرعي أو الاسم أو المعيار..."
+                    value={extClassSearch}
+                    onChange={(e) => setExtClassSearch(e.target.value)}
+                    className="w-full bg-white border border-[#e0e0e0] rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414]"
+                  />
+                </div>
+              </div>
+              <div className="overflow-x-auto max-h-[640px]">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0] sticky top-0">
+                    <tr>
+                      <th className="p-3">الكود التفصيلي</th>
+                      <th className="p-3">اسم البند التفصيلي بالعربي</th>
+                      <th className="p-3">المستوى</th>
+                      <th className="p-3">الكود الأب بالقوائم</th>
+                      <th className="p-3">اسم البند الأب بالقوائم</th>
+                      <th className="p-3">الطبيعة</th>
+                      <th className="p-3">مرجع المعيار (IFRS / IAS)</th>
+                      <th className="p-3">ما يظهر في قائمة الاختيار اليدوي</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-[#e0e0e0]">
+                    {EXTENDED_IFRS_CLASSIFICATIONS.filter((item) => {
+                      if (!extClassSearch.trim()) return true;
+                      const q = extClassSearch.trim().toLowerCase();
+                      return (
+                        item.code.toLowerCase().includes(q) ||
+                        item.nameAr.toLowerCase().includes(q) ||
+                        item.parentStatementCode.toLowerCase().includes(q) ||
+                        item.ifrsRef.toLowerCase().includes(q)
+                      );
+                    }).map((item) => (
+                      <tr
+                        key={item.code}
+                        className={item.level === 2 ? 'bg-[#f3f3f3] font-bold' : 'hover:bg-[#f3f3f3]/40'}
+                      >
+                        <td className="p-2.5 font-mono font-bold text-[#141414]">{item.code}</td>
+                        <td className="p-2.5 text-[#141414]">{item.nameAr}</td>
+                        <td className="p-2.5 font-mono text-[#707070]">مستوى {item.level}</td>
+                        <td className="p-2.5 font-mono font-bold">{item.parentStatementCode}</td>
+                        <td className="p-2.5 text-[#707070]">{item.parentStatementName}</td>
+                        <td className="p-2.5 font-mono">{item.naturalBalance === 'D' ? 'مدين (D)' : 'دائن (C)'}</td>
+                        <td className="p-2.5 font-mono font-semibold text-[#141414]">{item.ifrsRef}</td>
+                        <td className="p-2.5 font-mono text-[11px] text-[#707070]">{item.manualOption}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* 6.3 Arabic Codes Guide (ورقة دليل_الأكواد_العربي) */}
+          {refGuideSubTab === 'arabic-guide-34' && (
+            <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+              <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
+                <h4 className="text-sm font-bold text-[#141414] m-0">
+                  دليل الأكواد العربي المبسط (ورقة دليل_الأكواد_العربي — شرح كل رمز من A-01 إلى R-10 مع الأمثلة العملية)
+                </h4>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
+                    <tr>
+                      <th className="p-3">الكود</th>
+                      <th className="p-3">اسم البند بالعربي</th>
+                      <th className="p-3">القائمة المالية</th>
+                      <th className="p-3">الطبيعة المحاسبية</th>
+                      <th className="p-3">الصياغة في قائمة الاختيار اليدوي</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#e0e0e0]">
+                    {ARABIC_CODES_GUIDE.map((g) => (
+                      <tr key={g.code} className="hover:bg-[#f3f3f3]/40">
+                        <td className="p-3 font-mono font-bold text-[#141414]">{g.code}</td>
+                        <td className="p-3 font-bold text-[#141414]">{g.nameAr}</td>
+                        <td className="p-3 text-[#707070]">{g.statementType}</td>
+                        <td className="p-3 font-semibold">{g.naturalBalance}</td>
+                        <td className="p-3 font-mono text-[#707070]">{g.manualChoiceLabel}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 6.4 Auto-Classification Keywords (ورقة كلمات_البحث) */}
+          {refGuideSubTab === 'search-keywords-257' && (
+            <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+              <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <h4 className="text-sm font-bold text-[#141414] m-0">
+                    قاموس كلمات البحث للتصنيف التلقائي واكتشاف الأعمدة (ورقة كلمات_البحث — {EXCEL_SEARCH_KEYWORDS.length} قاعدة)
+                  </h4>
+                  <p className="text-xs text-[#707070] mt-0.5">
+                    يستخدمها المحرك لاقتراح البند المعياري تلقائياً بمجرد قراءة اسم الحساب العربي أو الإنجليزي
+                  </p>
+                </div>
+                <div className="relative w-64">
+                  <Search className="w-4 h-4 absolute right-3 top-2 text-[#707070]" />
+                  <input
+                    type="text"
+                    placeholder="بحث في الكلمات المفتاحية..."
+                    value={keywordSearch}
+                    onChange={(e) => setKeywordSearch(e.target.value)}
+                    className="w-full bg-white border border-[#e0e0e0] rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414]"
+                  />
+                </div>
+              </div>
+              <div className="overflow-x-auto max-h-[580px]">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0] sticky top-0">
+                    <tr>
+                      <th className="p-3">الأولوية</th>
+                      <th className="p-3">الكلمة المفتاحية في اسم الحساب</th>
+                      <th className="p-3">الكود المقترح تلقائياً</th>
+                      <th className="p-3">اسم البند في القوائم</th>
+                      <th className="p-3">مرجع المعيار</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#e0e0e0]">
+                    {EXCEL_SEARCH_KEYWORDS.filter((kw) => {
+                      if (!keywordSearch.trim()) return true;
+                      const q = keywordSearch.trim().toLowerCase();
+                      return kw.keyword.toLowerCase().includes(q) || kw.code.toLowerCase().includes(q);
+                    }).map((kw) => {
+                      const m = IFRS_MAPPING_CODES.find((x) => x.code === kw.code);
+                      return (
+                        <tr key={kw.seq} className="hover:bg-[#f3f3f3]/40">
+                          <td className="p-2.5 font-mono text-[#707070]">{kw.seq}</td>
+                          <td className="p-2.5 font-bold text-[#141414]">{kw.keyword}</td>
+                          <td className="p-2.5 font-mono font-bold text-[#141414]">{kw.code}</td>
+                          <td className="p-2.5 text-[#707070]">{m?.nameAr || '-'}</td>
+                          <td className="p-2.5 font-mono text-[#707070]">{m?.ifrsRef || '-'}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 6.5 Movements & Balances Guide + Governance Rules (ورقتا شرح_الحركات_والأرصدة وحوكمة_الحسابات ورسائل_النظام) */}
+          {refGuideSubTab === 'movements-governance' && (
+            <div className="space-y-6">
+              <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+                <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
+                  <h4 className="text-sm font-bold text-[#141414] m-0">
+                    أولاً: شرح الحركات والأرصدة في ميزان المراجعة (ورقة شرح_الحركات_والأرصدة — P/Q, R/S, T/U)
+                  </h4>
+                </div>
+                <div className="p-4 space-y-2 text-xs">
+                  {MOVEMENTS_AND_BALANCES_GUIDE.map((row, idx) => (
+                    <div key={idx} className="p-2.5 rounded-xl bg-[#f3f3f3]/60 border border-[#e0e0e0] flex flex-wrap gap-3">
+                      {row.split('|').map((cell: string, cIdx: number) => (
+                        <span key={cIdx} className={cIdx === 0 ? 'font-bold text-[#141414]' : 'text-[#707070]'}>
+                          {cell}
+                        </span>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+                <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
+                  <h4 className="text-sm font-bold text-[#141414] m-0">
+                    ثانياً: ضوابط حوكمة شجرة الحسابات ومعيار IFRS 18 (ورقة حوكمة_الحسابات)
+                  </h4>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-right text-xs">
+                    <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
+                      <tr>
+                        <th className="p-3">القاعدة / المعيار</th>
+                        <th className="p-3">الإجراء التطبيقي</th>
+                        <th className="p-3">الأثر والمرجع</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#e0e0e0]">
+                      {COA_GOVERNANCE_RULES.map((g, i) => (
+                        <tr key={i} className="hover:bg-[#f3f3f3]/40">
+                          <td className="p-3 font-bold text-[#141414]">{g.rule}</td>
+                          <td className="p-3 text-[#141414]">{g.action}</td>
+                          <td className="p-3 text-[#707070]">{g.impact}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
+                <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
+                  <h4 className="text-sm font-bold text-[#141414] m-0">
+                    ثالثاً: رسائل النظام التحذيرية والإرشادية (ورقة رسائل_النظام)
+                  </h4>
+                </div>
+                <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                  {SYSTEM_MESSAGES_AR.map((m, idx) => (
+                    <div key={idx} className="p-2.5 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center gap-2">
+                      <span className="font-mono font-bold text-[#141414]">{m.key}:</span>
+                      <span className="text-[#141414]">{m.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════════════
-          SECTION 6: USAGE GUIDE & IFRS 18 GOVERNANCE (دليل الاستخدام وحوكمة IFRS 18)
+          SECTION 7: USAGE GUIDE & IFRS 18 GOVERNANCE (دليل الاستخدام وحوكمة IFRS 18)
          ═══════════════════════════════════════════════════════════════════════════ */}
       {activeSubTab === 'overview' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-3">
-            <h3 className="text-base font-bold text-[#141414] m-0">طريقة الاستخدام المعتمدة (6 خطوات)</h3>
+            <h3 className="text-base font-bold text-[#141414] m-0">طريقة الاستخدام المعتمدة (7 خطوات متكاملة)</h3>
             <ol className="space-y-2 text-xs text-[#141414] pr-4 list-decimal">
-              <li>افتح تبويب <strong>(ميزان المراجعة الذكي)</strong> لاستعراض الحسابات الـ 211 المستوردة من ملف الشركة (بببب.xlsx).</li>
-              <li>راجع أرصدة أول المدة (مدين P / دائن Q) وحركات السنة الفعلية (مدين R / دائن S)، حيث يحسب النظام الرصيد الختامي (T/U) آلياً.</li>
-              <li>استخدم زر <strong>(اعتماد التصنيف المقترح)</strong> لتصنيف الحسابات الـ 57 التي كانت غير مصنفة في الملف الخام وفق جدول (A-01 إلى R-10).</li>
-              <li>افتح تبويب <strong>(مركز الفحوصات وكشف الأخطاء)</strong> لمراجعة الـ 34 فحصاً معيارياً وطريقة معالجة أي تنبيه.</li>
-              <li>تتحدث <strong>القوائم المالية الخمس</strong> تلقائياً: المركز المالي، الدخل الشامل، التغيرات في حقوق الملكية، التدفقات النقدية، والنسب المالية.</li>
+              <li>افتح تبويب <strong>(ميزان المراجعة الذكي)</strong> لاستعراض الحسابات الـ 211 المستوردة، وتعديل الرصيد النهائي (مدين / دائن) أو إخفاء وإظهار الأعمدة بضغطة زر.</li>
+              <li>اختر التصنيف اليدوي من البنود الرئيسية الـ 34 أو من <strong>دليل التصنيف الموسع (314 بنداً فرعياً A-01-01..R-10-06)</strong> مع ظهور مرجع المعيار الدولي.</li>
+              <li>استخدم زر <strong>(اعتماد التصنيف المقترح)</strong> لتصنيف الحسابات غير المصنفة آلياً باستخدام قاموس الـ 257 كلمة مفتاحية.</li>
+              <li>افتح تبويب <strong>(مركز الفحوصات وكشف الأخطاء)</strong> لمراجعة الـ 34 فحصاً معيارياً وجدول تفصيل الأخطاء على مستوى الحسابات.</li>
+              <li>استعرض <strong>القوائم المالية الخمس</strong> واضغط على أي قسم في المركز المالي أو قائمة الدخل لتوسيع البنود الفرعية وإضافة حقول مخصصة للأصول.</li>
+              <li>افتح تبويب <strong>(الدليل والشجرة القابلة للتوسع)</strong> لاستعراض شجرة الإكسل الكاملة (319 عقدة + المستوى الرابع للحسابات) أو شجرة الشركة التشغيلية.</li>
               <li>استخدم <strong>(محاكي خطة النسب المالية What-If)</strong> لاختبار خطة تحسين السيولة والربحية وتصدير التقارير إلى Excel أو PDF.</li>
             </ol>
           </div>

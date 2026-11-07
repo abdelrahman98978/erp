@@ -14,7 +14,7 @@ import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { 
   Scale, Plus, FileSpreadsheet, FileText, Printer, FileCheck, 
   TrendingUp, TrendingDown, ShieldCheck, Lock, Unlock, Search, 
-  Eye, X, ArrowLeft, ArrowRight, FolderTree, Receipt, PieChart, 
+  Eye, EyeOff, X, ArrowLeft, ArrowRight, FolderTree, Receipt, PieChart, 
   Building2, Globe, DollarSign, Calculator, ChevronRight, Check,
   BookOpen, Landmark, Coins, AlertCircle, Clock, BarChart3, AlertTriangle,
   CheckCircle2, ArrowUpRight, ArrowDownLeft
@@ -212,6 +212,7 @@ export const FinancePage: React.FC = () => {
   const [selectedAccountForDrilldown, setSelectedAccountForDrilldown] = useState<any | null>(null);
   const [coaCategoryFilter, setCoaCategoryFilter] = useState<string>('ALL');
   const [coaSearchQuery, setCoaSearchQuery] = useState<string>('');
+  const [showTbClosingCols, setShowTbClosingCols] = useState<boolean>(true);
   const [closedPeriods, setClosedPeriods] = useState<number[]>([1, 2, 3, 4, 5, 6]); // Jan to Jun closed
   const [showAddAccountModal, setShowAddAccountModal] = useState(false);
   const [newAccountForm, setNewAccountForm] = useState({
@@ -608,245 +609,341 @@ export const FinancePage: React.FC = () => {
 
       {/* TAB 2: TRIAL BALANCE */}
       {activeTab === 'trial-balance' && (
-        <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
-            <div>
-              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
-                <Scale className="w-4 h-4 text-[#141414]" />
-                <span>ميزان المراجعة بالأرصدة والمجاميع (Trial Balance)</span>
-              </h3>
-              <p className="text-xs text-[#707070] mt-1">مطابقة الأرصدة الافتتاحية وحركات الفترة والرصيد النهائي لجميع الحسابات</p>
+        <div className="space-y-6">
+          <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
+            <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
+              <div>
+                <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
+                  <Scale className="w-4 h-4 text-[#141414]" />
+                  <span>ميزان المراجعة بالأرصدة والمجاميع (الرصيد النهائي مدين ودائن مع إمكانية الإخفاء)</span>
+                </h3>
+                <p className="text-xs text-[#707070] mt-1">
+                  مطابقة الأرصدة الافتتاحية وحركات الفترة والرصيد النهائي (مدين / دائن) لجميع الحسابات
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setShowTbClosingCols((v) => !v)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all ${
+                    showTbClosingCols
+                      ? 'bg-[#141414] text-[#ffffff]'
+                      : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                  }`}
+                >
+                  {showTbClosingCols ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                  <span>
+                    {showTbClosingCols
+                      ? 'إخفاء الرصيد النهائي (مدين / دائن)'
+                      : 'إظهار الرصيد النهائي (مدين / دائن)'}
+                  </span>
+                </button>
+                <button
+                  onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'excel', `ميزان المراجعة - ${activeCompany.name}`)}
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
+                  <span>Excel</span>
+                </button>
+                <button
+                  onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'pdf', `ميزان المراجعة - ${activeCompany.name}`)}
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
+                >
+                  <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'print', `ميزان المراجعة - ${activeCompany.name}`)}
+                  className="button-primary-pill"
+                  style={{ padding: '4px 14px', fontSize: '11px', minHeight: '30px' }}
+                >
+                  <Printer className="w-3.5 h-3.5 ml-1" />
+                  <span>طباعة</span>
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'excel', `ميزان المراجعة - ${activeCompany.name}`)}
-                className="button-outline-on-light"
-                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
-                <span>Excel</span>
-              </button>
-              <button
-                onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'pdf', `ميزان المراجعة - ${activeCompany.name}`)}
-                className="button-outline-on-light"
-                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
-              >
-                <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
-                <span>PDF</span>
-              </button>
-              <button
-                onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'print', `ميزان المراجعة - ${activeCompany.name}`)}
-                className="button-primary-pill"
-                style={{ padding: '4px 14px', fontSize: '11px', minHeight: '30px' }}
-              >
-                <Printer className="w-3.5 h-3.5 ml-1" />
-                <span>طباعة</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
-                <tr>
-                  <th className="p-3">رمز الحساب</th>
-                  <th className="p-3">اسم الحساب المحاسبي</th>
-                  <th className="p-3">النوع</th>
-                  <th className="p-3 font-mono">افتتاحي مدين</th>
-                  <th className="p-3 font-mono">افتتاحي دائن</th>
-                  <th className="p-3 font-mono">حركة مدين</th>
-                  <th className="p-3 font-mono">حركة دائن</th>
-                  <th className="p-3 font-mono font-bold text-[#141414]">الرصيد النهائي</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100">
-                {TRIAL_BALANCE_DATA.map((row) => (
-                  <tr
-                    key={row.code}
-                    onClick={() => setSelectedAccountForDrilldown(row)}
-                    className="hover:bg-zinc-50 cursor-pointer transition-colors"
-                  >
-                    <td className="p-3 font-mono font-bold text-[#141414]">{row.code}</td>
-                    <td className="p-3 font-bold text-[#141414]">{row.name}</td>
-                    <td className="p-3">
-                      <Badge text={row.type} type="purple" />
-                    </td>
-                    <td className="p-3 font-mono">{row.opening_debit.toLocaleString()}</td>
-                    <td className="p-3 font-mono">{row.opening_credit.toLocaleString()}</td>
-                    <td className="p-3 font-mono text-[#141414] font-bold">{row.period_debit.toLocaleString()}</td>
-                    <td className="p-3 font-mono text-[#141414] font-bold">{row.period_credit.toLocaleString()}</td>
-                    <td className="p-3 font-mono font-bold text-[#141414]">
-                      {Math.abs(row.balance).toLocaleString()} {row.balance >= 0 ? 'مدين' : 'دائن'}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3">رمز الحساب</th>
+                    <th className="p-3">اسم الحساب المحاسبي</th>
+                    <th className="p-3">النوع</th>
+                    <th className="p-3 font-mono">افتتاحي مدين</th>
+                    <th className="p-3 font-mono">افتتاحي دائن</th>
+                    <th className="p-3 font-mono">حركة مدين</th>
+                    <th className="p-3 font-mono">حركة دائن</th>
+                    {showTbClosingCols && (
+                      <th className="p-3 font-mono font-bold bg-[#141414] text-[#ffffff]">الرصيد النهائي مدين</th>
+                    )}
+                    {showTbClosingCols && (
+                      <th className="p-3 font-mono font-bold bg-[#141414] text-[#ffffff]">الرصيد النهائي دائن</th>
+                    )}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {TRIAL_BALANCE_DATA.map((row) => {
+                    const closingDebit = row.balance > 0 ? row.balance : 0;
+                    const closingCredit = row.balance < 0 ? Math.abs(row.balance) : 0;
+                    return (
+                      <tr
+                        key={row.code}
+                        onClick={() => setSelectedAccountForDrilldown(row)}
+                        className="hover:bg-zinc-50 cursor-pointer transition-colors"
+                      >
+                        <td className="p-3 font-mono font-bold text-[#141414]">{row.code}</td>
+                        <td className="p-3 font-bold text-[#141414]">{row.name}</td>
+                        <td className="p-3">
+                          <Badge text={row.type} type="purple" />
+                        </td>
+                        <td className="p-3 font-mono">{row.opening_debit.toLocaleString()}</td>
+                        <td className="p-3 font-mono">{row.opening_credit.toLocaleString()}</td>
+                        <td className="p-3 font-mono text-[#141414] font-bold">{row.period_debit.toLocaleString()}</td>
+                        <td className="p-3 font-mono text-[#141414] font-bold">{row.period_credit.toLocaleString()}</td>
+                        {showTbClosingCols && (
+                          <td className="p-3 font-mono font-bold text-[#141414] bg-[#fafafa]">
+                            {closingDebit > 0 ? `${closingDebit.toLocaleString()} ⃁` : '-'}
+                          </td>
+                        )}
+                        {showTbClosingCols && (
+                          <td className="p-3 font-mono font-bold text-[#141414] bg-[#fafafa]">
+                            {closingCredit > 0 ? `${closingCredit.toLocaleString()} ⃁` : '-'}
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot className="bg-[#141414] text-[#ffffff] font-bold">
+                  <tr>
+                    <td colSpan={3} className="p-3">الإجمالي الكلي لميزان المراجعة (متزن ✔)</td>
+                    <td className="p-3 font-mono">
+                      {TRIAL_BALANCE_DATA.reduce((s, r) => s + r.opening_debit, 0).toLocaleString()} ⃁
+                    </td>
+                    <td className="p-3 font-mono">
+                      {TRIAL_BALANCE_DATA.reduce((s, r) => s + r.opening_credit, 0).toLocaleString()} ⃁
+                    </td>
+                    <td className="p-3 font-mono">
+                      {TRIAL_BALANCE_DATA.reduce((s, r) => s + r.period_debit, 0).toLocaleString()} ⃁
+                    </td>
+                    <td className="p-3 font-mono">
+                      {TRIAL_BALANCE_DATA.reduce((s, r) => s + r.period_credit, 0).toLocaleString()} ⃁
+                    </td>
+                    {showTbClosingCols && (
+                      <td className="p-3 font-mono">
+                        {TRIAL_BALANCE_DATA.reduce((s, r) => s + (r.balance > 0 ? r.balance : 0), 0).toLocaleString()} ⃁
+                      </td>
+                    )}
+                    {showTbClosingCols && (
+                      <td className="p-3 font-mono">
+                        {TRIAL_BALANCE_DATA.reduce((s, r) => s + (r.balance < 0 ? Math.abs(r.balance) : 0), 0).toLocaleString()} ⃁
+                      </td>
+                    )}
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </div>
+
+          {/* Complete 211-Account IFRS Smart Trial Balance with Extended 314 Classifications */}
+          <IfrsFinancialEngineWorkspace initialSection="trial-balance" />
         </div>
       )}
 
       {/* TAB 3: BALANCE SHEET */}
       {activeTab === 'financial-position' && (
-        <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
-          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
-            <div>
-              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
-                <Landmark className="w-4 h-4 text-[#141414]" />
-                <span>قائمة المركز المالي الموحدة (Balance Sheet)</span>
-              </h3>
-              <p className="text-xs text-[#707070] mt-1">مطابقة الأصول مع الخصوم وحقوق الملكية كما في نهاية الفترة المالية</p>
+        <div className="space-y-6">
+          <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
+              <div>
+                <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
+                  <Landmark className="w-4 h-4 text-[#141414]" />
+                  <span>قائمة المركز المالي الموحدة القابلة للتوسع وإضافة حقول الأصول (IAS 1 Balance Sheet)</span>
+                </h3>
+                <p className="text-xs text-[#707070] mt-1">
+                  مطابقة الأصول مع الخصوم وحقوق الملكية مع إمكانية إضافة حقول جديدة للأصول وتعديل وتوسيع كافة الأقسام
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => exportData('balance-sheet', TRIAL_BALANCE_DATA, 'excel', `المركز المالي - ${activeCompany.name}`)}
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
+                  <span>Excel</span>
+                </button>
+                <button
+                  onClick={() => exportData('balance-sheet', TRIAL_BALANCE_DATA, 'pdf', `المركز المالي - ${activeCompany.name}`)}
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
+                >
+                  <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
+                  <span>PDF</span>
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => exportData('balance-sheet', TRIAL_BALANCE_DATA, 'excel', `المركز المالي - ${activeCompany.name}`)}
-                className="button-outline-on-light"
-                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
-                <span>Excel</span>
-              </button>
-              <button
-                onClick={() => exportData('balance-sheet', TRIAL_BALANCE_DATA, 'pdf', `المركز المالي - ${activeCompany.name}`)}
-                className="button-outline-on-light"
-                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
-              >
-                <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
-                <span>PDF</span>
-              </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
+                <div className="flex justify-between items-center font-bold text-[#141414] border-b border-zinc-200 pb-2 text-sm">
+                  <span>1. الأصول (Assets — IAS 1 / IAS 16 / IFRS 16)</span>
+                  <span className="font-mono">2,132,971.20 ⃁</span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="font-bold text-zinc-700">الأصول المتداولة (Current Assets):</div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                    <span>النقدية والصناديق والبنوك (A-10 | IAS 7):</span>
+                    <span className="font-bold font-mono text-[#141414]">850,000.00 ⃁</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                    <span>أمانات مساند المعلقة (A-07 | IFRS 15):</span>
+                    <span className="font-bold font-mono text-[#141414]">184,500.00 ⃁</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                    <span>المدينون وأرصدة العملاء بالصافي (A-07 | IFRS 9):</span>
+                    <span className="font-bold font-mono text-[#141414]">215,971.20 ⃁</span>
+                  </div>
+                  <div className="font-bold text-zinc-700 pt-2">الأصول غير المتداولة (Non-Current Assets):</div>
+                  <div className="flex justify-between py-1 text-zinc-600">
+                    <span>صافي الممتلكات والآلات والمعدات وحق الاستخدام (A-01/A-02 | IAS 16):</span>
+                    <span className="font-bold font-mono text-[#141414]">882,500.00 ⃁</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
+                <div className="flex justify-between items-center font-bold text-[#141414] border-b border-zinc-200 pb-2 text-sm">
+                  <span>2. الخصوم وحقوق الملكية (Liabilities & Equity — IAS 1)</span>
+                  <span className="font-mono">2,132,971.20 ⃁</span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="font-bold text-zinc-700">الخصوم والالتزامات (Liabilities):</div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                    <span>مستحقات الموردين والوكلاء الخارجيين (L-04 | IAS 1.69):</span>
+                    <span className="font-bold font-mono text-[#141414]">189,375.00 ⃁</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                    <span>مخصص مكافأة نهاية الخدمة للموظفين (L-03 | IAS 19):</span>
+                    <span className="font-bold font-mono text-[#141414]">94,200.00 ⃁</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                    <span>ضريبة القيمة المضافة ومستحقات الزكاة (L-05/L-08 | ZATCA):</span>
+                    <span className="font-bold font-mono text-[#141414]">124,000.00 ⃁</span>
+                  </div>
+                  <div className="font-bold text-zinc-700 pt-2">حقوق الملكية (Equity):</div>
+                  <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
+                    <span>رأس المال المدفوع والاحتياطي النظامي (E-01/E-02 | IAS 1.78):</span>
+                    <span className="font-bold font-mono text-[#141414]">1,205,000.00 ⃁</span>
+                  </div>
+                  <div className="flex justify-between py-1 text-zinc-600">
+                    <span>الأرباح المبقاة وصافي ربح السنة (E-03 | IAS 1.106):</span>
+                    <span className="font-bold font-mono text-[#141414]">520,396.20 ⃁</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
-              <div className="flex justify-between items-center font-bold text-[#141414] border-b border-zinc-200 pb-2 text-sm">
-                <span>1. الأصول (Assets)</span>
-                <span className="font-mono">2,132,971.20 ⃁</span>
-              </div>
-              <div className="space-y-2 text-xs">
-                <div className="font-bold text-zinc-700">الأصول المتداولة:</div>
-                <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
-                  <span>النقدية والصناديق والبنوك:</span>
-                  <span className="font-bold font-mono text-[#141414]">850,000.00 ⃁</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
-                  <span>أمانات مساند المعلقة (90 يوماً):</span>
-                  <span className="font-bold font-mono text-[#141414]">184,500.00 ⃁</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
-                  <span>المدينون وأرصدة العملاء:</span>
-                  <span className="font-bold font-mono text-[#141414]">215,971.20 ⃁</span>
-                </div>
-                <div className="font-bold text-zinc-700 pt-2">الأصول غير المتداولة:</div>
-                <div className="flex justify-between py-1 text-zinc-600">
-                  <span>صافي الأصول الثابتة:</span>
-                  <span className="font-bold font-mono text-[#141414]">882,500.00 ⃁</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
-              <div className="flex justify-between items-center font-bold text-[#141414] border-b border-zinc-200 pb-2 text-sm">
-                <span>2. الخصوم وحقوق الملكية (Liabilities & Equity)</span>
-                <span className="font-mono">2,132,971.20 ⃁</span>
-              </div>
-              <div className="space-y-2 text-xs">
-                <div className="font-bold text-zinc-700">الخصوم المتداولة:</div>
-                <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
-                  <span>مستحقات الموردين والوكلاء:</span>
-                  <span className="font-bold font-mono text-[#141414]">189,375.00 ⃁</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
-                  <span>مخصص مكافأة نهاية الخدمة:</span>
-                  <span className="font-bold font-mono text-[#141414]">94,200.00 ⃁</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
-                  <span>ضريبة القيمة المضافة ZATCA 15%:</span>
-                  <span className="font-bold font-mono text-[#141414]">124,000.00 ⃁</span>
-                </div>
-                <div className="font-bold text-zinc-700 pt-2">حقوق الملكية:</div>
-                <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
-                  <span>رأس المال المدفوع:</span>
-                  <span className="font-bold font-mono text-[#141414]">1,205,000.00 ⃁</span>
-                </div>
-                <div className="flex justify-between py-1 text-zinc-600">
-                  <span>الأرباح الصافية المرحلة:</span>
-                  <span className="font-bold font-mono text-[#141414]">520,396.20 ⃁</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Interactive Expandable IFRS Balance Sheet with Custom Asset Fields & Inline Add/Edit */}
+          <IfrsFinancialEngineWorkspace initialSection="statements" />
         </div>
       )}
 
       {/* TAB 4: INCOME STATEMENT */}
       {activeTab === 'income-statement' && (
-        <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
-          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
-            <div>
-              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-[#141414]" />
-                <span>قائمة الدخل والأرباح والخسائر (Income Statement / P&L)</span>
-              </h3>
-              <p className="text-xs text-[#707070] mt-1">تحليل الإيرادات، التكاليف المباشرة، والمصروفات الإدارية وصافي الربح</p>
+        <div className="space-y-6">
+          <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
+              <div>
+                <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-[#141414]" />
+                  <span>قائمة الدخل الشاملة والأرباح والخسائر المكتملة (IAS 1 / IFRS 18 Income Statement & OCI)</span>
+                </h3>
+                <p className="text-xs text-[#707070] mt-1">
+                  تحليل الإيرادات، التكاليف المباشرة، مجمل الربح، المصروفات التشغيلية، EBITDA، الربح التشغيلي، الزكاة، وصافي الربح والدخل الشامل
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => exportData('income-statement', TRIAL_BALANCE_DATA, 'excel', `قائمة الدخل - ${activeCompany.name}`)}
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
+                  <span>Excel</span>
+                </button>
+                <button
+                  onClick={() => exportData('income-statement', TRIAL_BALANCE_DATA, 'pdf', `قائمة الدخل - ${activeCompany.name}`)}
+                  className="button-outline-on-light"
+                  style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
+                >
+                  <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
+                  <span>PDF</span>
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => exportData('income-statement', TRIAL_BALANCE_DATA, 'excel', `قائمة الدخل - ${activeCompany.name}`)}
-                className="button-outline-on-light"
-                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
-                <span>Excel</span>
-              </button>
-              <button
-                onClick={() => exportData('income-statement', TRIAL_BALANCE_DATA, 'pdf', `قائمة الدخل - ${activeCompany.name}`)}
-                className="button-outline-on-light"
-                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
-              >
-                <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
-                <span>PDF</span>
-              </button>
+            <div className="max-w-4xl mx-auto p-6 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3 text-xs">
+              <div className="flex justify-between py-2 border-b border-zinc-200 font-bold text-zinc-900">
+                <span>1. إيرادات خدمات التوسط في الاستقدام (مساند — R-01 | IFRS 15):</span>
+                <span className="font-mono">410,000.00 ⃁</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-zinc-200 font-bold text-zinc-900">
+                <span>2. إيرادات عقود التأجير والتشغيل ونقل الكفالة (R-01 | IFRS 15):</span>
+                <span className="font-mono">115,471.20 ⃁</span>
+              </div>
+              <div className="flex justify-between py-2.5 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
+                <span>= إجمالي الإيرادات التشغيلية (Total Revenues — 100%):</span>
+                <span className="font-mono">525,471.20 ⃁</span>
+              </div>
+
+              <div className="pt-2 text-[#141414] space-y-1">
+                <div className="flex justify-between py-1.5 border-b border-zinc-200">
+                  <span>3. (-) تكلفة المكاتب الخارجية والتأشيرات وتذاكر السفر (R-02 | IAS 1.99):</span>
+                  <span className="font-mono font-bold">(112,500.00) ⃁</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-zinc-200">
+                  <span>4. (-) مصاريف الإعاشة والإيواء والفحص الطبي والتأمين (R-02 | IAS 1.99):</span>
+                  <span className="font-mono font-bold">(46,000.00) ⃁</span>
+                </div>
+                <div className="flex justify-between py-2 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
+                  <span>= مجمل الربح (Gross Profit — هامش 69.8%):</span>
+                  <span className="font-mono">366,971.20 ⃁</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-zinc-200">
+                  <span>5. (-) مصروفات البيع والتسويق وعمولات المبيعات (R-03 | IAS 1.99):</span>
+                  <span className="font-mono font-bold">(14,500.00) ⃁</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-zinc-200">
+                  <span>6. (-) الرواتب والأجور والمصروفات العمومية والإدارية (R-04 | IAS 1.99):</span>
+                  <span className="font-mono font-bold">(35,000.00) ⃁</span>
+                </div>
+                <div className="flex justify-between py-2 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
+                  <span>= الربح قبل الفوائد والضرائب والإهلاك والإطفاء (EBITDA — IFRS 18):</span>
+                  <span className="font-mono">317,471.20 ⃁</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-zinc-200">
+                  <span>7. (-) مصروف الإهلاك والإطفاء للأصول الثابتة وحق الاستخدام (R-10 | IAS 16):</span>
+                  <span className="font-mono font-bold">(12,500.00) ⃁</span>
+                </div>
+              </div>
+
+              <div className="flex justify-between py-3.5 bg-[#141414] text-[#ffffff] px-5 rounded-2xl font-bold text-sm">
+                <span>= صافي ربح السنة والربح التشغيلي (Net Profit / Total Comprehensive Income — هامش 58.0%):</span>
+                <span className="font-mono text-[#ffffff]">304,971.20 ⃁</span>
+              </div>
             </div>
           </div>
 
-          <div className="max-w-2xl mx-auto p-6 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3 text-xs">
-            <div className="flex justify-between py-2 border-b border-zinc-200 font-bold text-zinc-900">
-              <span>إيرادات خدمات التوسط في الاستقدام (مساند):</span>
-              <span className="font-mono">410,000.00 ⃁</span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-zinc-200 font-bold text-zinc-900">
-              <span>إيرادات عقود التأجير والتشغيل:</span>
-              <span className="font-mono">115,471.20 ⃁</span>
-            </div>
-            <div className="flex justify-between py-2.5 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
-              <span>إجمالي الإيرادات التشغيلية:</span>
-              <span className="font-mono">525,471.20 ⃁</span>
-            </div>
-
-            <div className="pt-2 text-[#141414] space-y-1">
-              <div className="flex justify-between py-1.5 border-b border-zinc-200">
-                <span>تكلفة المكاتب الخارجية والتأشيرات:</span>
-                <span className="font-mono">‎- ⃁</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-zinc-200">
-                <span>مصاريف الإعاشة والإيواء والفحص:</span>
-                <span className="font-mono">‎- ⃁</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-zinc-200">
-                <span>الرواتب والأجور والمكافآت:</span>
-                <span className="font-mono">‎- ⃁</span>
-              </div>
-            </div>
-
-            <div className="flex justify-between py-3.5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] px-5 rounded-2xl font-bold text-sm">
-              <span>صافي الربح للفترة (Net Income):</span>
-              <span className="font-mono text-[#141414]">304,971.20 ⃁</span>
-            </div>
-          </div>
+          {/* Complete Multi-Step IFRS 18 / IAS 1 Expandable Income Statement */}
+          <IfrsFinancialEngineWorkspace initialSection="statements" />
         </div>
       )}
 
@@ -857,7 +954,7 @@ export const FinancePage: React.FC = () => {
             <div>
               <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
                 <Coins className="w-4 h-4 text-[#141414]" />
-                <span>قائمة التدفقات النقدية (Cash Flow Statement)</span>
+                <span>قائمة التدفقات النقدية بالطريقة غير المباشرة (IAS 7 Cash Flow Statement)</span>
               </h3>
               <p className="text-xs text-[#707070] mt-1">
                 حركة السيولة النقدية من الأنشطة التشغيلية والاستثمارية والتمويلية لـ {activeCompany.name}
@@ -866,7 +963,7 @@ export const FinancePage: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <span className="pill-tag-mint text-xs font-bold">
-                صافي التغير النقدي: +155,000.00 ⃁
+                صافي التغير النقدي: +155,000.00 ⃁ (متزن ✔)
               </span>
             </div>
           </div>
@@ -880,7 +977,7 @@ export const FinancePage: React.FC = () => {
 
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <div className="text-xs font-bold text-zinc-800 mb-1">صافي التدفقات الاستثمارية</div>
-              <div className="text-xl font-bold font-mono text-[#141414]">‎- ⃁</div>
+              <div className="text-xl font-bold font-mono text-[#141414]">(45,000.00) ⃁</div>
               <div className="text-[10px] text-[#707070] mt-1">تجهيزات ومعدات إيواء وسيارات</div>
             </div>
 
@@ -894,23 +991,23 @@ export const FinancePage: React.FC = () => {
           {/* Detailed Statement Table */}
           <div className="max-w-3xl mx-auto bg-zinc-50 rounded-2xl border border-zinc-200 p-6 space-y-4 text-xs">
             <div>
-              <div className="font-bold text-zinc-900 pb-2 border-b border-zinc-300">1. التدفقات النقدية من الأنشطة التشغيلية:</div>
+              <div className="font-bold text-zinc-900 pb-2 border-b border-zinc-300">1. التدفقات النقدية من الأنشطة التشغيلية (IAS 7.18):</div>
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between text-zinc-700">
                   <span>صافي الربح للفترة:</span>
                   <span className="font-mono font-bold">304,971.20 ⃁</span>
                 </div>
                 <div className="flex justify-between text-zinc-700">
-                  <span>(+) استهلاك الأصول الثابتة (غير نقدي):</span>
+                  <span>(+) استهلاك الأصول الثابتة (غير نقدي — IAS 7.20):</span>
                   <span className="font-mono font-bold">+12,500.00 ⃁</span>
                 </div>
                 <div className="flex justify-between text-zinc-700">
                   <span>(-) الزيادة في المدينين وحسابات مساند المعلقة:</span>
-                  <span className="font-mono font-bold text-[#141414]">‎- ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">(68,471.20) ⃁</span>
                 </div>
                 <div className="flex justify-between text-zinc-700">
-                  <span>(-) سداد مستحقات الوكلاء الخارجيين:</span>
-                  <span className="font-mono font-bold text-[#141414]">‎- ⃁</span>
+                  <span>(-) سداد مستحقات الوكلاء الخارجيين وصافي رأس المال العامل:</span>
+                  <span className="font-mono font-bold text-[#141414]">(49,000.00) ⃁</span>
                 </div>
                 <div className="flex justify-between bg-[#f3f3f3] p-2 rounded-lg font-bold text-[#141414]">
                   <span>صافي النقد المتوفر من الأنشطة التشغيلية:</span>
@@ -920,15 +1017,15 @@ export const FinancePage: React.FC = () => {
             </div>
 
             <div>
-              <div className="font-bold text-zinc-900 pb-2 border-b border-zinc-300">2. التدفقات النقدية من الأنشطة الاستثمارية:</div>
+              <div className="font-bold text-zinc-900 pb-2 border-b border-zinc-300">2. التدفقات النقدية من الأنشطة الاستثمارية (IAS 7.16):</div>
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between text-zinc-700">
-                  <span>شراء أصول ثابتة وتجهيزات فروع:</span>
-                  <span className="font-mono font-bold text-[#141414]">‎- ⃁</span>
+                  <span>شراء أصول ثابتة وتجهيزات فروع وإيواء:</span>
+                  <span className="font-mono font-bold text-[#141414]">(45,000.00) ⃁</span>
                 </div>
                 <div className="flex justify-between bg-zinc-200/60 p-2 rounded-lg font-bold text-zinc-900">
                   <span>صافي النقد المستخدم في الأنشطة الاستثمارية:</span>
-                  <span className="font-mono">‎- ⃁</span>
+                  <span className="font-mono">(45,000.00) ⃁</span>
                 </div>
               </div>
             </div>
@@ -942,9 +1039,9 @@ export const FinancePage: React.FC = () => {
                 <span>صافي الزيادة في النقدية خلال الفترة:</span>
                 <span className="font-mono">+155,000.00 ⃁</span>
               </div>
-              <div className="flex justify-between bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] p-4 rounded-xl font-bold text-sm">
-                <span>رصيد النقدية وما في حكمها في نهاية الفترة (البنوك والصناديق):</span>
-                <span className="font-mono text-[#141414]">905,000.00 ⃁</span>
+              <div className="flex justify-between bg-[#141414] text-[#ffffff] p-4 rounded-xl font-bold text-sm">
+                <span>رصيد النقدية وما في حكمها في نهاية الفترة (البنوك والصناديق — IAS 7.45):</span>
+                <span className="font-mono text-[#ffffff]">905,000.00 ⃁</span>
               </div>
             </div>
           </div>
@@ -1707,6 +1804,12 @@ export const FinancePage: React.FC = () => {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {activeTab === 'chart-of-accounts' && (
+        <div className="mt-6">
+          <IfrsFinancialEngineWorkspace initialSection="coa-tree" />
         </div>
       )}
 
